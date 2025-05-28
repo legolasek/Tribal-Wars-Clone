@@ -11,6 +11,7 @@ try {
 
     require_once __DIR__ . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'BuildingManager.php';
     require_once __DIR__ . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'VillageManager.php';
+    require_once __DIR__ . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'AjaxResponse.php'; // Include AjaxResponse
 
     // Sprawdź, czy użytkownik jest zalogowany
     if (!isset($_SESSION['user_id'])) {
@@ -109,12 +110,14 @@ try {
         case 1: // Ratusz
             $response['action_type'] = 'manage_village';
             // Pobierz populację wioski
-            $stmt_pop = $conn->prepare("SELECT population FROM villages WHERE id = ? LIMIT 1");
+            $stmt_pop = $conn->prepare("SELECT population, name FROM villages WHERE id = ? LIMIT 1"); // Added name
             $stmt_pop->bind_param("i", $village_id);
             $stmt_pop->execute();
             $pop_result = $stmt_pop->get_result()->fetch_assoc();
             $stmt_pop->close();
             $population = $pop_result ? (int)$pop_result['population'] : 0;
+            $village_name = $pop_result ? $pop_result['name'] : 'Wioska'; // Get village name
+
             // Pobierz liczbę wiosek gracza
             $stmt_villages_count = $conn->prepare("SELECT COUNT(*) as cnt FROM villages WHERE user_id = ?");
             $stmt_villages_count->bind_param("i", $user_id);
@@ -122,22 +125,6 @@ try {
             $villages_count_result = $stmt_villages_count->get_result()->fetch_assoc();
             $stmt_villages_count->close();
             $villages_count = $villages_count_result ? (int)$villages_count_result['cnt'] : 1;
-            $response['additional_info_html'] = '
-                <h3>Zarządzanie Wioską</h3>
-                <h4>Informacje o wiosce:</h4>
-                <ul>
-                    <li>Nazwa: ' . htmlspecialchars($building_details['name_pl']) . '</li>
-                    <li>Poziom Ratusza: ' . $building_details['level'] . '</li>
-                    <li>Populacja: ' . $population . '</li>
-                    <li>Liczba wiosek: ' . $villages_count . '</li>
-                </ul>
-                <h4>Zmień nazwę wioski:</h4>
-                <form id="rename-village-form">
-                    <input type="hidden" name="village_id" value="'. $village_id .'">
-                    <input type="text" name="new_village_name" placeholder="Nowa nazwa wioski">
-                    <button type="submit">Zmień nazwę</button>
-                </form>
-                <div id="rename-message" style="margin-top: 10px;"></div>';
 
             // --- MENU ROZBUDOWY BUDYNKÓW ---
             $stmt_buildings = $conn->prepare("
@@ -151,33 +138,44 @@ try {
             $stmt_buildings->execute();
             $buildings_result = $stmt_buildings->get_result();
 
-            $buildings_html = '<h4>Rozbudowa budynków</h4>';
-            $buildings_html .= '<table class="main-building-upgrade-table">';
-            $buildings_html .= '<tr><th>Budynek</th><th>Poziom</th><th>Akcja</th></tr>';
-
+            $buildings_data = [];
             while ($b = $buildings_result->fetch_assoc()) {
-                $can_upgrade = $b['level'] < $b['max_level'];
-                $buildings_html .= '<tr>';
-                $buildings_html .= '<td>' . htmlspecialchars($b['name_pl']) . '</td>';
-                $buildings_html .= '<td>' . $b['level'] . '</td>';
-                if ($can_upgrade) {
-                    $buildings_html .= '<td>
-                        <form class="upgrade-form" action="upgrade_building.php" method="post">
-                            <input type="hidden" name="village_building_id" value="' . $b['id'] . '">
-                            <input type="hidden" name="building_type_id" value="' . htmlspecialchars($b['internal_name']) . '">
-                            <input type="hidden" name="current_level" value="' . $b['level'] . '">
-                            <button type="submit">Rozbuduj</button>
-                        </form>
-                    </td>';
-                } else {
-                    $buildings_html .= '<td><span class="max-level">Maksymalny poziom</span></td>';
-                }
-                $buildings_html .= '</tr>';
+                 $buildings_data[] = [
+                     'id' => $b['id'],
+                     'level' => (int)$b['level'],
+                     'name_pl' => $b['name_pl'],
+                     'internal_name' => $b['internal_name'],
+                     'max_level' => (int)$b['max_level']
+                 ];
             }
-            $buildings_html .= '</table>';
             $stmt_buildings->close();
 
-            $response['additional_info_html'] .= $buildings_html;
+            // Add current village resources and capacities for overview (assuming they are fetched earlier)
+            // If not fetched earlier, need to fetch them here
+             if (!isset($villageData)) {
+                  $villageManager = new VillageManager($conn);
+                 $villageData = $villageManager->getVillageInfo($village_id);
+             }
+
+             $currentResourcesAndCapacity = [
+                  'wood' => $villageData['wood'] ?? 0,
+                  'clay' => $villageData['clay'] ?? 0,
+                  'iron' => $villageData['iron'] ?? 0,
+                  'population' => $villageData['population'] ?? 0,
+                  'warehouse_capacity' => $villageData['warehouse_capacity'] ?? 0,
+                  'farm_capacity' => $villageData['farm_capacity'] ?? 0
+             ];
+
+
+            // Return data as JSON
+            AjaxResponse::success([
+                'village_name' => $village_name,
+                'main_building_level' => $building_details['level'],
+                'population' => $population,
+                'villages_count' => $villages_count,
+                 'buildings_list' => $buildings_data,
+                 'resources_capacity' => $currentResourcesAndCapacity // Add resources/capacity info
+            ]);
             break;
         case 2: // Koszary
             $response['action_type'] = 'recruit_barracks';
@@ -193,39 +191,12 @@ try {
             // Pobierz kolejkę rekrutacji
             $recruitmentQueue = $unitManager->getRecruitmentQueue($village_id, 'barracks');
             
-            // Generuj HTML dla kolejki rekrutacji
-            $queueHtml = '';
-            if (!empty($recruitmentQueue)) {
-                $queueHtml .= '<h4>Aktualnie rekrutowane jednostki:</h4>';
-                $queueHtml .= '<table class="recruitment-queue">';
-                $queueHtml .= '<tr><th>Jednostka</th><th>Liczba</th><th>Pozostały czas</th><th>Akcja</th></tr>';
-                
-                foreach ($recruitmentQueue as $queue) {
-                    $remaining = $queue['count'] - $queue['count_finished'];
-                    $timeRemaining = gmdate("H:i:s", $queue['time_remaining']);
-                    
-                    $queueHtml .= '<tr>';
-                    $queueHtml .= '<td>' . htmlspecialchars($queue['unit_name']) . '</td>';
-                    $queueHtml .= '<td>' . $remaining . ' / ' . $queue['count'] . '</td>';
-                    $queueHtml .= '<td class="build-timer" data-ends-at="' . ($queue['finish_at']) . '" data-item-description="Rekrutacja jednostek piechoty">';
-                    $queueHtml .= $timeRemaining;
-                    $queueHtml .= '</td>';
-                    $queueHtml .= '<td><a href="cancel_recruitment.php?queue_id=' . $queue['id'] . '" class="cancel-button">Anuluj</a></td>';
-                    $queueHtml .= '</tr>';
-                }
-                
-                $queueHtml .= '</table>';
-            }
-            
-            // Generuj HTML dla formularza rekrutacji
-            $unitsHtml = '';
+            // Przygotuj dane jednostek do JSON
+            $availableUnitsData = [];
             if (!empty($barracksUnits)) {
-                $unitsHtml .= '<h4>Dostępne jednostki:</h4>';
-                $unitsHtml .= '<form action="recruit_units.php" method="post" id="recruit-form">';
-                $unitsHtml .= '<input type="hidden" name="building_type" value="barracks">';
-                $unitsHtml .= '<table class="recruitment-units">';
-                $unitsHtml .= '<tr><th>Jednostka</th><th colspan="3">Koszt</th><th>Czas</th><th>Atak/Obrona</th><th>Posiadane</th><th>Rekrutuj</th></tr>';
-                
+                 require_once __DIR__ . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'UnitConfigManager.php';
+                 $unitConfigManager = new UnitConfigManager($conn);
+
                 foreach ($barracksUnits as $unitInternal => $unit) {
                     $canRecruit = true;
                     $disableReason = '';
@@ -239,43 +210,51 @@ try {
                     
                     // Oblicz czas rekrutacji
                     $recruitTime = $unitManager->calculateRecruitmentTime($unit['id'], $building_details['level']);
-                    $recruitTimeFormatted = gmdate("H:i:s", $recruitTime);
                     
-                    $unitsHtml .= '<tr>';
-                    $unitsHtml .= '<td><strong>' . htmlspecialchars($unit['name_pl']) . '</strong><br><small>' . htmlspecialchars($unit['description_pl']) . '</small></td>';
-                    $unitsHtml .= '<td><img src="img/resources/wood.png" title="Drewno" alt="Drewno"> ' . $unit['cost_wood'] . '</td>';
-                    $unitsHtml .= '<td><img src="img/resources/clay.png" title="Glina" alt="Glina"> ' . $unit['cost_clay'] . '</td>';
-                    $unitsHtml .= '<td><img src="img/resources/iron.png" title="Żelazo" alt="Żelazo"> ' . $unit['cost_iron'] . '</td>';
-                    $unitsHtml .= '<td>' . $recruitTimeFormatted . '</td>';
-                    $unitsHtml .= '<td>' . $unit['attack'] . '/' . $unit['defense'] . '</td>';
-                    $unitsHtml .= '<td>' . ($villageUnits[$unitInternal] ?? 0) . '</td>';
-                    
-                    if ($canRecruit) {
-                        $unitsHtml .= '<td>';
-                        $unitsHtml .= '<input type="number" name="count" class="recruit-count" min="1" max="100" value="1">';
-                        $unitsHtml .= '<input type="hidden" name="unit_type_id" value="' . $unit['id'] . '">';
-                        $unitsHtml .= '<button type="submit" class="recruit-button">Rekrutuj</button>';
-                        $unitsHtml .= '</td>';
-                    } else {
-                        $unitsHtml .= '<td title="' . htmlspecialchars($disableReason) . '"><button disabled>Niedostępne</button></td>';
-                    }
-                    
-                    $unitsHtml .= '</tr>';
+                    $availableUnitsData[] = [
+                        'internal_name' => $unitInternal,
+                        'name_pl' => $unit['name_pl'],
+                        'description_pl' => $unit['description_pl'],
+                        'cost_wood' => $unit['cost_wood'],
+                        'cost_clay' => $unit['cost_clay'],
+                        'cost_iron' => $unit['cost_iron'],
+                        'population_cost' => $unit['population_cost'] ?? 0, // Dodaj population_cost
+                        'recruit_time_seconds' => $recruitTime,
+                        'attack' => $unit['attack'],
+                        'defense' => $unit['defense'],
+                        'owned' => $villageUnits[$unitInternal] ?? 0,
+                        'can_recruit' => $canRecruit,
+                        'disable_reason' => $disableReason
+                    ];
                 }
-                
-                $unitsHtml .= '</table>';
-                $unitsHtml .= '</form>';
-            } else {
-                $unitsHtml .= '<p>Brak dostępnych jednostek do rekrutacji.</p>';
             }
-            
-            // Połącz wszystkie sekcje HTML
-            $response['additional_info_html'] = '
-                <h3>Rekrutacja Piechoty</h3>
-                <p>Tutaj możesz rekrutować jednostki piechoty.</p>
-                ' . $queueHtml . '
-                ' . $unitsHtml . '
-            ';
+
+            // Przygotuj dane kolejki rekrutacji do JSON
+            $recruitmentQueueData = [];
+            if (!empty($recruitmentQueue)) {
+                foreach ($recruitmentQueue as $queue) {
+                     $recruitmentQueueData[] = [
+                         'id' => $queue['id'],
+                         'unit_id' => $queue['unit_id'],
+                         'unit_internal_name' => $queue['unit_internal_name'],
+                         'unit_name_pl' => $queue['unit_name'], // Assuming unit_name is available
+                         'count' => $queue['count'],
+                         'count_finished' => $queue['count_finished'],
+                         'started_at' => strtotime($queue['started_at']), // Convert to Unix timestamp
+                         'finish_at' => strtotime($queue['finish_at']), // Convert to Unix timestamp
+                         'time_remaining' => $queue['time_remaining'], // Should be calculated seconds
+                         'building_internal_name' => $queue['building_internal_name'], // barracks or stable
+                     ];
+                }
+            }
+
+            // Zwróć dane w formacie JSON
+            AjaxResponse::success([
+                'building_name_pl' => $building_details['name_pl'],
+                'building_level' => $building_details['level'],
+                'available_units' => $availableUnitsData,
+                'recruitment_queue' => $recruitmentQueueData
+            ]);
             break;
         case 3: // Stajnia
             $response['action_type'] = 'recruit_stable';
@@ -291,39 +270,12 @@ try {
             // Pobierz kolejkę rekrutacji
             $recruitmentQueue = $unitManager->getRecruitmentQueue($village_id, 'stable');
             
-            // Generuj HTML dla kolejki rekrutacji
-            $queueHtml = '';
-            if (!empty($recruitmentQueue)) {
-                $queueHtml .= '<h4>Aktualnie rekrutowane jednostki:</h4>';
-                $queueHtml .= '<table class="recruitment-queue">';
-                $queueHtml .= '<tr><th>Jednostka</th><th>Liczba</th><th>Pozostały czas</th><th>Akcja</th></tr>';
-                
-                foreach ($recruitmentQueue as $queue) {
-                    $remaining = $queue['count'] - $queue['count_finished'];
-                    $timeRemaining = gmdate("H:i:s", $queue['time_remaining']);
-                    
-                    $queueHtml .= '<tr>';
-                    $queueHtml .= '<td>' . htmlspecialchars($queue['unit_name']) . '</td>';
-                    $queueHtml .= '<td>' . $remaining . ' / ' . $queue['count'] . '</td>';
-                    $queueHtml .= '<td class="build-timer" data-ends-at="' . ($queue['finish_at']) . '" data-item-description="Rekrutacja jednostek kawalerii">';
-                    $queueHtml .= $timeRemaining;
-                    $queueHtml .= '</td>';
-                    $queueHtml .= '<td><a href="cancel_recruitment.php?queue_id=' . $queue['id'] . '" class="cancel-button">Anuluj</a></td>';
-                    $queueHtml .= '</tr>';
-                }
-                
-                $queueHtml .= '</table>';
-            }
-            
-            // Generuj HTML dla formularza rekrutacji
-            $unitsHtml = '';
+            // Przygotuj dane jednostek do JSON
+            $availableUnitsData = [];
             if (!empty($stableUnits)) {
-                $unitsHtml .= '<h4>Dostępne jednostki:</h4>';
-                $unitsHtml .= '<form action="recruit_units.php" method="post" id="recruit-form">';
-                $unitsHtml .= '<input type="hidden" name="building_type" value="stable">';
-                $unitsHtml .= '<table class="recruitment-units">';
-                $unitsHtml .= '<tr><th>Jednostka</th><th colspan="3">Koszt</th><th>Czas</th><th>Atak/Obrona</th><th>Posiadane</th><th>Rekrutuj</th></tr>';
-                
+                 require_once __DIR__ . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'UnitConfigManager.php';
+                 $unitConfigManager = new UnitConfigManager($conn);
+
                 foreach ($stableUnits as $unitInternal => $unit) {
                     $canRecruit = true;
                     $disableReason = '';
@@ -337,43 +289,51 @@ try {
                     
                     // Oblicz czas rekrutacji
                     $recruitTime = $unitManager->calculateRecruitmentTime($unit['id'], $building_details['level']);
-                    $recruitTimeFormatted = gmdate("H:i:s", $recruitTime);
                     
-                    $unitsHtml .= '<tr>';
-                    $unitsHtml .= '<td><strong>' . htmlspecialchars($unit['name_pl']) . '</strong><br><small>' . htmlspecialchars($unit['description_pl']) . '</small></td>';
-                    $unitsHtml .= '<td><img src="img/resources/wood.png" title="Drewno" alt="Drewno"> ' . $unit['cost_wood'] . '</td>';
-                    $unitsHtml .= '<td><img src="img/resources/clay.png" title="Glina" alt="Glina"> ' . $unit['cost_clay'] . '</td>';
-                    $unitsHtml .= '<td><img src="img/resources/iron.png" title="Żelazo" alt="Żelazo"> ' . $unit['cost_iron'] . '</td>';
-                    $unitsHtml .= '<td>' . $recruitTimeFormatted . '</td>';
-                    $unitsHtml .= '<td>' . $unit['attack'] . '/' . $unit['defense'] . '</td>';
-                    $unitsHtml .= '<td>' . ($villageUnits[$unitInternal] ?? 0) . '</td>';
-                    
-                    if ($canRecruit) {
-                        $unitsHtml .= '<td>';
-                        $unitsHtml .= '<input type="number" name="count" class="recruit-count" min="1" max="100" value="1">';
-                        $unitsHtml .= '<input type="hidden" name="unit_type_id" value="' . $unit['id'] . '">';
-                        $unitsHtml .= '<button type="submit" class="recruit-button">Rekrutuj</button>';
-                        $unitsHtml .= '</td>';
-                    } else {
-                        $unitsHtml .= '<td title="' . htmlspecialchars($disableReason) . '"><button disabled>Niedostępne</button></td>';
-                    }
-                    
-                    $unitsHtml .= '</tr>';
+                    $availableUnitsData[] = [
+                        'internal_name' => $unitInternal,
+                        'name_pl' => $unit['name_pl'],
+                        'description_pl' => $unit['description_pl'],
+                        'cost_wood' => $unit['cost_wood'],
+                        'cost_clay' => $unit['cost_clay'],
+                        'cost_iron' => $unit['cost_iron'],
+                        'population_cost' => $unit['population_cost'] ?? 0, // Dodaj population_cost
+                        'recruit_time_seconds' => $recruitTime,
+                        'attack' => $unit['attack'],
+                        'defense' => $unit['defense'],
+                        'owned' => $villageUnits[$unitInternal] ?? 0,
+                        'can_recruit' => $canRecruit,
+                        'disable_reason' => $disableReason
+                    ];
                 }
-                
-                $unitsHtml .= '</table>';
-                $unitsHtml .= '</form>';
-            } else {
-                $unitsHtml .= '<p>Brak dostępnych jednostek do rekrutacji.</p>';
             }
-            
-            // Połącz wszystkie sekcje HTML
-            $response['additional_info_html'] = '
-                <h3>Rekrutacja Kawalerii</h3>
-                <p>Tutaj możesz rekrutować jednostki kawalerii.</p>
-                ' . $queueHtml . '
-                ' . $unitsHtml . '
-            ';
+
+            // Przygotuj dane kolejki rekrutacji do JSON
+            $recruitmentQueueData = [];
+            if (!empty($recruitmentQueue)) {
+                foreach ($recruitmentQueue as $queue) {
+                     $recruitmentQueueData[] = [
+                         'id' => $queue['id'],
+                         'unit_id' => $queue['unit_id'],
+                         'unit_internal_name' => $queue['unit_internal_name'],
+                         'unit_name_pl' => $queue['unit_name'], // Assuming unit_name is available
+                         'count' => $queue['count'],
+                         'count_finished' => $queue['count_finished'],
+                         'started_at' => strtotime($queue['started_at']), // Convert to Unix timestamp
+                         'finish_at' => strtotime($queue['finish_at']), // Convert to Unix timestamp
+                         'time_remaining' => $queue['time_remaining'], // Should be calculated seconds
+                         'building_internal_name' => $queue['building_internal_name'], // barracks or stable
+                     ];
+                }
+            }
+
+            // Zwróć dane w formacie JSON
+            AjaxResponse::success([
+                'building_name_pl' => $building_details['name_pl'],
+                'building_level' => $building_details['level'],
+                'available_units' => $availableUnitsData,
+                'recruitment_queue' => $recruitmentQueueData
+            ]);
             break;
         case 4: // Kuźnia
             $response['action_type'] = 'research';

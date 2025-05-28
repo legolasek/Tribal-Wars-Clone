@@ -178,6 +178,14 @@ require 'header.php';
                 </div>
             </section>
 
+            <section id="recruitment-queue">
+                <h3>Kolejka rekrutacji</h3>
+                <div class="queue-content" id="recruitment-queue-list">
+                    <!-- Recruitment queue items will be loaded here by js/units.js -->
+                    <p class="queue-empty">Ładowanie kolejki rekrutacji...</p>
+                </div>
+            </section>
+
             <section class="map-section">
                 <h3>Mapa</h3>
                 <p>Zobacz okoliczne wioski i planuj podboje.</p>
@@ -397,6 +405,10 @@ require 'footer.php';
 //     $database->closeConnection();
 // }
 ?>
+
+<script src="js/resources.js"></script>
+<script src="js/buildings.js"></script>
+<script src="js/units.js"></script>
 
 <script>
 // Function to update timers on the page
