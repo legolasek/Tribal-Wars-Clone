@@ -2565,3 +2565,674 @@ Style for notifications dropdown.
      color: var(--color-success);
      font-weight: normal;
 }
+
+/* --- Paginacja --- */
+.pagination {
+    margin-top: var(--spacing-md);
+    text-align: center;
+}
+
+.pagination .page-link {
+    display: inline-block;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    margin: 0 var(--spacing-xs);
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-small);
+    color: var(--color-primary);
+    text-decoration: none;
+    transition: background-color var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.pagination .page-link:hover {
+    background-color: var(--color-background-medium);
+    color: var(--color-primary-dark);
+}
+
+.pagination .page-link.active {
+    background-color: var(--color-primary);
+    color: var(--color-text-light);
+    border-color: var(--color-primary);
+    font-weight: bold;
+}
+
+
+
+/* --- Raporty (reports.php) --- */
+.reports-tabs {
+     margin-bottom: var(--spacing-md);
+     border-bottom: 2px solid var(--color-border);
+     display: flex; /* Użyj flexbox dla zakładek */
+     overflow-x: auto; /* Dodaj scroll jeśli zakładki się nie mieszczą */
+     padding-bottom: 5px; /* Dodatkowy odstęp pod linią */
+}
+
+.reports-tabs .tab {
+     display: block; /* Zmień na block, żeby padding działał jak na przycisku */
+     padding: var(--spacing-sm) var(--spacing-md);
+     margin-right: var(--spacing-sm); /* Odstęp między zakładkami */
+     background-color: var(--color-background-medium);
+     color: var(--color-text-dark);
+     border: 1px solid var(--color-border);
+     border-bottom: none; /* Usuń dolną ramkę, żeby pasowała do linii */
+     border-top-left-radius: var(--border-radius-small);
+     border-top-right-radius: var(--border-radius-small);
+     transition: background-color var(--transition-fast), color var(--transition-fast);
+     white-space: nowrap; /* Zapobiegaj zawijaniu tekstu w zakładce */
+}
+
+.reports-tabs .tab:hover {
+     background-color: var(--color-background-dark);
+     color: var(--color-primary);
+}
+
+.reports-tabs .tab.active {
+     background-color: var(--color-background-light); /* Aktywna zakładka na tle strony */
+     color: var(--color-primary);
+     border-color: var(--color-border);
+     border-bottom-color: var(--color-background-light); /* Kolor tła, żeby zakryć linię */
+     position: relative; /* Potrzebne do nadpisania linii border-bottom */
+     z-index: 1; /* Upewnij się, że jest nad linią */
+     font-weight: bold;
+}
+
+
+.reports-container {
+    display: flex;
+    gap: var(--spacing-md); /* Odstęp między listą a szczegółami */
+    flex-wrap: wrap; /* Zawijaj na mniejszych ekranach */
+}
+
+.reports-list {
+    flex: 1; /* Zajmij dostępną przestrzeń */
+    min-width: 300px; /* Minimalna szerokość listy */
+    max-width: 100%; /* Domyślnie 100% na małych ekranach */
+    /* Optional: Add a max-width on larger screens if needed */
+     /* max-height: 600px; */ /* Ogranicz wysokość listy, jeśli chcesz scrollowanie */
+     /* overflow-y: auto; */
+}
+
+.report-item {
+    background-color: var(--color-background-medium);
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-small);
+    padding: var(--spacing-sm) var(--spacing-md);
+    margin-bottom: var(--spacing-sm);
+    cursor: pointer;
+    transition: background-color var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
+    box-shadow: var(--box-shadow-default);
+}
+
+.report-item:hover {
+    background-color: var(--color-background-dark);
+    border-color: var(--color-primary);
+}
+
+.report-item.unread {
+    background-color: #fff8e1; /* Jasnożółte tło dla nieprzeczytanych */
+    border-color: var(--color-accent);
+    font-weight: bold;
+}
+
+.report-item.unread:hover {
+     background-color: #ffecb3; /* Jaśniejsze żółte na hover */
+}
+
+.report-title {
+    font-weight: bold;
+    margin-bottom: var(--spacing-xs);
+    color: var(--color-primary);
+    display: flex;
+    align-items: center;
+}
+
+.report-icon {
+     margin-right: var(--spacing-sm);
+     font-size: 1.2em; /* Większa ikona */
+     /* Kolory ikon można dodać w JS lub osobnych klasach */
+}
+
+.report-villages {
+     font-size: var(--font-size-small);
+     color: var(--color-text-dark);
+     margin-bottom: var(--spacing-xs);
+}
+
+.report-date {
+    font-size: var(--font-size-small);
+    color: #666;
+    text-align: right; /* Data po prawej stronie */
+}
+
+.report-details {
+    flex: 2; /* Zajmij więcej przestrzeni niż lista na dużych ekranach */
+    min-width: 400px; /* Minimalna szerokość szczegółów */
+    max-width: 100%; /* Domyślnie 100% na małych ekranach */
+    background-color: var(--color-background-light);
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-medium);
+    padding: var(--spacing-md);
+    box-shadow: var(--box-shadow-default);
+}
+
+.report-details h3 {
+     color: var(--color-primary);
+     margin-top: 0;
+     margin-bottom: var(--spacing-md);
+     border-bottom: 1px solid var(--color-border);
+     padding-bottom: var(--spacing-sm);
+}
+
+.report-details .battle-summary {
+    display: flex;
+    gap: var(--spacing-md);
+    flex-wrap: wrap; /* Zawijaj na mniejszych ekranach */
+}
+
+.battle-side {
+    flex: 1;
+    min-width: 250px; /* Minimalna szerokość strony bitwy */
+    padding: var(--spacing-md);
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-small);
+    background-color: var(--color-background-medium);
+}
+
+.battle-side h4 {
+     color: var(--color-primary);
+     margin-top: 0;
+     margin-bottom: var(--spacing-sm);
+}
+
+.battle-side .battle-village {
+     font-size: var(--font-size-normal);
+     margin-bottom: var(--spacing-sm);
+}
+
+.battle-side .battle-strength {
+     font-weight: bold;
+     color: var(--color-accent-dark);
+     margin-bottom: var(--spacing-sm);
+}
+
+.battle-side.winner {
+     border-color: var(--color-success);
+     background-color: var(--color-success-bg);
+}
+
+.battle-side.loser {
+     border-color: var(--color-error);
+     background-color: var(--color-error-bg);
+}
+
+.battle-loot {
+     width: 100%; /* Zajmij całą szerokość pod stronami bitwy */
+     margin-top: var(--spacing-md);
+     padding: var(--spacing-md);
+     border: 1px solid var(--color-border);
+     border-radius: var(--border-radius-small);
+     background-color: var(--color-background-medium);
+}
+
+.battle-loot h4 {
+     color: var(--color-primary);
+     margin-top: 0;
+     margin-bottom: var(--spacing-sm);
+}
+
+.battle-loot p {
+     font-weight: bold;
+}
+
+/* Style dla tabel jednostek w szczegółach raportu */
+.report-details .units-table {
+     width: 100%;
+     border-collapse: collapse; /* Usuń odstępy między komórkami */
+     margin-top: var(--spacing-sm);
+}
+
+.report-details .units-table th,
+.report-details .units-table td {
+     border: 1px solid var(--color-border);
+     padding: var(--spacing-sm);
+     text-align: left;
+}
+
+.report-details .units-table th {
+     background-color: var(--color-primary);
+     color: var(--color-text-light);
+     font-weight: bold;
+}
+
+.report-details .units-table td.unit-name {
+     display: flex;
+     align-items: center;
+}
+
+.report-details .units-table td.unit-name img {
+     margin-right: var(--spacing-xs);
+     width: 20px; /* Rozmiar ikon jednostek */
+     height: 20px;
+}
+
+.report-details .units-table td.unit-lost {
+     color: var(--color-error); /* Kolor dla strat */
+     font-weight: bold;
+}
+
+/* Responsywność dla raportów */
+@media (max-width: 768px) {
+     .reports-container {
+         flex-direction: column; /* Stosuj elementy w kolumnie na mniejszych ekranach */
+     }
+     
+     .reports-list,
+     .report-details {
+         flex: none; /* Resetuj flex */
+         width: 100%; /* Zajmij całą szerokość */
+         min-width: auto; /* Resetuj minimalną szerokość */
+     }
+
+      .battle-summary {
+          flex-direction: column; /* Stosuj strony bitwy w kolumnie */
+          gap: var(--spacing-sm);
+      }
+      
+      .battle-side {
+          min-width: auto; /* Resetuj minimalną szerokość */
+      }
+}
+
+/* Styl dla komunikatu 'Brak raportów' */
+p.no-reports {
+     font-style: italic;
+     color: #666;
+     text-align: center;
+     margin-top: var(--spacing-md);
+}
+
+/* --- Wiadomości (messages.php) --- */
+.messages-tabs {
+    display: flex;
+    margin-bottom: var(--spacing-md);
+    border-bottom: 2px solid var(--color-border);
+    overflow-x: auto;
+    padding-bottom: 5px;
+}
+
+.messages-tabs .tab {
+    display: block;
+    padding: var(--spacing-sm) var(--spacing-md);
+    margin-right: var(--spacing-sm);
+    background-color: var(--color-background-medium);
+    color: var(--color-text-dark);
+    border: 1px solid var(--color-border);
+    border-bottom: none;
+    border-top-left-radius: var(--border-radius-small);
+    border-top-right-radius: var(--border-radius-small);
+    transition: background-color var(--transition-fast), color var(--transition-fast);
+    white-space: nowrap;
+    font-weight: bold; /* Domyślnie pogrubione, nieprzeczytane mogą być jeszcze bardziej */
+}
+
+.messages-tabs .tab:hover {
+     background-color: var(--color-background-dark);
+     color: var(--color-primary);
+}
+
+.messages-tabs .tab.active {
+     background-color: var(--color-background-light);
+     color: var(--color-primary);
+     border-color: var(--color-border);
+     border-bottom-color: var(--color-background-light);
+     position: relative;
+     z-index: 1;
+}
+
+.badge {
+    background-color: var(--color-accent);
+    color: var(--color-primary);
+    border-radius: var(--border-radius-small); /* Zmieniono na prostokątne z zaokrąglonymi rogami */
+    padding: 2px 8px; /* Zwiększony padding */
+    font-size: var(--font-size-small);
+    margin-left: var(--spacing-xs);
+    font-weight: bold;
+}
+
+/* Specjalny styl dla badge'a nieprzeczytanych */
+.messages-tabs .tab.active .badge {
+     background-color: var(--color-primary);
+     color: var(--color-text-light);
+}
+
+.messages-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-md);
+    flex-wrap: wrap; /* Zawijaj na mniejszych ekranach */
+    gap: var(--spacing-sm); /* Odstęp między elementami toolbar */
+}
+
+.bulk-actions {
+    display: flex;
+    gap: var(--spacing-sm);
+    align-items: center;
+    flex-wrap: wrap; /* Zawijaj wewnątrz toolbar */
+}
+
+.bulk-actions select, .bulk-actions button {
+     /* Dostosuj styl selekta i przycisku akcji masowej do ogólnego wyglądu */
+}
+
+.messages-container {
+    display: flex;
+    gap: var(--spacing-md);
+    flex-wrap: wrap; /* Zawijaj na mniejszych ekranach */
+}
+
+.messages-list {
+    flex: 1; /* Zajmij dostępną przestrzeń */
+    min-width: 300px; /* Minimalna szerokość listy */
+    max-width: 100%; /* Domyślnie 100% */
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm); /* Odstęp między wiadomościami */
+}
+
+.message-item {
+    display: flex;
+    align-items: center; /* Wyrównanie w pionie */
+    background-color: var(--color-background-medium);
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-small);
+    padding: var(--spacing-sm) var(--spacing-md);
+    cursor: pointer;
+    transition: background-color var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
+    box-shadow: var(--box-shadow-default);
+}
+
+.message-item:hover {
+    background-color: var(--color-background-dark);
+    border-color: var(--color-primary);
+}
+
+.message-item.unread {
+    background-color: #fff8e1; /* Jasnożółte tło dla nieprzeczytanych */
+    border-color: var(--color-accent);
+    font-weight: bold;
+}
+
+.message-item.unread:hover {
+     background-color: #ffecb3; /* Jaśniejsze żółte na hover */
+}
+
+.message-checkbox,
+.message-status {
+    flex-shrink: 0; /* Zapobiegaj zmniejszaniu się */
+    width: 30px; /* Ustalona szerokość */
+    text-align: center;
+}
+
+.message-checkbox-input {
+     margin: 0; /* Usuń domyślny margines checkboxa */
+}
+
+.message-sender,
+.message-date {
+    flex-shrink: 0; /* Zapobiegaj zmniejszaniu się */
+    width: 150px; /* Ustalona szerokość */
+    overflow: hidden; /* Ukryj nadmiarowy tekst */
+    text-overflow: ellipsis; /* Pokaż wielokropek dla nadmiarowego tekstu */
+    white-space: nowrap; /* Nie zawijaj tekstu */
+    /* Add margin/padding if needed */
+}
+
+.message-subject {
+    flex-grow: 1; /* Zajmij pozostałą przestrzeń */
+    overflow: hidden; /* Ukryj nadmiarowy tekst */
+    text-overflow: ellipsis; /* Pokaż wielokropek dla nadmiarowego tekstu */
+    white-space: nowrap; /* Nie zawijaj tekstu */
+    margin: 0 var(--spacing-sm); /* Odstęp od nadawcy/odbiorcy i daty */
+}
+
+.message-subject a {
+    color: inherit; /* Dziedzicz kolor z message-item */
+    text-decoration: none; /* Usuń podkreślenie */
+}
+
+.message-subject a:hover {
+    text-decoration: underline; /* Podkreślenie na hover */
+}
+
+.message-actions {
+    flex-shrink: 0;
+    width: 100px; /* Ustalona szerokość */
+    text-align: right;
+}
+
+.message-actions .action-btn {
+     /* Dostosuj styl przycisków akcji do nowego wyglądu */
+     background: none; /* Usuń tło przycisków */
+     border: none; /* Usuń ramkę */
+     padding: 0 var(--spacing-xs); /* Zmniejsz padding */
+     color: var(--color-primary); /* Ustaw kolor ikony */
+     cursor: pointer;
+     transition: color var(--transition-fast);
+     box-shadow: none;
+     display: inline-block; /* Aby marginesy i paddingi działały poprawnie */
+     text-transform: none;
+     letter-spacing: normal;
+     font-weight: normal;
+}
+
+.message-actions .action-btn:hover {
+     color: var(--color-accent);
+     transform: none; /* Usuń transformację na hover */
+     box-shadow: none; /* Usuń cień na hover */
+}
+
+.message-actions .action-btn:active {
+     transform: none; /* Usuń transformację na active */
+     box-shadow: none; /* Usuń cień na active */
+}
+
+.delete-message-btn {
+     color: var(--color-error); /* Czerwony kolor dla przycisku usuwania */
+}
+
+.message-details {
+    flex: 2; /* Zajmij więcej przestrzeni niż lista */
+    min-width: 400px; /* Minimalna szerokość */
+    max-width: 100%; /* Domyślnie 100% */
+    background-color: var(--color-background-light);
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-medium);
+    padding: var(--spacing-md);
+    box-shadow: var(--box-shadow-default);
+}
+
+.message-details h3 {
+    color: var(--color-primary);
+    margin-top: 0;
+    margin-bottom: var(--spacing-sm);
+}
+
+.message-details .message-meta {
+    font-size: var(--font-size-small);
+    color: #666;
+    margin-bottom: var(--spacing-md);
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: var(--spacing-sm);
+}
+
+.message-details .message-body {
+    line-height: 1.8; /* Lepsza czytelność treści wiadomości */
+    white-space: pre-wrap; /* Zachowaj formatowanie białymi znakami i zawijaj */
+    word-wrap: break-word; /* Zapobiegaj wykraczaniu długich słów */
+}
+
+.message-details .message-actions {
+    margin-top: var(--spacing-md);
+    text-align: left; /* Akcje pod treścią */
+}
+
+/* Styl dla komunikatu 'Brak wiadomości' */
+.no-messages {
+     text-align: center;
+     padding: var(--spacing-lg);
+     font-style: italic;
+     color: #666;
+}
+
+/* Responsywność dla wiadomości */
+@media (max-width: 768px) {
+    .messages-container {
+        flex-direction: column; /* Stosuj elementy w kolumnie */
+        gap: var(--spacing-sm);
+    }
+
+    .messages-list,
+    .message-details {
+        flex: none;
+        width: 100%;
+        min-width: auto;
+    }
+
+    .message-item {
+        flex-wrap: wrap;
+        padding: var(--spacing-sm);
+        justify-content: space-between; /* Rozłóż elementy na szerokość */
+    }
+
+    .message-checkbox,
+    .message-status {
+        width: auto;
+        margin-right: var(--spacing-sm);
+    }
+    
+    .message-sender,
+    .message-subject {
+         width: 100%;
+         margin: 0 0 var(--spacing-xs) 0;
+         white-space: normal;
+         text-overflow: clip;
+         order: -1; /* Przesuń na górę */
+    }
+
+    .message-date {
+        width: 100%;
+        margin: 0 0 var(--spacing-xs) 0; /* Dodaj odstęp */
+        text-align: left;
+        font-size: var(--font-size-small);
+        color: #999;
+         order: 0; /* Umieść pod nadawcą/tematem */
+    }
+
+    .message-actions {
+        width: 100%;
+        text-align: left;
+        margin-top: var(--spacing-sm);
+         order: 1; /* Umieść na końcu */
+    }
+
+     .messages-toolbar {
+         flex-direction: column; /* Stosuj kolumnę */
+         gap: var(--spacing-md);
+         align-items: flex-start;
+     }
+     
+     .bulk-actions {
+         width: 100%;
+     }
+     
+     .bulk-actions select, .bulk-actions button {
+         width: auto; /* Auto szerokość */
+     }
+}
+
+/* General styles for layout and components */
+
+/* Player profile styles */
+.player-profile {
+    max-width: 600px;
+    margin: 40px auto;
+    background: var(--beige-light);
+    border: 2px solid var(--brown-primary);
+    border-radius: var(--border-radius-medium);
+    box-shadow: var(--box-shadow-medium);
+    padding: var(--spacing-xl);
+}
+
+.player-profile h2 {
+    color: var(--brown-dark);
+    margin-top: 0;
+}
+
+.player-profile .summary-box {
+     background: var(--beige-dark);
+     border: 1px solid var(--beige-darker);
+     border-radius: var(--border-radius-small);
+     padding: var(--spacing-md) var(--spacing-lg);
+     margin-bottom: var(--spacing-lg);
+}
+
+.player-profile .villages-list {
+    margin-top: var(--spacing-lg);
+}
+
+.player-profile .villages-list table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.player-profile .villages-list th,
+.player-profile .villages-list td {
+    border: 1px solid var(--beige-darker);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    text-align: left;
+}
+
+.player-profile .villages-list th {
+    background: var(--beige-darker);
+    color: var(--brown-dark);
+}
+
+.player-profile .villages-list td {
+    background: var(--beige-light);
+}
+
+.player-profile .villages-list td a.btn {
+     padding: 4px 10px; /* Match inline style */
+     font-size: 0.95em; /* Match inline style */
+     margin: 0;
+}
+
+.player-profile .no-villages {
+    margin-top: var(--spacing-md);
+    font-style: italic;
+    color: var(--brown-dark);
+}
+
+/* Ensure main content area provides padding */
+#main-content main {
+    padding: var(--spacing-xl);
+}
+
+/* Style for the back button at the bottom */
+.player-profile .back-to-ranking-btn {
+    margin-top: var(--spacing-lg);
+    /* The button class styles will handle the rest */
+}
+
+/* Add styles for the new header structure in player.php if not already in main.css */
+#main-header {
+    /* Existing main-header styles */
+}
+
+#main-header .header-title .game-logo {
+     /* Existing game-logo styles */
+}
+
+#main-header .header-user {
+     /* Existing header-user styles */
+}

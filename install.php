@@ -444,7 +444,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['admin_username'])) {
     require_once 'config/config.php';
     require_once 'lib/Database.php';
     require_once 'lib/functions.php';
-    require_once 'lib/VillageManager.php';
+    require_once 'lib/managers/VillageManager.php';
     $db = new Database(DB_HOST, DB_USER, DB_PASS, DB_NAME);
     $conn = $db->getConnection();
     $username = trim($_POST['admin_username']);

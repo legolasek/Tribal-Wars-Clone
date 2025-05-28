@@ -1,16 +1,20 @@
 <?php
 require 'init.php';
 validateCSRF();
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
 
-session_start();
+// ini_set('display_errors', 1); // Remove development-specific settings
+// ini_set('display_startup_errors', 1); // Remove development-specific settings
+// error_reporting(E_ALL); // Remove development-specific settings
+
+// Remove duplicate session_start() and header()
+// session_start();
 header('Content-Type: application/json');
+
+require_once __DIR__ . '/lib/managers/VillageManager.php';
 
 // Sprawdź, czy użytkownik jest zalogowany
 if (!isset($_SESSION['user_id'])) {
-    echo json_encode(['success' => false, 'error' => 'Użytkownik niezalogowany.']);
+    echo json_encode(['success' => false, 'error' => 'Użytkownik niezalogowany.', 'redirect' => 'login.php']);
     exit();
 }
 
@@ -31,7 +35,7 @@ $new_village_name = trim($_POST['new_village_name']);
 $village_id = isset($_POST['village_id']) ? (int)$_POST['village_id'] : 0;
 $user_id = $_SESSION['user_id'];
 
-// Walidacja nowej nazwy wioski
+// Walidacja nowej nazwy wioski (można też dodać do VillageManager)
 if (strlen($new_village_name) < 3) {
     echo json_encode(['success' => false, 'error' => 'Nazwa wioski musi zawierać co najmniej 3 znaki.']);
     exit();
@@ -43,44 +47,39 @@ if (strlen($new_village_name) > 50) {
 }
 
 // Sprawdź, czy nazwa zawiera tylko dozwolone znaki
-if (!preg_match('/^[a-zA-ZąćęłńóśźżĄĆĘŁŃÓŚŹŻ0-9\s\-\_\.]+$/u', $new_village_name)) {
-    echo json_encode(['success' => false, 'error' => 'Nazwa wioski zawiera niedozwolone znaki.']);
-    exit();
+// Użyj tej samej regex co w lib/functions.php -> isValidVillageName
+if (!preg_match('/^[a-zA-ZąćęłńóśźżĄĆĘŁŃÓŚŹŻ0-9\s\-\.\_]+$/u', $new_village_name)) { // Added \. to allowed chars based on isValidVillageName
+     echo json_encode(['success' => false, 'error' => 'Nazwa wioski zawiera niedozwolone znaki.']);
+     exit();
 }
 
-// Połącz się z bazą danych
-require_once __DIR__ . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'config.php';
-require_once __DIR__ . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'Database.php';
+// Remove manual DB connection
+// require_once __DIR__ . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'config.php';
+// require_once __DIR__ . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'Database.php';
 
 try {
-    // Utwórz połączenie z bazą danych
-    $database = new Database(DB_HOST, DB_USER, DB_PASS, DB_NAME);
-    $conn = $database->getConnection();
-
+    // Use global $conn from init.php
     if (!$conn) {
         echo json_encode(['success' => false, 'error' => 'Nie udało się połączyć z bazą danych.']);
         exit();
     }
 
     // Jeśli nie podano konkretnego ID wioski, znajdź domyślną wioskę użytkownika
+    // Użyj VillageManager do pobrania pierwszej wioski, jeśli village_id <= 0
     if ($village_id <= 0) {
-        $stmt = $conn->prepare("SELECT id FROM villages WHERE user_id = ? LIMIT 1");
-        $stmt->bind_param("i", $user_id);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        $village_data = $result->fetch_assoc();
-        $stmt->close();
-
-        if ($village_data && isset($village_data['id'])) {
-            $village_id = $village_data['id'];
+        $villageManager = new VillageManager($conn);
+        $firstVillage = $villageManager->getFirstVillage($user_id);
+        if ($firstVillage && isset($firstVillage['id'])) {
+            $village_id = $firstVillage['id'];
         } else {
             echo json_encode(['success' => false, 'error' => 'Nie znaleziono wioski dla użytkownika.']);
-            $database->closeConnection();
-            exit();
+            exit(); // Exit directly, no manual connection to close
         }
     }
 
-    // Sprawdź, czy wioska należy do zalogowanego użytkownika
+    // Sprawdź, czy wioska należy do zalogowanego użytkownika - VillageManager handles this in renameVillage
+    // No need for this explicit check here
+    /*
     $stmt = $conn->prepare("SELECT id FROM villages WHERE id = ? AND user_id = ? LIMIT 1");
     $stmt->bind_param("ii", $village_id, $user_id);
     $stmt->execute();
@@ -90,31 +89,33 @@ try {
 
     if (!$village) {
         echo json_encode(['success' => false, 'error' => 'Nie masz uprawnień do zmiany nazwy tej wioski.']);
-        $database->closeConnection();
+        // $database->closeConnection(); // Remove
         exit();
     }
+    */
 
-    // Aktualizuj nazwę wioski w bazie danych
-    $stmt = $conn->prepare("UPDATE villages SET name = ? WHERE id = ?");
-    $stmt->bind_param("si", $new_village_name, $village_id);
-    $result = $stmt->execute();
-    $stmt->close();
+    // Use VillageManager to rename the village
+    $villageManager = $villageManager ?? new VillageManager($conn); // Instantiate if not already
+    $renameResult = $villageManager->renameVillage($village_id, $user_id, $new_village_name);
 
-    if ($result) {
+    if ($renameResult['success']) {
         // Aktualizacja się powiodła
-        echo json_encode(['success' => true, 'message' => 'Nazwa wioski została zmieniona na: ' . $new_village_name]);
+        echo json_encode(['success' => true, 'message' => $renameResult['message']]);
 
-        // Zapisz nową nazwę wioski w sesji, jeśli jest to potrzebne
+        // Zapisz nową nazwę wioski w sesji, jeśli jest to potrzebne (np. dla wyświetlania w nagłówku)
+        // Ta logika może być lepiej zarządzana gdzie indziej, ale na razie zostawiamy
         $_SESSION['village_name'] = $new_village_name;
     } else {
         // Aktualizacja się nie powiodła
-        echo json_encode(['success' => false, 'error' => 'Nie udało się zmienić nazwy wioski.']);
+        echo json_encode(['success' => false, 'error' => $renameResult['message']]);
     }
 
-    // Zamknij połączenie z bazą danych
-    $database->closeConnection();
+    // Remove manual DB connection close
+    // $database->closeConnection();
 
 } catch (Exception $e) {
     echo json_encode(['success' => false, 'error' => 'Wystąpił błąd: ' . $e->getMessage()]);
 }
+
+// No need for $conn->close(); - handled by init.php if persistent, or closes automatically
 ?> 

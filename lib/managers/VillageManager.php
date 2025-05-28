@@ -62,7 +62,7 @@ class VillageManager
         // Wymagany BuildingManager dla ResourceManager, ponieważ oblicza produkcję
         require_once __DIR__ . '/BuildingManager.php';
         // BuildingManager potrzebuje BuildingConfigManager
-        require_once __DIR__ . '/managers/BuildingConfigManager.php';
+        require_once __DIR__ . '/BuildingConfigManager.php';
 
         // Tworzenie instancji Managerów wewnątrz, co jest prostsze w obecnym kodzie,
         // ale docelowo lepsze byłoby wstrzykiwanie zależności do VillageManager.
@@ -147,7 +147,8 @@ class VillageManager
         require_once __DIR__ . '/BuildingManager.php';
         require_once __DIR__ . '/UnitManager.php';
         require_once __DIR__ . '/ResearchManager.php';
-        require_once __DIR__ . '/managers/BuildingConfigManager.php'; // BuildingManager potrzebuje config
+        require_once __DIR__ . '/BuildingConfigManager.php';
+        require_once __DIR__ . '/ResourceManager.php';
 
         // Tworzenie instancji (docelowo wstrzykiwanie)
         $buildingConfigManager = new BuildingConfigManager($this->conn);
@@ -155,8 +156,8 @@ class VillageManager
         $unitManager = new UnitManager($this->conn); // UnitManager może potrzebować config/BuildingManager
         $researchManager = new ResearchManager($this->conn); // ResearchManager może potrzebować config/UnitManager/BuildingManager
         // BattleManager również, jeśli przetwarzanie ataków będzie w tej funkcji
-        // require_once __DIR__ . '/BattleManager.php';
-        // $battleManager = new BattleManager($this->conn); // BattleManager może potrzebować UnitConfigManager i VillageManager
+        // require_once __DIR__ . '/managers/BattleManager.php'; // Zaktualizowana ścieżka
+        // $battleManager = new BattleManager($this->conn, $this); // BattleManager potrzebuje UnitConfigManager i VillageManager
 
         // 2. Zakończ ukończone zadania budowy
         // Przenieś logikę z game.php do BuildingManager (np. processBuildingQueue)
@@ -198,10 +199,10 @@ class VillageManager
         // Wymagałoby to, aby BattleManager zwracał te informacje lub zapisywał je np. w tabeli powiadomień/raportów.
 
         // Po przetworzeniu wszystkich zadań, upewnij się, że dane wioski w pamięci są aktualne
-        // game.php już pobiera dane ponownie po wywołaniu updateResources, więc tutaj nie musimy nic robić, ale to miejsce
-        // gdzie można by zwrócić zaktualizowany obiekt wioski.
-        
-        return $messages; // Zwróć zebrane komunikaty
+        // (Niekoniecznie potrzebne, jeśli game.php pobiera dane wioski ponownie po tym wywołaniu)
+
+        // Zwróć zebrane komunikaty
+        return $messages;
     }
 
     /**
@@ -267,7 +268,7 @@ class VillageManager
     public function updateVillagePopulation(int $village_id): bool
     {
         // Wymagany BuildingConfigManager do obliczenia pojemności farmy
-         require_once __DIR__ . '/managers/BuildingConfigManager.php';
+         require_once __DIR__ . '/BuildingConfigManager.php';
          $buildingConfigManager = new BuildingConfigManager($this->conn); // Tworzenie instancji (docelowo wstrzykiwanie)
 
         // Pobierz poziom farmy
@@ -385,7 +386,7 @@ class VillageManager
     private function createInitialBuildings(int $village_id): bool
     {
          // Wymagany BuildingConfigManager do pobrania typów budynków
-         require_once __DIR__ . '/managers/BuildingConfigManager.php';
+         require_once __DIR__ . '/BuildingConfigManager.php';
          $buildingConfigManager = new BuildingConfigManager($this->conn); // Tworzenie instancji (docelowo wstrzykiwanie)
 
         // Pobierz listę wszystkich typów budynków z bazy
@@ -566,16 +567,16 @@ class VillageManager
 
     /**
      * Pobiera aktualną produkcję surowca na godzinę dla danej wioski.
-     * @deprecated Preferuj ResourceManager::getHourlyProductionRate
+     * @deprecated Preferuj ResourceManager->getHourlyProductionRate
      */
     public function getResourceProduction($village_id, $resource_type)
     {
         // Ta metoda jest przestarzała. Jej funkcjonalność powinna być obsługiwana przez ResourceManager.
         // Tymczasowa implementacja, aby naprawić błąd ArgumentCountError.
         
-        require_once __DIR__ . '/managers/BuildingConfigManager.php'; // Wymagane dla BuildingManager
-        require_once __DIR__ . '/BuildingManager.php'; // Wymagane dla ResourceManager
-        require_once __DIR__ . '/ResourceManager.php'; // Właściwy manager do zasobów
+        require_once __DIR__ . '/BuildingConfigManager.php'; // Poprawiona ścieżka
+        require_once __DIR__ . '/BuildingManager.php'; // Poprawiona ścieżka
+        require_once __DIR__ . '/ResourceManager.php'; // Poprawiona ścieżka
 
         // Tworzenie instancji potrzebnych managerów (tymczasowe rozwiązanie)
         $buildingConfigManager = new BuildingConfigManager($this->conn);

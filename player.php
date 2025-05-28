@@ -1,123 +1,130 @@
 <?php
 require 'init.php';
-require_once 'config/config.php';
-require_once 'lib/Database.php';
 
-$username = isset($_GET['user']) ? trim($_GET['user']) : '';
+// require_once 'config/config.php'; // Remove manual DB connection
+// require_once 'lib/Database.php'; // Remove manual DB connection
+require_once __DIR__ . '/lib/managers/UserManager.php'; // Include UserManager
+require_once __DIR__ . '/lib/managers/VillageManager.php'; // Include VillageManager
+require_once __DIR__ . '/lib/managers/RankingManager.php'; // Include RankingManager
+require_once __DIR__ . '/lib/functions.php'; // For formatNumber
 
-?><!DOCTYPE html>
-<html lang="pl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profil gracza <?php echo htmlspecialchars($username); ?> - Tribal Wars Nowa Edycja</title>
-    <link rel="stylesheet" href="css/main.css?v=<?php echo time(); ?>">
-    <style>
-        .player-profile { max-width: 600px; margin: 40px auto; background: #fffaf0; border: 2px solid #8b4513; border-radius: 8px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); padding: 32px 36px; }
-        .player-profile h2 { color: #654321; margin-top: 0; }
-        .villages-list { margin-top: 18px; }
-        .villages-list table { width: 100%; border-collapse: collapse; }
-        .villages-list th, .villages-list td { border: 1px solid #e0cfa0; padding: 8px 10px; text-align: left; }
-        .villages-list th { background: #d2b48c; color: #4a3c2b; }
-        .villages-list td { background: #fffaf0; }
-        .back-btn { margin-top: 18px; background: #8b4513; color: #f0e6c8; border: none; border-radius: 4px; padding: 8px 18px; font-size: 1em; cursor: pointer; text-decoration: none; display: inline-block; }
-        .back-btn:hover { background: #a0522d; color: #fffbe6; }
-    </style>
-</head>
-<body>
-<div class="player-profile">
-<?php
-if ($username === '') {
-    echo '<p>Nie podano gracza.</p>';
-    echo '<a href="map.php" class="back-btn">&larr; Powrót do mapy</a>';
-    exit;
+// Sprawdź, czy podano ID użytkownika lub nazwę gracza w adresie URL
+$player_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+$username_get = isset($_GET['user']) ? trim($_GET['user']) : '';
+
+// Jeśli nie podano ani ID, ani nazwy, przekieruj na ranking graczy
+if ($player_id <= 0 && empty($username_get)) {
+    header("Location: ranking.php?type=players");
+    exit();
 }
 
-$database = new Database(DB_HOST, DB_USER, DB_PASS, DB_NAME);
-$conn = $database->getConnection();
+// Use global $conn from init.php
+if (!$conn) {
+    // Handle database connection error (though init.php should handle this)
+    // For now, a simple error message
+    die('Nie udało się połączyć z bazą danych.'); // Consider better error handling
+}
 
-$stmt = $conn->prepare("SELECT id, username, registration_date FROM users WHERE username = ? LIMIT 1");
-$stmt->bind_param("s", $username);
-$stmt->execute();
-$result = $stmt->get_result();
-$user = $result->fetch_assoc();
-$stmt->close();
+// Inicjalizacja menedżerów
+$userManager = new UserManager($conn);
+$villageManager = new VillageManager($conn);
+$rankingManager = new RankingManager($conn);
 
+$user = null;
+
+// Pobierz dane gracza po ID lub nazwie użytkownika
+if ($player_id > 0) {
+    $user = $userManager->getUserById($player_id); // Assuming getUserById method exists
+} elseif (!empty($username_get)) {
+    $user = $userManager->getUserByUsername($username_get); // Assuming getUserByUsername method exists
+}
+
+// Sprawdź, czy znaleziono gracza
 if (!$user) {
-    echo '<h2>Gracz nie istnieje</h2>';
-    echo '<a href="map.php" class="back-btn">&larr; Powrót do mapy</a>';
-    $database->closeConnection();
+    $pageTitle = 'Gracz nie istnieje';
+    require 'header.php';
+    // Use standard game layout divs
+    echo '<div id="game-container"><div id="main-content"><main><h2>Gracz nie istnieje</h2><p>Profil gracza nie został znaleziony.</p><a href="ranking.php?type=players" class="btn btn-secondary mt-3">← Powrót do rankingu</a></main></div></div>';
+    require 'footer.php';
     exit;
 }
 
 $user_id = $user['id'];
+$username = $user['username'];
 
-// Pobierz wioski gracza
-$stmt = $conn->prepare("SELECT name, x_coord, y_coord FROM villages WHERE user_id = ? ORDER BY name");
-$stmt->bind_param("i", $user_id);
-$stmt->execute();
-$result = $stmt->get_result();
-$villages = [];
-while ($row = $result->fetch_assoc()) {
-    $villages[] = $row;
-}
-$stmt->close();
+// Pobierz wioski gracza przy użyciu VillageManager
+$villages = $villageManager->getUserVillages($user_id);
 
-// Ranking gracza wg liczby wiosek
-$ranking = 0;
-$total_players = 0;
-$stmt = $conn->prepare("SELECT u.username, COUNT(v.id) as villages_count FROM users u LEFT JOIN villages v ON u.id = v.user_id GROUP BY u.id ORDER BY villages_count DESC, u.username ASC");
-$stmt->execute();
-$result = $stmt->get_result();
-$rankings = [];
-while ($row = $result->fetch_assoc()) {
-    $rankings[] = $row;
-}
-$stmt->close();
-$total_players = count($rankings);
-foreach ($rankings as $i => $row) {
-    if ($row['username'] === $username) {
-        $ranking = $i + 1;
-        break;
-    }
-}
+// Pobierz ranking gracza przy użyciu RankingManager
+// RankingManager::getPlayerRank and getTotalPlayersCount are assumed to exist/be implemented
+$playerRank = $rankingManager->getPlayerRank($user_id); // Assuming this method returns rank number
+$totalPlayers = $rankingManager->getTotalPlayersCount(); // Assuming this method returns total count
 
-// Liczba wszystkich graczy
+// Pobierz ogólne statystyki (jeśli potrzebne i dostępne w menedżerach)
+// Można dodać metody do UserManager lub RankingManager
+// $total_users = $rankingManager->getTotalUsersCount(); // Example
+// $total_villages = $villageManager->getTotalVillagesCount(); // Example
+
+// For now, keep existing queries for total counts if managers don't have them
 $res = $conn->query("SELECT COUNT(*) as total FROM users");
 $total_users = $res ? $res->fetch_assoc()['total'] : 0;
-// Liczba wszystkich wiosek
 $res = $conn->query("SELECT COUNT(*) as total FROM villages");
 $total_villages = $res ? $res->fetch_assoc()['total'] : 0;
 
-$database->closeConnection();
+// $database->closeConnection(); // Remove manual DB close
 
+$pageTitle = 'Profil gracza: ' . htmlspecialchars($username);
+require 'header.php';
 ?>
-    <h2>Profil gracza: <?php echo htmlspecialchars($username); ?></h2>
-    <div class="summary-box" style="background:#f5e7c2; border:1px solid #c8bca8; border-radius:6px; padding:12px 18px; margin-bottom:18px;">
-        <b>Data rejestracji gracza:</b> <?php echo isset($user['registration_date']) ? htmlspecialchars($user['registration_date']) : 'brak danych'; ?><br>
-        <b>Liczba graczy:</b> <?php echo $total_users; ?><br>
-        <b>Liczba wiosek w grze:</b> <?php echo $total_villages; ?>
-    </div>
-    <p><b>Liczba wiosek:</b> <?php echo count($villages); ?></p>
-    <p><b>Miejsce w rankingu:</b> <?php echo $ranking; ?> / <?php echo $total_players; ?></p>
-    <div class="villages-list">
-        <h3>Lista wiosek</h3>
-        <?php if (count($villages) === 0): ?>
-            <p>Gracz nie posiada żadnej wioski.</p>
-        <?php else: ?>
-        <table>
-            <tr><th>Nazwa wioski</th><th>Koordynaty</th><th></th></tr>
-            <?php foreach ($villages as $v): ?>
-                <tr>
-                    <td><?php echo htmlspecialchars($v['name']); ?></td>
-                    <td>(<?php echo $v['x_coord']; ?>|<?php echo $v['y_coord']; ?>)</td>
-                    <td><a href="map.php?center_x=<?php echo $v['x_coord']; ?>&center_y=<?php echo $v['y_coord']; ?>" class="back-btn" style="padding:4px 10px; font-size:0.95em; margin:0;">Pokaż na mapie</a></td>
-                </tr>
-            <?php endforeach; ?>
-        </table>
+
+<div id="game-container">
+    <?php // Add the header section similar to other pages if needed, or rely on header.php ?>
+    <!-- Example header structure -->
+    <header id="main-header">
+        <div class="header-title">
+            <span class="game-logo">👤</span>
+            <span>Profil gracza</span>
+        </div>
+        <?php /* User section will be included by header.php if logic is there */ ?>
+        <?php // Manual user section if header.php doesn't handle it based on context ?>
+        <?php if (isset($_SESSION['user_id']) && ($currentUserVillage = $villageManager->getFirstVillage($_SESSION['user_id']))): ?>
+         <div class="header-user">
+             Gracz: <?= htmlspecialchars($_SESSION['username']) ?><br>
+             <span class="village-name-display" data-village-id="<?= $currentUserVillage['id'] ?>"><?= htmlspecialchars($currentUserVillage['name']) ?> (<?= $currentUserVillage['x_coord'] ?>|<?= $currentUserVillage['y_coord'] ?>)</span>
+         </div>
         <?php endif; ?>
+    </header>
+
+    <div id="main-content">
+        <main>
+            <h2>Profil gracza: <?php echo htmlspecialchars($username); ?></h2>
+            <div class="summary-box">
+                <b>Data rejestracji gracza:</b> <?php echo isset($user['registration_date']) ? htmlspecialchars($user['registration_date']) : 'brak danych'; ?><br>
+                <b>Liczba graczy:</b> <?php echo $total_users; ?><br>
+                <b>Liczba wiosek w grze:</b> <?php echo $total_villages; ?>
+            </div>
+            <p><b>Liczba wiosek:</b> <?php echo count($villages); ?></p>
+            <p><b>Miejsce w rankingu:</b> <?php echo $playerRank; ?> / <?php echo $totalPlayers; ?></p>
+            <div class="villages-list">
+                <h3>Lista wiosek</h3>
+                <?php if (count($villages) === 0): ?>
+                    <p class="no-villages">Gracz nie posiada żadnej wioski.</p>
+                <?php else: ?>
+                <table>
+                    <tr><th>Nazwa wioski</th><th>Koordynaty</th><th></th></tr>
+                    <?php foreach ($villages as $v): ?>
+                        <tr>
+                            <td><?php echo htmlspecialchars($v['name']); ?></td>
+                            <td>(<?php echo $v['x_coord']; ?>|<?php echo $v['y_coord']; ?>)</td>
+                            <td><a href="map.php?center_x=<?php echo $v['x_coord']; ?>&center_y=<?php echo $v['y_coord']; ?>" class="btn btn-secondary" style="padding:4px 10px; font-size:0.95em; margin:0;">Pokaż na mapie</a></td>
+                        </tr>
+                    <?php endforeach; ?>
+                </table>
+                <?php endif; ?>
+            </div>
+            <a href="ranking.php?type=players" class="btn btn-secondary mt-3">← Powrót do rankingu</a>
+        </main>
     </div>
-    <a href="map.php" class="back-btn">&larr; Powrót do mapy</a>
 </div>
-</body>
-</html> 
+
+<?php require 'footer.php'; ?> 

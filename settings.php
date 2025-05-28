@@ -1,5 +1,7 @@
 <?php
 require 'init.php';
+require_once __DIR__ . '/lib/managers/VillageManager.php'; // Zaktualizowana ścieżka
+require_once __DIR__ . '/lib/managers/UserManager.php'; // Zaktualizowana ścieżka
 
 // Redirect if not logged in
 if (!isset($_SESSION['user_id'])) {
@@ -11,30 +13,24 @@ $user_id = $_SESSION['user_id'];
 $username = $_SESSION['username'];
 $message = '';
 
+$villageManager = new VillageManager($conn); // Instantiate VillageManager
+$village_id = $villageManager->getFirstVillage($user_id); // Get the user's first village ID
+$village = null;
+if ($village_id) {
+    $village = $villageManager->getVillageInfo($village_id); // Get village details if an ID exists
+}
+
+// Inicjalizacja UserManager
+$userManager = new UserManager($conn); // Instantiate UserManager
+
 // Handle email change
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_email'])) {
-    $new_email = trim($_POST['new_email'] ?? '');
-    if (empty($new_email) || !filter_var($new_email, FILTER_VALIDATE_EMAIL)) {
-        $message = '<p class="error-message">Nieprawidłowy adres e-mail.</p>';
+    $new_email = $_POST['new_email'] ?? '';
+    $result = $userManager->changeEmail($user_id, $new_email);
+    if ($result['success']) {
+        $message = '<p class="success-message">' . htmlspecialchars($result['message']) . '</p>';
     } else {
-        // Check if email is taken
-        $stmt = $conn->prepare("SELECT id FROM users WHERE email = ? AND id != ?");
-        $stmt->bind_param("si", $new_email, $user_id);
-        $stmt->execute();
-        $stmt->store_result();
-        if ($stmt->num_rows > 0) {
-            $message = '<p class="error-message">Podany e-mail jest już zajęty.</p>';
-        } else {
-            $stmt_update = $conn->prepare("UPDATE users SET email = ? WHERE id = ?");
-            $stmt_update->bind_param("si", $new_email, $user_id);
-            if ($stmt_update->execute()) {
-                $message = '<p class="success-message">Adres e-mail został zaktualizowany.</p>';
-            } else {
-                $message = '<p class="error-message">Wystąpił błąd podczas aktualizacji e-maila.</p>';
-            }
-            $stmt_update->close();
-        }
-        $stmt->close();
+        $message = '<p class="error-message">' . htmlspecialchars($result['message']) . '</p>';
     }
 }
 
@@ -44,66 +40,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
     $new_password = $_POST['new_password'] ?? '';
     $confirm_password = $_POST['confirm_password'] ?? '';
 
-    if (empty($current_password) || empty($new_password) || empty($confirm_password)) {
-        $message = '<p class="error-message">Wszystkie pola zmiany hasła są wymagane.</p>';
-    } elseif ($new_password !== $confirm_password) {
-        $message = '<p class="error-message">Nowe hasło i potwierdzenie nie są identyczne.</p>';
+    $result = $userManager->changePassword($user_id, $current_password, $new_password, $confirm_password);
+    if ($result['success']) {
+        $message = '<p class="success-message">' . htmlspecialchars($result['message']) . '</p>';
     } else {
-        // Verify current password
-        $stmt = $conn->prepare("SELECT password FROM users WHERE id = ?");
-        $stmt->bind_param("i", $user_id);
-        $stmt->execute();
-        $stmt->bind_result($hashed_password);
-        $stmt->fetch();
-        $stmt->close();
-
-        if (!password_verify($current_password, $hashed_password)) {
-            $message = '<p class="error-message">Obecne hasło jest nieprawidłowe.</p>';
-        } else {
-            $new_hashed = password_hash($new_password, PASSWORD_DEFAULT);
-            $stmt_update = $conn->prepare("UPDATE users SET password = ? WHERE id = ?");
-            $stmt_update->bind_param("si", $new_hashed, $user_id);
-            if ($stmt_update->execute()) {
-                $message = '<p class="success-message">Hasło zostało zmienione pomyślnie.</p>';
-            } else {
-                $message = '<p class="error-message">Wystąpił błąd podczas zmiany hasła.</p>';
-            }
-            $stmt_update->close();
-        }
+        $message = '<p class="error-message">' . htmlspecialchars($result['message']) . '</p>';
     }
 }
 ?>
-<!DOCTYPE html>
-<html lang="pl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ustawienia — Tribal Wars Nowa Edycja</title>
-    <link rel="stylesheet" href="css/main.css?v=<?php echo time(); ?>">
-    <script src="js/main.js?v=<?php echo time(); ?>"></script>
-</head>
-<body>
+<?php require 'header.php'; ?>
+
 <div id="game-container">
     <header id="main-header">
         <div class="header-title">
             <span class="game-logo">⚙️</span>
-            <span class="game-name">Ustawienia</span>
+            <span>Ustawienia</span>
         </div>
-        <div class="header-user">Witaj, <b><?php echo htmlspecialchars($username); ?></b></div>
+        <div class="header-user">
+            Gracz: <?= htmlspecialchars($username) ?><br>
+            <?php if (isset($village) && $village): // Check if village data is available ?>
+                <span class="village-name-display" data-village-id="<?= $village['id'] ?>"><?= htmlspecialchars($village['name']) ?> (<?= $village['x_coord'] ?>|<?= $village['y_coord'] ?>)</span>
+            <?php endif; ?>
+        </div>
     </header>
     <div id="main-content">
-        <nav id="sidebar">
-            <ul>
-                <li><a href="game.php">🏠 Wioska</a></li>
-                <li><a href="map.php">🗺️ Mapa</a></li>
-                <li><a href="attack.php">⚔️ Atak</a></li>
-                <li><a href="reports.php">📜 Raporty</a></li>
-                <li><a href="messages.php">✉️ Wiadomości</a></li>
-                <li><a href="ranking.php">🏆 Ranking</a></li>
-                <li><a href="settings.php" class="active">⚙️ Ustawienia</a></li>
-                <li><a href="logout.php">🚪 Wyloguj</a></li>
-            </ul>
-        </nav>
+
         <main>
             <h2>Ustawienia konta</h2>
             <?php echo $message; ?>
@@ -133,5 +94,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
         </main>
     </div>
 </div>
-</body>
-</html> 
+<?php require 'footer.php'; ?> 

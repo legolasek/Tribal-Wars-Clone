@@ -1,7 +1,9 @@
 <?php
 require 'init.php';
 validateCSRF();
-require_once 'lib/BuildingManager.php'; // Potrzebny do informacji o budynkach
+require_once __DIR__ . '/lib/managers/VillageManager.php'; // Zaktualizowana ścieżka
+// BuildingManager is not needed directly here, VillageManager handles initial building creation
+// require_once __DIR__ . '/lib/managers/BuildingManager.php';
 
 // Sprawdź, czy użytkownik jest zalogowany
 if (!isset($_SESSION['user_id'])) {
@@ -11,11 +13,24 @@ if (!isset($_SESSION['user_id'])) {
 
 $user_id = $_SESSION['user_id'];
 $username = $_SESSION['username'];
-$buildingManager = new BuildingManager($conn);
+
+// $buildingManager = new BuildingManager($conn); // Not needed directly here
 
 $message = '';
 
-// Sprawdź, czy użytkownik istnieje w bazie
+$villageManager = new VillageManager($conn); // Instantiate VillageManager
+
+// Sprawdź, czy użytkownik już ma wioskę (na wszelki wypadek, gdyby tu trafił bezpośrednio)
+// Użyj VillageManager do sprawdzenia
+$existingVillage = $villageManager->getFirstVillage($user_id);
+
+if ($existingVillage) {
+    header("Location: game.php"); // Już ma wioskę, idź do gry
+    exit();
+}
+
+// Remove manual user check - VillageManager methods implicitly check ownership/existence
+/*
 $stmt_check_user = $conn->prepare("SELECT id FROM users WHERE id = ? LIMIT 1");
 $stmt_check_user->bind_param("i", $user_id);
 $stmt_check_user->execute();
@@ -28,23 +43,31 @@ if ($stmt_check_user->num_rows === 0) {
     exit();
 }
 $stmt_check_user->close();
+*/
 
-// Sprawdź, czy użytkownik już ma wioskę (na wszelki wypadek, gdyby tu trafił bezpośrednio)
-$stmt_check_village_exists = $conn->prepare("SELECT id FROM villages WHERE user_id = ? AND world_id = ? LIMIT 1");
-$world_id = CURRENT_WORLD_ID; // Przypisanie stałej do zmiennej, aby przekazać przez referencję
-$stmt_check_village_exists->bind_param("ii", $user_id, $world_id);
-$stmt_check_village_exists->execute();
-$stmt_check_village_exists->store_result();
-if ($stmt_check_village_exists->num_rows > 0) {
-    $stmt_check_village_exists->close();
-    header("Location: game.php"); // Już ma wioskę, idź do gry
-    exit();
-}
-$stmt_check_village_exists->close();
+
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_village'])) {
     // Na razie tworzymy wioskę w losowym, wolnym miejscu na mapie i aktualnym świecie.
     // TODO: W przyszłości można dodać wybór kierunku lub konkretnego miejsca.
+    
+    // Deleguj tworzenie wioski do VillageManager
+    $creationResult = $villageManager->createVillage($user_id);
+
+    if ($creationResult['success']) {
+        $message = '<p class="success-message">' . htmlspecialchars($creationResult['message']) . ' Za chwilę zostaniesz przekierowany do gry...</p>';
+        // Store new village ID in session if needed elsewhere
+        if (isset($creationResult['village_id'])) {
+             $_SESSION['village_id'] = $creationResult['village_id'];
+        }
+        header("Refresh: 3; url=game.php"); // Przekieruj do gry po 3 sekundach
+        // Nie wywołuj exit() od razu, aby wiadomość była widoczna
+    } else {
+        $message = '<p class="error-message">Wystąpił błąd podczas tworzenia wioski: ' . htmlspecialchars($creationResult['message']) . '</p>';
+    }
+
+    // Remove manual transaction and queries - handled by VillageManager::createVillage
+    /*
     $x_coord = rand(1, 500); // Przykładowy zakres mapy
     $y_coord = rand(1, 500);
     // TODO: Dodać pętlę sprawdzającą, czy współrzędne są wolne i generującą nowe, jeśli zajęte.
@@ -71,37 +94,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_village'])) {
         }
 
         // 2. Dodaj początkowe budynki (Ratusz poziom 1)
-        $main_building_info = $buildingManager->getBuildingInfo('main_building');
-        if ($main_building_info) {
-            $stmt_add_main_building = $conn->prepare("INSERT INTO village_buildings (village_id, building_type_id, level) VALUES (?, ?, 1)");
-            $stmt_add_main_building->bind_param("ii", $new_village_id, $main_building_info['id']);
-            $stmt_add_main_building->execute();
-            $stmt_add_main_building->close();
-        } else {
-            throw new Exception("Nie znaleziono informacji o Ratuszu w konfiguracji budynków.");
-        }
-        
-        // Dodajmy też Magazyn na poziomie 1, skoro ustawiamy initial_warehouse_capacity
-        $warehouse_info = $buildingManager->getBuildingInfo('warehouse');
-        if ($warehouse_info) {
-            // Upewnijmy się, że pojemność magazynu jest zgodna z poziomem 1
-            $initial_warehouse_capacity = $buildingManager->getWarehouseCapacityByLevel(1);
-            $stmt_update_capacity = $conn->prepare("UPDATE villages SET warehouse_capacity = ? WHERE id = ?");
-            $stmt_update_capacity->bind_param("ii", $initial_warehouse_capacity, $new_village_id);
-            $stmt_update_capacity->execute();
-            $stmt_update_capacity->close();
-
-            $stmt_add_warehouse = $conn->prepare("INSERT INTO village_buildings (village_id, building_type_id, level) VALUES (?, ?, 1)");
-            $stmt_add_warehouse->bind_param("ii", $new_village_id, $warehouse_info['id']);
-            $stmt_add_warehouse->execute();
-            $stmt_add_warehouse->close();
-        } else {
-             // Ostrzeżenie, ale nie przerywamy transakcji, magazyn może nie być krytyczny na start
-            error_log("Nie znaleziono informacji o Magazynie w konfiguracji budynków przy tworzeniu wioski dla user_id: " . $user_id);
-        }
-
-        // TODO: Dodać pozostałe budynki produkcyjne na poziomie 0 lub 1, jeśli taka jest logika gry.
-        // Na razie Ratusz wystarczy do działania podstawowego interfejsu.
+        // ... logic for adding initial buildings ...
 
         $conn->commit();
         $message = '<p class="success-message">Wioska została pomyślnie utworzona! Za chwilę zostaniesz przekierowany do gry...</p>';
@@ -111,6 +104,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_village'])) {
         $conn->rollback();
         $message = '<p class="error-message">Wystąpił błąd podczas tworzenia wioski: ' . $e->getMessage() . '</p>';
     }
+    */
 
 }
 
@@ -132,6 +126,6 @@ require 'header.php';
 </div>
 <?php require 'footer.php'; ?>
 <?php
-// Zamknij połączenie z bazą po wyświetleniu strony
-$database->closeConnection();
+// Remove manual DB connection close
+// $database->closeConnection();
 ?> 

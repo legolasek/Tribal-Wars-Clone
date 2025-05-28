@@ -1,6 +1,6 @@
 <?php
 require 'init.php';
-require_once 'lib/VillageManager.php';
+require_once __DIR__ . '/lib/managers/VillageManager.php';
 require_once 'config/config.php';
 require_once 'lib/Database.php';
 
@@ -80,264 +80,242 @@ $pageTitle = 'Mapa Świata';
 require 'header.php';
 ?>
 
-<!DOCTYPE html>
-<html lang="pl">
-<head>
-    <meta charset="UTF-8">
-    <title>Mapa świata</title>
-    <link rel="stylesheet" href="css/main.css">
-    <style>
-        .map-container { 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            margin: var(--spacing-lg) auto; /* Use CSS variable */
-            padding: 0 var(--spacing-md); /* Add horizontal padding */
-            max-width: 90%; /* Limit max width */
-        }
-        .map-grid { 
-            display: grid; 
-            grid-template-columns: repeat(<?php echo $size; ?>, 32px); 
-            grid-template-rows: repeat(<?php echo $size; ?>, 32px); 
-            gap: 1px; 
-            background: var(--beige-darker); /* Use CSS variable */
-            border: 2px solid var(--brown-primary); /* Use CSS variable */
-            box-shadow: var(--box-shadow-default); /* Use CSS variable */
-        }
-        .map-tile { 
-            width: 32px; 
-            height: 32px; 
-            background: var(--beige-medium); /* Use CSS variable */
-            position: relative; 
-            cursor: pointer; 
-            transition: box-shadow .15s, transform .15s; /* Add transform transition */
-            overflow: hidden; /* Hide overflowing content */
-        }
-        .map-tile:hover { 
-            box-shadow: 0 0 8px rgba(var(--brown-primary-rgb), 0.5); /* Use CSS variable */
-            z-index: 2; 
-            transform: scale(1.05); /* Slight zoom effect */
-        }
-        .map-tile.selected { 
-            outline: 2px solid var(--gold-highlight); /* Use CSS variable */
-            z-index: 3; 
-        }
-        .map-tile img { 
-            width: 100%; 
-            height: 100%; 
-            display: block; 
-            object-fit: cover; /* Ensure image covers the tile */
-            filter: brightness(0.8); /* Slightly darken background images */
-        }
-         /* Style for barbarian villages */
-        .map-tile.barbarian img {
-             filter: grayscale(0.8) brightness(0.7);
-        }
-         /* Style for player villages */
-        .map-tile.player img {
-             filter: brightness(1);
-        }
-        /* Style for own village */
-        .map-tile.own-village img {
-             filter: brightness(1.2) hue-rotate(150deg); /* Example tint */
-        }
-        
-        .map-popup { 
-            position: absolute; 
-            left: calc(100% + var(--spacing-xs)); /* Position to the right of the tile, using CSS var */
-            top: 50%;
-            transform: translateY(-50%); /* Center vertically */
-            background: var(--beige-light); /* Use CSS variable */
-            border: 1px solid var(--brown-dark); /* Use CSS variable */
-            border-radius: var(--border-radius-small); /* Use CSS variable */
-            box-shadow: var(--box-shadow-hover); /* Use CSS variable */
-            padding: var(--spacing-sm); /* Use CSS variable */
-            min-width: 200px; /* Increased min-width */
-            max-width: 300px; /* Added max-width */
-            z-index: 100; /* Increased z-index */
-            font-size: var(--font-size-normal); /* Use CSS variable */
-            color: var(--brown-dark); /* Use CSS variable */
-        }
-        .map-popup h4 { 
-            margin: 0 0 var(--spacing-xs) 0; /* Use CSS variable */
-            font-size: var(--font-size-large); /* Use CSS variable */
-            color: var(--brown-primary); /* Use CSS variable */
-            border-bottom: 1px solid var(--beige-darker); /* Add separator */
-            padding-bottom: var(--spacing-xs); /* Padding below separator */
-        }
-        .map-popup div { 
-            margin-bottom: var(--spacing-xs); /* Space between details */
-            line-height: 1.4; /* Improve readability */
-        }
-        .map-popup div:last-child { 
-            margin-bottom: 0; /* No margin for the last div */
-        }
-        .map-popup b { 
-            color: var(--brown-secondary); /* Style labels */
-        }
-        .map-popup button { 
-            display: block; /* Make button block level */
-            width: 100%; /* Full width button */
-            margin-top: var(--spacing-sm); /* Use CSS variable */
-             /* Inherit styles from global .btn */
-            /* padding: 6px 14px; 
-            background: #8d5c2c; 
-            color: #fff; 
-            border: none; 
-            border-radius: 5px; 
-            cursor: pointer; 
-            font-weight: bold; */
-        }
-        .map-popup .popup-close-btn {
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            font-size: var(--font-size-large); /* Use CSS variable */
-            color: var(--brown-dark); /* Use CSS variable */
-            cursor: pointer;
-        }
-         .map-popup .popup-close-btn:hover {
-             color: var(--red-error); /* Use CSS variable */
-         }
-
-        .map-controls { 
-            margin-bottom: var(--spacing-md); /* Use CSS variable */
-            display: flex; 
-            gap: var(--spacing-md); /* Use CSS variable */
-            align-items: center; /* Align items vertically */
-            flex-wrap: wrap; /* Allow wrapping */
-            justify-content: center; /* Center controls */
-        }
-        .map-controls button { 
-             /* Inherit styles from global .btn */
-            /* padding: 6px 14px; background: #8d5c2c; color: #fff; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; */
-        }
-        .map-controls button:disabled { 
-            /* background: #ccc; color: #888; */
-            opacity: 0.6; /* Indicate disabled state */
-            cursor: not-allowed; /* Change cursor */
-        }
-        .map-controls label {
-            font-weight: bold;
-            color: var(--brown-dark);
-        }
-        .map-controls input[type="number"] {
-            padding: var(--spacing-xs); /* Use CSS variable */
-            border: 1px solid var(--beige-dark); /* Use CSS variable */
-            border-radius: var(--border-radius-small); /* Use CSS variable */
-            background-color: var(--beige-light); /* Use CSS variable */
-            color: var(--brown-dark); /* Use CSS variable */
-            font-size: var(--font-size-normal); /* Use CSS variable */
-            width: 60px; /* Adjusted width */
-            text-align: center; /* Center text */
-        }
-
-    </style>
-</head>
-<body>
-<div class="map-container">
-    <h1>Mapa świata</h1>
-    <div class="map-controls">
-        <button onclick="moveMap(0,-1)">↑</button>
-        <button onclick="moveMap(-1,0)">←</button>
-        <button onclick="centerMap()">Centruj</button>
-        <button onclick="moveMap(1,0)">→</button>
-        <button onclick="moveMap(0,1)">↓</button>
-        <label>Rozmiar: <input type="number" id="map-size" min="7" max="31" value="<?php echo $size; ?>" style="width:50px;"> </label>
-        <button onclick="resizeMap()">Zmień</button>
+<div id="game-container">
+    <header id="main-header">
+        <div class="header-title">
+            <span class="game-logo">🗺️</span> <!-- Ikona dla mapy -->
+            <span>Mapa Świata</span>
         </div>
-    <div id="map-grid" class="map-grid"></div>
+        <div class="header-user">
+            Gracz: <?= htmlspecialchars($username) ?><br>
+            <?php if ($village): ?>
+                <span class="village-name-display" data-village-id="<?= $village['id'] ?>"><?= htmlspecialchars($village['name']) ?> (<?= $village['x_coord'] ?>|<?= $village['y_coord'] ?>)</span>
+            <?php endif; ?>
         </div>
+    </header>
+
+    <main id="main-content">
+        <h2>Mapa świata</h2>
+
+        <div class="map-container">
+            <div class="map-controls">
+                <button onclick="moveMap(0,-1)">↑</button>
+                <button onclick="moveMap(-1,0)">←</button>
+                <button onclick="centerMap()">Centruj</button>
+                <button onclick="moveMap(1,0)">→</button>
+                <button onclick="moveMap(0,1)">↓</button>
+                <label>Rozmiar: <input type="number" id="map-size" min="7" max="31" value="<?php echo $size; ?>" style="width:50px;"> </label>
+                <button onclick="resizeMap()">Zmień</button>
+            </div>
+            <div id="map-grid" class="map-grid"></div>
+        </div>
+
+        <!-- Popup for map tile details -->
+        <div id="map-popup" class="map-popup" style="display: none;">
+            <button class="popup-close-btn">&times;</button>
+            <h4 id="popup-village-name"></h4>
+            <div><b>Właściciel:</b> <span id="popup-village-owner"></span></div>
+            <div><b>Współrzędne:</b> <span id="popup-village-coords"></span></div>
+            <button id="popup-send-units" class="btn">Wyślij jednostki</button>
+            <!-- <button id="popup-send-resources" class="btn">Wyślij surowce</button> -->
+        </div>
+    </main>
+</div>
+
 <script>
-let mapX = <?php echo $x; ?>;
-let mapY = <?php echo $y; ?>;
-let mapSize = <?php echo $size; ?>;
-let selectedTile = null;
+// Pass village data to JavaScript
+const villagesData = <?php echo json_encode($villages_map); ?>;
+const currentVillageId = <?php echo $village_id ?? 'null'; ?>;
+const centerCoords = { x: <?php echo $center_x; ?>, y: <?php echo $center_y; ?> };
+const mapRadius = <?php echo $radius; ?>;
+const mapSize = <?php echo $size; ?>;
 
-function fetchMap() {
-    document.getElementById('map-grid').innerHTML = '<div style="grid-column: 1 / -1; text-align:center; padding:30px;">Ładowanie mapy...</div>';
-    fetch(`map_data.php?x=${mapX}&y=${mapY}&size=${mapSize}`)
-        .then(r=>r.json())
-        .then(data=>renderMap(data.villages));
-}
+document.addEventListener('DOMContentLoaded', () => {
+    renderMap(villagesData, centerCoords, mapRadius, mapSize, currentVillageId);
 
-function renderMap(villages) {
-    const grid = document.getElementById('map-grid');
-    grid.innerHTML = '';
-    const vmap = {};
-    villages.forEach(v=>{ vmap[v.x+'_'+v.y] = v; });
-    for(let row=0; row<mapSize; row++) {
-        for(let col=0; col<mapSize; col++) {
-            const x = mapX - Math.floor(mapSize/2) + col;
-            const y = mapY - Math.floor(mapSize/2) + row;
-            const key = x+'_'+y;
-            const v = vmap[key];
+    // Add event listeners for map controls
+    document.querySelector('.map-controls button:nth-child(1)').addEventListener('click', () => moveMap(0, -1));
+    document.querySelector('.map-controls button:nth-child(2)').addEventListener('click', () => moveMap(-1, 0));
+    document.querySelector('.map-controls button:nth-child(3)').addEventListener('click', () => centerMap());
+    document.querySelector('.map-controls button:nth-child(4)').addEventListener('click', () => moveMap(1, 0));
+    document.querySelector('.map-controls button:nth-child(5)').addEventListener('click', () => moveMap(0, 1));
+    document.getElementById('map-size').addEventListener('change', () => resizeMap()); // Listen for change on input
+    document.querySelector('.map-controls button:nth-child(7)').addEventListener('click', () => resizeMap()); // Listen for button click
+
+    // Event delegation for map tiles
+    document.getElementById('map-grid').addEventListener('click', function(event) {
+        const tile = event.target.closest('.map-tile');
+        if (tile && !tile.dataset.x === undefined && !tile.dataset.y === undefined) { // Ensure it's a valid tile
+            const x = parseInt(tile.dataset.x);
+            const y = parseInt(tile.dataset.y);
+            showVillagePopup(x, y);
+        }
+    });
+
+    // Close popup button
+    document.querySelector('#map-popup .popup-close-btn').addEventListener('click', hideVillagePopup);
+
+    // Send units button
+    document.getElementById('popup-send-units').addEventListener('click', function() {
+        const villageId = this.dataset.villageId;
+        if (villageId) {
+            window.location.href = `attack.php?target_village_id=${villageId}`;
+        }
+    });
+
+    // Handle clicks outside the popup to close it
+    document.addEventListener('click', function(event) {
+        const popup = document.getElementById('map-popup');
+        const isClickInsidePopup = popup.contains(event.target);
+        const isClickOnTile = event.target.closest('.map-tile');
+        
+        // Close popup if clicked outside the popup AND not on a map tile
+        if (!isClickInsidePopup && !isClickOnTile && popup.style.display !== 'none') {
+            hideVillagePopup();
+        }
+    });
+
+    // Prevent clicks inside the popup from closing it via the document listener
+    document.getElementById('map-popup').addEventListener('click', function(event) {
+        event.stopPropagation();
+    });
+});
+
+function renderMap(villages, center, radius, size, currentVillageId) {
+    const mapGrid = document.getElementById('map-grid');
+    mapGrid.innerHTML = ''; // Clear existing map
+    const startX = center.x - radius;
+    const startY = center.y - radius;
+
+    for (let y = startY; y <= center.y + radius; y++) {
+        for (let x = startX; x <= center.x + radius; x++) {
+            const village = villages[y] ? villages[y][x] : null;
             const tile = document.createElement('div');
-            tile.className = 'map-tile';
+            tile.classList.add('map-tile');
             tile.dataset.x = x;
             tile.dataset.y = y;
-            if (v) {
-                tile.innerHTML = `<img src="${v.img}" alt="">`;
-                tile.title = v.name + ' ('+x+'|'+y+')';
-                tile.onclick = e => showPopup(tile, v);
-                if (v.type === 'barbarian') tile.style.filter = 'grayscale(0.3)';
-                    } else {
-                tile.style.background = '#e8dcc0 url(img/ds_graphic/map/empty.png) center/cover no-repeat';
-                tile.onclick = () => hidePopup();
+
+            let tileContent = '';
+            let villageClass = '';
+
+            if (village) {
+                if (village.is_own) {
+                    villageClass = 'own-village';
+                    tileContent = '<img src="img/ds_graphic/buildings/main_building.png" alt="Wioska gracza">'; // Placeholder image
+                } else if (village.user_id === null) {
+                    villageClass = 'barbarian';
+                    tileContent = '<img src="img/ds_graphic/buildings/main_building.png" alt="Wioska barbarzyńska">'; // Placeholder image
+                } else {
+                    villageClass = 'player';
+                    tileContent = '<img src="img/ds_graphic/buildings/main_building.png" alt="Wioska gracza">'; // Placeholder image
+                }
+            } else {
+                // Example background image for empty tiles
+                // tileContent = '<img src="img/map/map_bg/grass.jpg" alt="Teran">'; // You might have different terrains
+                 tileContent = ''; // Leave empty for now if no terrain images
             }
-            grid.appendChild(tile);
+            
+            tile.classList.add(villageClass);
+            tile.innerHTML = tileContent + '<span class="coords">' + x + '|' + y + '</span>'; // Display coords on tile
+            mapGrid.appendChild(tile);
         }
+    }
+     // Adjust grid columns based on size
+     mapGrid.style.gridTemplateColumns = `repeat(${size}, 32px)`;
+     mapGrid.style.gridTemplateRows = `repeat(${size}, 32px)`;
+}
+
+function moveMap(dx, dy) {
+    const currentX = centerCoords.x;
+    const currentY = centerCoords.y;
+    window.location.href = `map.php?x=${currentX + dx * mapSize}&y=${currentY + dy * mapSize}&radius=${mapRadius}&size=${mapSize}`;
+}
+
+function centerMap() {
+     // Assuming the user's village coordinates are available globally or fetched
+     // For now, let's assume currentVillageCoords is available from PHP if $village is set
+     <?php if ($village): ?>
+     const currentVillageCoords = { x: <?php echo $village['x_coord']; ?>, y: <?php echo $village['y_coord']; ?> };
+     window.location.href = `map.php?x=${currentVillageCoords.x}&y=${currentVillageCoords.y}&radius=${mapRadius}&size=${mapSize}`;
+     <?php else: ?>
+     // Fallback or error if user has no village
+     console.error("Cannot center map: User has no village.");
+     <?php endif; ?>
+}
+
+function resizeMap() {
+     const newSize = parseInt(document.getElementById('map-size').value);
+     if (!isNaN(newSize) && newSize >= 7 && newSize <= 31) {
+          const newRadius = Math.floor((newSize - 1) / 2); // Calculate new radius based on size
+          window.location.href = `map.php?x=${centerCoords.x}&y=${centerCoords.y}&radius=${newRadius}&size=${newSize}`;
+     } else {
+          alert('Rozmiar mapy musi być liczbą między 7 a 31.');
+     }
+}
+
+function showVillagePopup(x, y) {
+    const village = villagesData[y] ? villagesData[y][x] : null;
+    const popup = document.getElementById('map-popup');
+    const popupVillageName = document.getElementById('popup-village-name');
+    const popupVillageOwner = document.getElementById('popup-village-owner');
+    const popupVillageCoords = document.getElementById('popup-village-coords');
+    const popupSendUnitsButton = document.getElementById('popup-send-units');
+    
+    if (village) {
+        popupVillageName.textContent = village.name;
+        popupVillageOwner.textContent = village.owner;
+        popupVillageCoords.textContent = `${x}|${y}`;
+        
+        // Set village ID for buttons
+        popupSendUnitsButton.dataset.villageId = village.id;
+
+        // Show/hide/enable/disable buttons based on village type/ownership
+        if (village.is_own) {
+            popupSendUnitsButton.style.display = 'none'; // Can't attack own village
+        } else {
+             popupSendUnitsButton.style.display = 'block';
+             // Maybe disable attack button if not enough units/conditions not met
+             // For now, always enabled for non-own villages
+        }
+        
+        // Position the popup near the tile
+        const tileElement = document.querySelector(`.map-tile[data-x="${x}"][data-y="${y}"]`);
+        if (tileElement) {
+             const tileRect = tileElement.getBoundingClientRect();
+             const gameContainer = document.getElementById('game-container'); // Assuming game-container is the scrollable parent
+             const containerRect = gameContainer.getBoundingClientRect();
+
+             // Calculate position relative to the game-container (or viewport if container is not relative)
+             let popupLeft = tileRect.right + 10; // 10px right of the tile
+             let popupTop = tileRect.top + tileRect.height / 2; // Vertically centered with tile
+             
+             // Adjust position if near the right edge of the viewport
+             if (popupLeft + popup.offsetWidth > window.innerWidth - 20) { // 20px margin from right edge
+                 popupLeft = tileRect.left - popup.offsetWidth - 10; // Position to the left of the tile
+             }
+
+              // Adjust position relative to the top of the game container if game-container has position: relative
+              // Otherwise, position relative to viewport
+              // Assuming game-container has position: relative
+              popup.style.left = `${popupLeft - containerRect.left}px`;
+              popup.style.top = `${popupTop - containerRect.top - popup.offsetHeight / 2}px`;
+
+             popup.style.display = 'block';
+        }
+
+    } else {
+        // Handle empty tile click - maybe show different info or do nothing
+        hideVillagePopup();
     }
 }
 
-function showPopup(tile, v) {
-    hidePopup();
-    tile.classList.add('selected');
-    selectedTile = tile;
-    const popup = document.createElement('div');
-    popup.className = 'map-popup';
-    popup.innerHTML = `<h4>${v.name}</h4>
-        <div><b>Koordynaty:</b> ${v.x}|${v.y}</div>
-        <div><b>Punkty:</b> ${v.points}</div>
-        <div><b>Typ:</b> ${v.type === 'barbarian' ? 'Barbarzyńska' : 'Gracza'}</div>
-        <div><b>ID:</b> ${v.id}</div>
-        <button onclick="hidePopup()" style="margin-top:8px;float:right;">Zamknij</button>`;
-    tile.appendChild(popup);
+function hideVillagePopup() {
+    document.getElementById('map-popup').style.display = 'none';
 }
-function hidePopup() {
-    if (selectedTile) {
-        selectedTile.classList.remove('selected');
-        const pop = selectedTile.querySelector('.map-popup');
-        if (pop) pop.remove();
-        selectedTile = null;
-    }
-}
-function moveMap(dx,dy) {
-    mapX += dx;
-    mapY += dy;
-    fetchMap();
-    hidePopup();
-}
-function centerMap() {
-    mapX = <?php echo $x; ?>;
-    mapY = <?php echo $y; ?>;
-    fetchMap();
-    hidePopup();
-}
-function resizeMap() {
-    const val = parseInt(document.getElementById('map-size').value);
-    if (val >= 7 && val <= 31) {
-        mapSize = val;
-        document.querySelector('.map-grid').style.gridTemplateColumns = `repeat(${mapSize}, 32px)`;
-        document.querySelector('.map-grid').style.gridTemplateRows = `repeat(${mapSize}, 32px)`;
-        fetchMap();
-        hidePopup();
-    }
-}
-window.addEventListener('click', e => { if (!e.target.closest('.map-popup')) hidePopup(); });
-fetchMap();
+
+// Helper function to format duration (from buildings.js or similar)
+// Make sure this function is available globally or included here
+// function formatDuration(seconds) { ... }
 </script>
-</body>
-</html> 
 
 <?php require 'footer.php'; ?> 

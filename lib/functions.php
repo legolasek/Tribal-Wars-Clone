@@ -675,3 +675,23 @@ function formatDuration($seconds, $long_format = false) {
         return $hours . "h " . $minutes . "m";
     }
 }
+
+/**
+ * Zwraca tekst akcji dla przycisku budynku w widoku wioski
+ */
+function getBuildingActionText($building_internal_name) {
+    switch ($building_internal_name) {
+        case 'main_building': return 'Przegląd wioski';
+        case 'barracks': return 'Rekrutacja wojska';
+        case 'stable': return 'Rekrutacja konnicy';
+        case 'workshop': return 'Produkcja machin';
+        case 'smithy': return 'Badania technologii';
+        case 'academy': return 'Badania zaawansowane';
+        case 'market': return 'Handel';
+        case 'statue': return 'Posąg'; // Placeholder
+        case 'church':
+        case 'first_church': return 'Kościół'; // Placeholder
+        case 'mint': return 'Odlewnia monety'; // Placeholder
+        default: return 'Akcja'; // Domyślny tekst
+    }
+}

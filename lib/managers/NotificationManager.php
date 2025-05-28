@@ -60,6 +60,31 @@ class NotificationManager {
     }
 
     /**
+     * Pobiera liczbę nieprzeczytanych powiadomień dla danego użytkownika.
+     * @param int $userId ID użytkownika
+     * @return int Liczba nieprzeczytanych powiadomień.
+     */
+    public function getUnreadNotificationCount(int $userId): int {
+        // Usuń wygasłe powiadomienia przed pobraniem (opcjonalnie, można to robić rzadziej)
+        // $this->cleanExpiredNotifications();
+
+        $query = "SELECT COUNT(*) AS unread_count FROM notifications WHERE user_id = ? AND is_read = 0";
+
+        $stmt = $this->conn->prepare($query);
+        $count = 0;
+        if ($stmt) {
+            $stmt->bind_param("i", $userId);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            if ($row = $result->fetch_assoc()) {
+                $count = (int)$row['unread_count'];
+            }
+            $stmt->close();
+        }
+        return $count;
+    }
+
+    /**
      * Usuwa wygasłe powiadomienia z bazy danych.
      */
     private function cleanExpiredNotifications() {

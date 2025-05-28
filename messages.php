@@ -1,6 +1,8 @@
 <?php
 require 'init.php';
-require_once 'lib/VillageManager.php';
+
+require_once __DIR__ . '/lib/managers/MessageManager.php';
+require_once __DIR__ . '/lib/managers/VillageManager.php';
 
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
@@ -13,6 +15,8 @@ $username = $_SESSION['username'];
 $villageManager = new VillageManager($conn);
 $village_id = $villageManager->getFirstVillage($user_id);
 $village = $villageManager->getVillageInfo($village_id);
+
+$messageManager = new MessageManager($conn);
 
 // Obsługa różnych zakładek wiadomości
 $activeTab = isset($_GET['tab']) ? $_GET['tab'] : 'inbox';
@@ -33,158 +37,46 @@ $totalPages = 1;
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'], $_POST['message_ids'])) {
     $action = $_POST['action'];
     $message_ids = $_POST['message_ids'];
-    
+
     if (!empty($message_ids) && is_array($message_ids)) {
-        $ids = array_map('intval', $message_ids);
-        $ids_str = implode(',', $ids);
-        
-        switch ($action) {
-            case 'mark_read':
-                $stmt = $conn->prepare("UPDATE messages SET is_read = 1 WHERE id IN ($ids_str) AND receiver_id = ?");
-                $stmt->bind_param("i", $user_id);
-                $stmt->execute();
-                $stmt->close();
-                break;
-                
-            case 'mark_unread':
-                $stmt = $conn->prepare("UPDATE messages SET is_read = 0 WHERE id IN ($ids_str) AND receiver_id = ?");
-                $stmt->bind_param("i", $user_id);
-                $stmt->execute();
-                $stmt->close();
-                break;
-                
-            case 'archive':
-                $stmt = $conn->prepare("UPDATE messages SET is_archived = 1 WHERE id IN ($ids_str) AND receiver_id = ?");
-                $stmt->bind_param("i", $user_id);
-                $stmt->execute();
-                $stmt->close();
-                break;
-                
-            case 'unarchive':
-                $stmt = $conn->prepare("UPDATE messages SET is_archived = 0 WHERE id IN ($ids_str) AND receiver_id = ?");
-                $stmt->bind_param("i", $user_id);
-                $stmt->execute();
-                $stmt->close();
-                break;
-                
-            case 'delete':
-                $stmt = $conn->prepare("DELETE FROM messages WHERE id IN ($ids_str) AND (receiver_id = ? OR (sender_id = ? AND is_sender_deleted = 0))");
-                $stmt->bind_param("ii", $user_id, $user_id);
-                $stmt->execute();
-                $stmt->close();
-                break;
+        // Use MessageManager to perform the bulk action
+        $success = $messageManager->performBulkAction($user_id, $action, $message_ids);
+
+        if ($success) {
+            // Przekierowanie, aby odświeżyć stronę po wykonaniu akcji
+            header("Location: messages.php?tab=$activeTab&action_success=1");
+            exit();
+        } else {
+            // Handle error - maybe add an error message to the session or GET params
+             // For now, just redirect without success flag
+             header("Location: messages.php?tab=$activeTab&action_error=1");
+             exit();
         }
-        
-        // Przekierowanie, aby odświeżyć stronę po wykonaniu akcji
-        header("Location: messages.php?tab=$activeTab&action_success=1");
-        exit();
     }
 }
 
-// Pobranie liczby wiadomości dla paginacji
-switch ($activeTab) {
-    case 'inbox':
-        $countQuery = "SELECT COUNT(*) as total FROM messages WHERE receiver_id = ? AND is_archived = 0";
-        $countStmt = $conn->prepare($countQuery);
-        $countStmt->bind_param("i", $user_id);
-        break;
-        
-    case 'sent':
-        $countQuery = "SELECT COUNT(*) as total FROM messages WHERE sender_id = ? AND is_sender_deleted = 0";
-        $countStmt = $conn->prepare($countQuery);
-        $countStmt->bind_param("i", $user_id);
-        break;
-        
-    case 'archive':
-        $countQuery = "SELECT COUNT(*) as total FROM messages WHERE receiver_id = ? AND is_archived = 1";
-        $countStmt = $conn->prepare($countQuery);
-        $countStmt->bind_param("i", $user_id);
-        break;
+// Pobranie wiadomości w zależności od aktywnej zakładki z paginacją przy użyciu MessageManager
+$messageData = $messageManager->getUserMessages($user_id, $activeTab, $offset, $messagesPerPage);
+$messages = $messageData['messages'];
+$totalMessages = $messageData['total'];
+
+$totalPages = ceil($totalMessages / $messagesPerPage); // Calculate total pages based on total messages
+
+// Upewnij się, że aktualna strona nie przekracza liczby stron
+if ($currentPage > $totalPages && $totalPages > 0) {
+    // Można przekierować lub ustawić na ostatnią stronę
+    $currentPage = $totalPages;
+    $offset = ($currentPage - 1) * $messagesPerPage;
+    // Re-fetch messages for the corrected page if necessary, though getUserMessages handles offset directly
+    // $messageData = $messageManager->getUserMessages($user_id, $activeTab, $offset, $messagesPerPage);
+    // $messages = $messageData['messages'];
 }
 
-if (isset($countStmt)) {
-    $countStmt->execute();
-    $countResult = $countStmt->get_result()->fetch_assoc();
-    $totalMessages = $countResult['total'];
-    $countStmt->close();
-    
-    $totalPages = ceil($totalMessages / $messagesPerPage);
-    
-    // Upewnij się, że aktualna strona nie przekracza liczby stron
-    if ($currentPage > $totalPages && $totalPages > 0) {
-        // Można przekierować lub ustawić na ostatnią stronę
-        $currentPage = $totalPages;
-        $offset = ($currentPage - 1) * $messagesPerPage;
-    }
-}
-
-// Pobranie wiadomości w zależności od aktywnej zakładki z paginacją
-$messages = [];
-$query = "";
-
-switch ($activeTab) {
-    case 'inbox':
-        $query = "SELECT m.id, m.subject, m.body, m.sent_at, m.is_read, u.username AS sender_username, u.id AS sender_id
-                 FROM messages m
-                 JOIN users u ON m.sender_id = u.id
-                 WHERE m.receiver_id = ? AND m.is_archived = 0
-                 ORDER BY m.sent_at DESC LIMIT ? OFFSET ?";
-        $stmt = $conn->prepare($query);
-        $stmt->bind_param("iii", $user_id, $messagesPerPage, $offset);
-        break;
-        
-    case 'sent':
-        $query = "SELECT m.id, m.subject, m.body, m.sent_at, 1 AS is_read, u.username AS receiver_username, u.id AS receiver_id
-                 FROM messages m
-                 JOIN users u ON m.receiver_id = u.id
-                 WHERE m.sender_id = ? AND m.is_sender_deleted = 0
-                 ORDER BY m.sent_at DESC LIMIT ? OFFSET ?";
-        $stmt = $conn->prepare($query);
-        $stmt->bind_param("iii", $user_id, $messagesPerPage, $offset);
-        break;
-        
-    case 'archive':
-        $query = "SELECT m.id, m.subject, m.body, m.sent_at, m.is_read, u.username AS sender_username, u.id AS sender_id
-     FROM messages m
-     JOIN users u ON m.sender_id = u.id
-                 WHERE m.receiver_id = ? AND m.is_archived = 1
-                 ORDER BY m.sent_at DESC LIMIT ? OFFSET ?";
-        $stmt = $conn->prepare($query);
-$stmt->bind_param("iii", $user_id, $messagesPerPage, $offset);
-        break;
-}
-
-$stmt->execute();
-$result = $stmt->get_result();
-
-while ($row = $result->fetch_assoc()) {
-    $messages[] = $row;
-}
-$stmt->close();
-
-// Pobierz liczbę nieprzeczytanych wiadomości
-$stmt = $conn->prepare("SELECT COUNT(*) as unread_count FROM messages WHERE receiver_id = ? AND is_read = 0 AND is_archived = 0");
-$stmt->bind_param("i", $user_id);
-$stmt->execute();
-$unread_result = $stmt->get_result()->fetch_assoc();
-$unread_count = $unread_result['unread_count'];
-$stmt->close();
-
-// Pobierz liczbę wiadomości w archiwum
-$stmt = $conn->prepare("SELECT COUNT(*) as archive_count FROM messages WHERE receiver_id = ? AND is_archived = 1");
-$stmt->bind_param("i", $user_id);
-$stmt->execute();
-$archive_result = $stmt->get_result()->fetch_assoc();
-$archive_count = $archive_result['archive_count'];
-$stmt->close();
-
-// Pobierz liczbę wysłanych wiadomości
-$stmt = $conn->prepare("SELECT COUNT(*) as sent_count FROM messages WHERE sender_id = ? AND is_sender_deleted = 0");
-$stmt->bind_param("i", $user_id);
-$stmt->execute();
-$sent_result = $stmt->get_result()->fetch_assoc();
-$sent_count = $sent_result['sent_count'];
-$stmt->close();
+// Pobierz liczniki wiadomości przy użyciu MessageManager
+$messageCounts = $messageManager->getMessageCounts($user_id);
+$unread_count = $messageCounts['unread'];
+$archive_count = $messageCounts['archive'];
+$sent_count = $messageCounts['sent'];
 
 $pageTitle = 'Wiadomości';
 require 'header.php';
@@ -198,27 +90,13 @@ require 'header.php';
             <span>Wiadomości</span>
         </div>
         <div class="header-user">
-            Gracz: <?= htmlspecialchars($username) ?>
-            <div class="header-links">
-                <a href="game.php">Przegląd</a> | 
-                <a href="logout.php">Wyloguj</a>
-            </div>
+            Gracz: <?= htmlspecialchars($username) ?><br>
+            <span class="village-name-display" data-village-id="<?= $village['id'] ?>"><?= htmlspecialchars($village['name']) ?> (<?= $village['x_coord'] ?>|<?= $village['y_coord'] ?>)</span>
         </div>
     </header>
 
     <div id="main-content">
         <!-- Sidebar navigation -->
-        <nav id="sidebar">
-            <ul>
-                <li><a href="game.php">Przegląd</a></li>
-                <li><a href="map.php">Mapa</a></li>
-                <li><a href="reports.php">Raporty</a></li>
-                <li><a href="messages.php" class="active">Wiadomości</a></li>
-                <li><a href="ranking.php">Ranking</a></li>
-                <li><a href="settings.php">Ustawienia</a></li>
-                <li><a href="logout.php">Wyloguj</a></li>
-            </ul>
-        </nav>
         
         <main>
             <h2>Wiadomości</h2>
@@ -275,71 +153,59 @@ require 'header.php';
             
             <?php if (!empty($messages)): ?>
                 <div class="messages-container">
-                <table class="messages-table">
-                    <thead>
-                        <tr>
-                                <th class="checkbox-col">
-                                    <input type="checkbox" id="select-all">
-                                </th>
-                                <th class="status-col"></th>
-                                <th class="<?= $activeTab === 'sent' ? 'receiver-col' : 'sender-col' ?>">
-                                    <?= $activeTab === 'sent' ? 'Do' : 'Od' ?>
-                                </th>
-                                <th class="subject-col">Temat</th>
-                                <th class="date-col">Data</th>
-                                <th class="actions-col"></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($messages as $msg): ?>
-                                <tr class="<?= ($activeTab !== 'sent' && !$msg['is_read']) ? 'unread' : '' ?>">
-                                    <td>
-                                        <input type="checkbox" name="message_ids[]" value="<?= $msg['id'] ?>" form="messages-form" class="message-checkbox">
-                                    </td>
-                                    <td class="status">
-                                        <?php if ($activeTab !== 'sent' && !$msg['is_read']): ?>
-                                            <i class="fas fa-envelope status-icon unread-icon" title="Nieprzeczytana"></i>
-                                        <?php else: ?>
-                                            <i class="fas fa-envelope-open status-icon read-icon" title="Przeczytana"></i>
-                                        <?php endif; ?>
-                                    </td>
-                                    <td>
-                                        <?php if ($activeTab === 'sent'): ?>
-                                            <a href="player.php?id=<?= $msg['receiver_id'] ?>" class="player-link">
-                                                <?= htmlspecialchars($msg['receiver_username']) ?>
-                                            </a>
-                                        <?php else: ?>
-                                            <a href="player.php?id=<?= $msg['sender_id'] ?>" class="player-link">
-                                                <?= htmlspecialchars($msg['sender_username']) ?>
-                                            </a>
-                                        <?php endif; ?>
-                                    </td>
-                                    <td class="subject">
-                                        <a href="view_message.php?id=<?= $msg['id'] ?>&tab=<?= $activeTab ?>">
-                                            <?= htmlspecialchars($msg['subject']) ?>
-                                        </a>
-                                    </td>
-                                    <td class="date"><?= date('d.m.Y H:i', strtotime($msg['sent_at'])) ?></td>
-                                    <td class="actions">
-                                        <a href="view_message.php?id=<?= $msg['id'] ?>&tab=<?= $activeTab ?>" class="action-btn" title="Podgląd">
-                                            <i class="fas fa-eye"></i>
-                                        </a>
-                                        <?php if ($activeTab === 'inbox'): ?>
-                                            <a href="send_message.php?reply_to=<?= $msg['id'] ?>" class="action-btn" title="Odpowiedz">
-                                                <i class="fas fa-reply"></i>
-                                            </a>
-                                        <?php endif; ?>
-                                        <a href="messages.php?tab=<?= $activeTab ?>&action=delete&message_ids[]=<?= $msg['id'] ?>" 
-                                           class="action-btn delete-btn" 
-                                           title="Usuń" 
-                                           onclick="return confirm('Czy na pewno chcesz usunąć tę wiadomość?')">
-                                            <i class="fas fa-trash"></i>
-                                        </a>
-                                    </td>
-                            </tr>
+                     <div class="messages-list">
+                         <?php foreach ($messages as $msg): ?>
+                            <div class="message-item <?= ($activeTab !== 'sent' && !$msg['is_read']) ? 'unread' : '' ?>" data-message-id="<?= $msg['id'] ?>">
+                                <div class="message-checkbox">
+                                    <input type="checkbox" name="message_ids[]" value="<?= $msg['id'] ?>" form="messages-form" class="message-checkbox-input">
+                                </div>
+                                <div class="message-status">
+                                    <?php if ($activeTab !== 'sent' && !$msg['is_read']): ?>
+                                        <i class="fas fa-envelope status-icon unread-icon" title="Nieprzeczytana"></i>
+                                    <?php else: ?>
+                                        <i class="fas fa-envelope-open status-icon read-icon" title="Przeczytana"></i>
+                                    <?php endif; ?>
+                                </div>
+                                <div class="message-sender">
+                                     <?php if ($activeTab === 'sent'): ?>
+                                         <a href="player.php?id=<?= $msg['receiver_id'] ?>" class="player-link">
+                                             <?= htmlspecialchars($msg['receiver_username']) ?>
+                                         </a>
+                                     <?php else: ?>
+                                         <a href="player.php?id=<?= $msg['sender_id'] ?>" class="player-link">
+                                             <?= htmlspecialchars($msg['sender_username']) ?>
+                                         </a>
+                                     <?php endif; ?>
+                                </div>
+                                <div class="message-subject">
+                                     <?= htmlspecialchars($msg['subject']) ?>
+                                </div>
+                                <div class="message-date">
+                                     <?= date('d.m.Y H:i', strtotime($msg['sent_at'])) ?>
+                                </div>
+                                <div class="message-actions">
+                                     <!-- Akcje zostaną obsłużone przez JS/AJAX lub pozostaną w formie linków -->
+                                     <button class="action-btn view-message-btn" data-message-id="<?= $msg['id'] ?>" title="Podgląd">
+                                          <i class="fas fa-eye"></i>
+                                     </button>
+                                     <?php if ($activeTab === 'inbox'): ?>
+                                         <a href="send_message.php?reply_to=<?= $msg['id'] ?>" class="action-btn reply-btn" title="Odpowiedz">
+                                             <i class="fas fa-reply"></i>
+                                         </a>
+                                     <?php endif; ?>
+                                     <button class="action-btn delete-message-btn" data-message-id="<?= $msg['id'] ?>" title="Usuń">
+                                          <i class="fas fa-trash"></i>
+                                     </button>
+                                </div>
+                            </div>
                         <?php endforeach; ?>
-                    </tbody>
-                </table>
+                     </div>
+                     
+                     <!-- Sekcja na szczegóły wiadomości - początkowo pusta -->
+                     <div class="message-details" id="message-details">
+                          <p>Wybierz wiadomość z listy, aby zobaczyć szczegóły.</p>
+                     </div>
+
                 </div>
                 
                 <!-- Paginacja -->
@@ -368,173 +234,420 @@ require 'header.php';
     </div>
 </div>
 
+<?php require 'footer.php'; ?>
+
+<script>
+    // js/messages.js
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const messagesList = document.querySelector('.messages-list');
+        const messageDetailsArea = document.getElementById('message-details'); // Assuming this div exists in messages.php
+
+        // Osadź user_id z PHP
+        const currentUserId = <?= json_encode($user_id) ?>;
+
+        if (messagesList && messageDetailsArea) {
+            // Event listener for clicking on message items in the list
+            messagesList.addEventListener('click', function(event) {
+                const messageItem = event.target.closest('.message-item');
+                const viewButton = event.target.closest('.view-message-btn');
+
+                // Check if a message item was clicked or the view button within it
+                // Ensure the click is not inside the checkbox or action buttons that have their own handlers
+                const isCheckboxClick = event.target.classList.contains('message-checkbox-input');
+                const isActionButton = event.target.closest('.action-btn'); // Check if any action button was clicked
+
+                if (messageItem && !isCheckboxClick && !isActionButton) {
+                     const messageId = messageItem.dataset.messageId;
+
+                    if (messageId) {
+                        // Prevent default link behavior if clicked element is a link
+                        if (event.target.tagName === 'A') {
+                            event.preventDefault();
+                        }
+
+                        // Load message details
+                        loadMessageDetails(messageId);
+                    }
+                } else if (viewButton) { // Handle clicks specifically on the view button
+                     const messageId = viewButton.dataset.messageId;
+                     if (messageId) {
+                          event.preventDefault(); // Prevent default button behavior
+                          loadMessageDetails(messageId);
+                     }
+                }
+            });
+
+            // Function to load message details via AJAX
+            function loadMessageDetails(messageId) {
+                // Show a loading indicator (optional)
+                messageDetailsArea.innerHTML = '<p>Ładowanie wiadomości...</p>';
+                messageDetailsArea.classList.add('loading');
+
+                // Fetch message details from view_message.php
+                // Pass the current tab to view_message.php for correct 'Powrót' link if needed, and for actions
+                const urlParams = new URLSearchParams(window.location.search);
+                const currentTab = urlParams.get('tab') || 'inbox';
+                fetch(`view_message.php?id=${messageId}&tab=${encodeURIComponent(currentTab)}`, {
+                    method: 'GET',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest' // Indicate AJAX request
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) {
+                         throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    messageDetailsArea.classList.remove('loading');
+
+                    if (data.success) {
+                        // Render message details HTML
+                        renderMessageDetails(data.messageData);
+                        // Mark message as read in the list UI
+                        const messageItem = messagesList.querySelector(`.message-item[data-message-id='${messageId}']`);
+                        if (messageItem && data.messageData && data.messageData.is_read) {
+                             messageItem.classList.remove('unread');
+                             const statusIcon = messageItem.querySelector('.status-icon');
+                             if(statusIcon) {
+                                 statusIcon.classList.remove('fa-envelope', 'unread-icon');
+                                 statusIcon.classList.add('fa-envelope-open', 'read-icon');
+                                 statusIcon.title = 'Przeczytana';
+                             }
+                        }
+                        // TODO: Update unread counts in tabs
+
+                    } else {
+                        // Handle error loading details
+                        messageDetailsArea.innerHTML = `<p class="error-message">${data.message || 'Nie udało się załadować wiadomości.'}</p>`;
+                        console.error('Error loading message details:', data.message);
+                    }
+                })
+                .catch(error => {
+                    messageDetailsArea.classList.remove('loading');
+                    messageDetailsArea.innerHTML = '<p class="error-message">Wystąpił błąd komunikacji podczas ładowania wiadomości.</p>';
+                    console.error('Fetch error:', error);
+                });
+            }
+
+            // Function to render message details HTML (create the HTML structure from JSON data)
+            function renderMessageDetails(messageData) {
+                // Determine tab name for return link
+                 const urlParams = new URLSearchParams(window.location.search);
+                 const currentTab = urlParams.get('tab') || 'inbox';
+                 let returnTabName = '';
+                 switch(currentTab) {
+                      case 'inbox': returnTabName = 'Odebranych'; break;
+                      case 'sent': returnTabName = 'Wysłanych'; break;
+                      case 'archive': returnTabName = 'Archiwum'; break;
+                      default: returnTabName = 'Wiadomości';
+                 }
+
+                // Basic HTML structure - adapt this to match desired look
+                let detailsHtml = `
+                    <div class="message-view-container" data-message-id="${messageData.id}">
+                        <div class="message-header">
+                            <div class="message-nav">
+                                <a href="messages.php?tab=${encodeURIComponent(currentTab)}" class="btn btn-secondary">
+                                    <i class="fas fa-arrow-left"></i> Powrót do ${returnTabName}
+                                </a>
+
+                                <div class="message-actions">
+                                    ${messageData.receiver_id == currentUserId ? `
+                                        <a href="send_message.php?reply_to=${messageData.id}" class="btn btn-primary">
+                                            <i class="fas fa-reply"></i> Odpowiedz
+                                        </a>
+                                    ` : ''}
+
+                                    <button class="btn btn-danger action-button" data-action="delete" data-message-id="${messageData.id}" data-confirm="Czy na pewno chcesz usunąć tę wiadomość?">
+                                        <i class="fas fa-trash"></i> Usuń
+                                    </button>
+
+                                    ${messageData.receiver_id == currentUserId ? `
+                                        ${currentTab !== 'archive' ? `
+                                            <button class="btn btn-secondary action-button" data-action="archive" data-message-id="${messageData.id}">
+                                                <i class="fas fa-archive"></i> Archiwizuj
+                                            </button>
+                                        ` : `
+                                            <button class="btn btn-secondary action-button" data-action="unarchive" data-message-id="${messageData.id}">
+                                                <i class="fas fa-inbox"></i> Przywróć
+                                            </button>
+                                        `}
+                                    ` : ''}
+                                </div>
+                            </div>
+
+                            <h2>${escapeHTML(messageData.subject)}</h2>
+                        </div>
+
+                        <div class="message-meta">
+                            <div class="message-participants">
+                                <div class="sender">
+                                    <strong>Od:</strong>
+                                    <a href="player.php?id=${messageData.sender_id}" class="player-link">
+                                        ${escapeHTML(messageData.sender_username)}
+                                    </a>
+                                </div>
+                                <div class="receiver">
+                                    <strong>Do:</strong>
+                                    <a href="player.php?id=${messageData.receiver_id}" class="player-link">
+                                        ${escapeHTML(messageData.receiver_username)}
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="message-date">
+                                <strong>Data:</strong> ${formatDateTime(messageData.sent_at)}
+                            </div>
+                        </div>
+
+                        <div class="message-content">
+                            ${formatMessageBody(messageData.body)}
+                        </div>
+                    </div>
+                `;
+
+                messageDetailsArea.innerHTML = detailsHtml;
+            }
+
+            // Helper function to format date and time
+            function formatDateTime(datetimeString) {
+                const date = new Date(datetimeString);
+                const day = String(date.getDate()).padStart(2, '0');
+                const month = String(date.getMonth() + 1).padStart(2, '0'); // Month is 0-indexed
+                const year = date.getFullYear();
+                const hours = String(date.getHours()).padStart(2, '0');
+                const minutes = String(date.getMinutes()).padStart(2, '0');
+                return `${day}.${month}.${year} ${hours}:${minutes}`;
+            }
+
+            // Helper function to format message body (e.g., replace newlines)
+            function formatMessageBody(body) {
+                return escapeHTML(body).replace(/\n/g, '<br>');
+            }
+
+            // Helper function to escape HTML characters to prevent XSS
+            function escapeHTML(str) {
+                const div = document.createElement('div');
+                div.appendChild(document.createTextNode(str));
+                return div.innerHTML;
+            }
+
+            // --- Event listener for actions within the loaded message details ---
+            // Using event delegation on the details area
+            messageDetailsArea.addEventListener('click', function(event) {
+                const actionButton = event.target.closest('.action-button');
+                if (actionButton) {
+                    const action = actionButton.dataset.action;
+                    const messageId = actionButton.dataset.messageId;
+                    const confirmMessage = actionButton.dataset.confirm;
+
+                    if (confirmMessage && !confirm(confirmMessage)) {
+                        return; // Anuluj akcję jeśli użytkownik nie potwierdził
+                    }
+
+                    // Perform the action via AJAX POST
+                    performMessageAction(messageId, action);
+                }
+            });
+
+            // Function to perform message actions via AJAX POST
+            function performMessageAction(messageId, action) {
+                // Show loading/disabling feedback (optional)
+
+                const urlParams = new URLSearchParams(window.location.search);
+                const currentTab = urlParams.get('tab') || 'inbox';
+
+                fetch('view_message.php?id=' + messageId + '&tab=' + encodeURIComponent(currentTab), {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-Requested-With': 'XMLHttpRequest' // Indicate AJAX request
+                    },
+                    body: new URLSearchParams({
+                        action: action,
+                        message_id: messageId,
+                        // Add CSRF token if implemented
+                        // csrf_token: 'your_token_here'
+                    })
+                })
+                .then(response => {
+                     if (!response.ok) {
+                         throw new Error(`HTTP error! status: ${response.status}`);
+                     }
+                     return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        alert(data.message); // Show success message
+                        if (data.redirect) {
+                            // Redirect if the action requires changing the view (e.g., delete, archive, unarchive)
+                            window.location.href = data.redirect; // This will reload messages.php with correct tab
+                        } else {
+                            // If no redirect (e.g., mark as read/unread), update UI locally
+                            // For mark_read/mark_unread, we need to update the message item class and status icon
+                            if (action === 'mark_read' || action === 'mark_unread') {
+                                const messageItem = messagesList.querySelector(`.message-item[data-message-id='${messageId}']`);
+                                if (messageItem) {
+                                     if (action === 'mark_read') {
+                                         messageItem.classList.remove('unread');
+                                     } else { // mark_unread
+                                         messageItem.classList.add('unread');
+                                     }
+                                     const statusIcon = messageItem.querySelector('.status-icon');
+                                     if(statusIcon) { // Update icon based on new read status
+                                          if (messageItem.classList.contains('unread')) {
+                                             statusIcon.classList.remove('fa-envelope-open', 'read-icon');
+                                             statusIcon.classList.add('fa-envelope', 'unread-icon');
+                                             statusIcon.title = 'Nieprzeczytana';
+                                          } else {
+                                             statusIcon.classList.remove('fa-envelope', 'unread-icon');
+                                             statusIcon.classList.add('fa-envelope-open', 'read-icon');
+                                             statusIcon.title = 'Przeczytana';
+                                          }
+                                     }
+                                }
+                            }
+                            // Clear the details area or update it if needed
+                            messageDetailsArea.innerHTML = '<p>Wybierz wiadomość z listy, aby zobaczyć szczegóły.</p>'; // Clear details
+                            // TODO: Update message counts in tabs after any action
+                        }
+
+                    } else {
+                        alert('Błąd: ' + (data.message || 'Nie udało się wykonać akcji.'));
+                    }
+                })
+                .catch(error => {
+                    console.error('Action fetch error:', error);
+                    alert('Wystąpił błąd komunikacji podczas wykonywania akcji.');
+                });
+            }
+
+            // --- Bulk Actions --- (Adapt the existing form submission)
+            const messagesForm = document.getElementById('messages-form');
+            const bulkActionSelect = document.getElementById('bulk-action');
+            const bulkApplyButton = document.getElementById('bulk-apply');
+            const messageCheckboxes = messagesList ? messagesList.querySelectorAll('.message-checkbox-input') : [];
+
+            if (messagesForm && bulkActionSelect && bulkApplyButton && messageCheckboxes.length > 0) {
+
+                 // Enable/disable apply button based on selection
+                messagesList.addEventListener('change', function(event) {
+                    if (event.target.classList.contains('message-checkbox-input')) {
+                        const anyChecked = Array.from(messageCheckboxes).some(checkbox => checkbox.checked);
+                        bulkApplyButton.disabled = !anyChecked;
+                    }
+                });
+
+                messagesForm.addEventListener('submit', function(event) {
+                    event.preventDefault(); // Prevent default form submission
+
+                    const selectedAction = bulkActionSelect.value;
+                    const selectedMessageIds = Array.from(messageCheckboxes)
+                        .filter(checkbox => checkbox.checked)
+                        .map(checkbox => checkbox.value);
+
+                    if (!selectedAction) {
+                        alert('Proszę wybrać akcję.');
+                        return;
+                    }
+
+                    if (selectedMessageIds.length === 0) {
+                        alert('Proszę wybrać wiadomości.');
+                        return;
+                    }
+
+                    // Optional: Add confirmation for delete action
+                    if (selectedAction === 'delete' && !confirm('Czy na pewno chcesz usunąć wybrane wiadomości?')) {
+                        return;
+                    }
+
+                    // Perform bulk action via AJAX POST to messages.php
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const currentTab = urlParams.get('tab') || 'inbox';
+
+                    // Add loading state or disable buttons
+                    bulkApplyButton.disabled = true;
+
+                    fetch(`messages.php?tab=${encodeURIComponent(currentTab)}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                            'X-Requested-With': 'XMLHttpRequest' // Indicate AJAX request
+                        },
+                        body: new URLSearchParams({
+                            action: selectedAction,
+                            message_ids: selectedMessageIds,
+                            // Add CSRF token if implemented
+                            // csrf_token: 'your_token_here'
+                        })
+                    })
+                    .then(response => {
+                         if (!response.ok) {
+                              throw new Error(`HTTP error! status: ${response.status}`);
+                         }
+                         // Assuming messages.php POST will return JSON for AJAX requests
+                         // Need to verify this in messages.php
+                         return response.json();
+                    })
+                    .then(data => {
+                         // Remove loading state or re-enable buttons
+                         bulkApplyButton.disabled = false;
+
+                        if (data.success) {
+                            alert(data.message || 'Akcja wykonana pomyślnie.');
+                            // TODO: Update the UI based on the bulk action without full reload
+                            // For now, reload the page to see changes
+                             window.location.reload(); // Reloads with current tab and page
+                        } else {
+                            alert('Błąd: ' + (data.message || 'Wystąpił błąd podczas wykonywania akcji masowej.'));
+                        }
+                    })
+                    .catch(error => {
+                        bulkApplyButton.disabled = false;
+                        console.error('Bulk action fetch error:', error);
+                        alert('Wystąpił błąd komunikacji podczas wykonywania akcji masowej.');
+                    });
+                });
+
+            } else if (messagesForm && bulkActionSelect && bulkApplyButton) {
+                 // Handle case where there are no messages to select
+                 bulkApplyButton.disabled = true;
+            }
+
+
+            // Initial state: Check URL for a specific message ID and load it if present
+            const urlParams = new URLSearchParams(window.location.search);
+            const initialMessageId = urlParams.get('id');
+            if (initialMessageId) {
+                loadMessageDetails(initialMessageId);
+            } else {
+                 // If no message ID in URL, show placeholder text in details area
+                 // Only set if the area is empty (i.e., not already populated by a non-AJAX call, which won't happen now)
+                 if(messageDetailsArea.innerHTML.trim() === '<p>Wybierz wiadomość z listy, aby zobaczyć szczegóły.</p>' || messageDetailsArea.innerHTML.trim() === '') {
+                     messageDetailsArea.innerHTML = '<p>Wybierz wiadomość z listy, aby zobaczyć szczegóły.</p>';
+                 }
+            }
+
+        }
+    });
+</script>
+
 <style>
-.messages-tabs {
-    display: flex;
-    margin-bottom: 20px;
-    border-bottom: 1px solid var(--beige-darker);
-}
-
-.messages-tabs .tab {
-    padding: 10px 20px;
-    text-decoration: none;
-    color: var(--brown-secondary);
-    border: 1px solid var(--beige-darker);
-    border-bottom: none;
-    border-radius: 5px 5px 0 0;
-    margin-right: 5px;
-    background-color: var(--beige-medium);
-    position: relative;
-    transition: all 0.3s ease;
-}
-
-.messages-tabs .tab.active {
-    background-color: var(--beige-light);
-    color: var(--brown-primary);
-    border-bottom: 1px solid var(--beige-light);
-    margin-bottom: -1px;
-    font-weight: bold;
-}
-
-.messages-tabs .tab:hover {
-    background-color: var(--beige-light);
-}
-
-.badge {
-    background-color: var(--brown-primary);
-    color: white;
-    border-radius: 50%;
-    padding: 2px 6px;
-    font-size: 11px;
-    margin-left: 5px;
-}
-
-.messages-toolbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-}
-
-.bulk-actions {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-}
-
-.messages-container {
-    background-color: var(--beige-light);
-    border-radius: var(--border-radius-medium);
-    box-shadow: var(--box-shadow-default);
-    overflow: hidden;
-}
-
-.messages-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-.messages-table th, .messages-table td {
-    padding: 12px 15px;
-    text-align: left;
-    border-bottom: 1px solid var(--beige-darker);
-}
-
-.messages-table th {
-    background-color: var(--beige-dark);
-    color: var(--brown-secondary);
-    font-weight: bold;
-}
-
-.messages-table tr:hover {
-    background-color: rgba(255, 255, 255, 0.4);
-}
-
-.messages-table tr.unread {
-    background-color: rgba(255, 255, 255, 0.7);
-    font-weight: bold;
-}
-
-.messages-table .checkbox-col {
-    width: 30px;
-}
-
-.messages-table .status-col {
-    width: 30px;
-}
-
-.messages-table .sender-col,
-.messages-table .receiver-col {
-    width: 150px;
-}
-
-.messages-table .date-col {
-    width: 120px;
-}
-
-.messages-table .actions-col {
-    width: 100px;
-    text-align: right;
-}
-
-.status-icon {
-    font-size: 16px;
-}
-
-.unread-icon {
-    color: var(--brown-primary);
-}
-
-.read-icon {
-    color: #999;
-}
-
-.action-btn {
-    color: var(--brown-secondary);
-    text-decoration: none;
-    margin-left: 10px;
-    font-size: 14px;
-}
-
-.action-btn:hover {
-    color: var(--brown-primary);
-}
-
-.delete-btn:hover {
-    color: var(--red-error);
-}
-
-.player-link {
-    color: var(--brown-secondary);
-    text-decoration: none;
-}
-
-.player-link:hover {
-    text-decoration: underline;
-    color: var(--brown-primary);
-}
-
-.no-messages {
-    background-color: var(--beige-light);
-    padding: 30px;
-    text-align: center;
-    border-radius: var(--border-radius-medium);
-    color: #999;
-    font-style: italic;
-}
-
-/* Pagination styles */
+/* Style paginacji (skopiowane z messages.php, jeśli spójne) */
+/*
 .pagination {
     display: flex;
     justify-content: center;
-    margin-top: 20px;
-    gap: 10px;
+    margin-top: var(--spacing-md);
+    gap: var(--spacing-sm);
 }
 
 .pagination .page-link {
-    padding: 5px 10px;
+    padding: var(--spacing-xs) var(--spacing-sm);
     border: 1px solid var(--beige-darker);
-    border-radius: 5px;
+    border-radius: var(--border-radius-small);
     text-decoration: none;
     color: var(--brown-primary);
     background-color: var(--beige-light);
@@ -552,57 +665,5 @@ require 'header.php';
     border-color: var(--brown-primary);
     cursor: default;
 }
-</style>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Obsługa "Zaznacz wszystkie"
-    const selectAll = document.getElementById('select-all');
-    const messageCheckboxes = document.querySelectorAll('.message-checkbox');
-    const bulkAction = document.getElementById('bulk-action');
-    const bulkApply = document.getElementById('bulk-apply');
-    
-    if (selectAll) {
-        selectAll.addEventListener('change', function() {
-            messageCheckboxes.forEach(checkbox => {
-                checkbox.checked = selectAll.checked;
-            });
-            updateBulkActionsState();
-        });
-    }
-    
-    // Aktualizacja stanu przycisku "Wykonaj" w zależności od zaznaczonych wiadomości
-    messageCheckboxes.forEach(checkbox => {
-        checkbox.addEventListener('change', function() {
-            updateBulkActionsState();
-            
-            // Zaktualizuj stan "Zaznacz wszystkie", jeśli wszystkie wiadomości są zaznaczone
-            if (selectAll) {
-                let allChecked = true;
-                messageCheckboxes.forEach(cb => {
-                    if (!cb.checked) allChecked = false;
-                });
-                selectAll.checked = allChecked;
-            }
-        });
-    });
-    
-    function updateBulkActionsState() {
-        let anyChecked = false;
-        messageCheckboxes.forEach(checkbox => {
-            if (checkbox.checked) anyChecked = true;
-        });
-        
-        bulkApply.disabled = !anyChecked || bulkAction.value === '';
-    }
-    
-    // Aktualizacja stanu przycisku po zmianie wybranej akcji
-    if (bulkAction) {
-        bulkAction.addEventListener('change', function() {
-            updateBulkActionsState();
-        });
-    }
-});
-</script>
-
-<?php require 'footer.php'; ?> 
+*/
+</style> 

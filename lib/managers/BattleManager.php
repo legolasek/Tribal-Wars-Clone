@@ -912,4 +912,71 @@ class BattleManager
         
         return sprintf('%02d:%02d:%02d', $hours, $minutes, $seconds);
     }
+
+    /**
+     * Pobiera listę raportów bitewnych dla użytkownika z paginacją.
+     *
+     * @param int $userId ID użytkownika.
+     * @param int $limit Liczba raportów na stronę.
+     * @param int $offset Offset dla paginacji.
+     * @return array Lista raportów bitewnych.
+     */
+    public function getBattleReportsForUser(int $userId, int $limit, int $offset): array
+    {
+        $reports = [];
+        $stmt = $this->conn->prepare("
+            SELECT
+                br.report_id, br.attacker_won, br.battle_time as created_at,
+                sv.name as source_village_name, sv.x_coord as source_x, sv.y_coord as source_y, sv.user_id as source_user_id,
+                tv.name as target_village_name, tv.x_coord as target_x, tv.y_coord as target_y, tv.user_id as target_user_id,
+                u_attacker.username as attacker_name, u_defender.username as defender_name,
+                r.is_read -- Pobieramy status odczytania z tabeli reports
+            FROM battle_reports br
+            JOIN villages sv ON br.source_village_id = sv.id
+            JOIN villages tv ON br.target_village_id = tv.id
+            JOIN users u_attacker ON sv.user_id = u_attacker.id
+            JOIN users u_defender ON tv.user_id = u_defender.id
+            JOIN reports r ON br.report_id = r.id AND r.user_id = ? -- Łączymy z tabelą reports
+            WHERE sv.user_id = ? OR tv.user_id = ?
+            ORDER BY br.battle_time DESC
+            LIMIT ?, ?
+        ");
+        // Bind parametry w kolejności: r.user_id, sv.user_id, tv.user_id, limit, offset
+        $stmt->bind_param("iiiii", $userId, $userId, $userId, $limit, $offset);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        while ($row = $result->fetch_assoc()) {
+            // Określ, czy użytkownik był atakującym czy broniącym
+            $row['is_attacker'] = ($row['source_user_id'] == $userId);
+            // Formatuj datę (można też zrobić w frontendzie)
+            $row['formatted_date'] = date('d.m.Y H:i:s', strtotime($row['created_at']));
+            $reports[] = $row;
+        }
+        $stmt->close();
+
+        return $reports;
+    }
+
+    /**
+     * Pobiera całkowitą liczbę raportów bitewnych dla użytkownika.
+     *
+     * @param int $userId ID użytkownika.
+     * @return int Całkowita liczba raportów.
+     */
+    public function getTotalBattleReportsForUser(int $userId): int
+    {
+        $countQuery = "SELECT COUNT(*) as total
+                     FROM battle_reports br
+                     JOIN villages sv ON br.source_village_id = sv.id
+                     JOIN villages tv ON br.target_village_id = tv.id
+                     WHERE sv.user_id = ? OR tv.user_id = ?";
+        $countStmt = $this->conn->prepare($countQuery);
+        $countStmt->bind_param("ii", $userId, $userId);
+        $countStmt->execute();
+        $countResult = $countStmt->get_result()->fetch_assoc();
+        $countStmt->close();
+
+        return $countResult['total'] ?? 0;
+    }
 } 

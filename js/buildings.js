@@ -338,7 +338,8 @@ document.addEventListener('DOMContentLoaded', () => {
                          case 'manage_village':
                              // TODO: Call main building management panel function
                               // Note: Main building action might display alongside details or replace. Adjust display logic.
-                              fetchAndRenderMainBuildingPanel(currentVillageId, buildingInternalName);
+                              // Assumes fetchAndRenderMainBuildingPanel is available (e.g., in main_building.js and included)
+                             fetchAndRenderMainBuildingPanel(currentVillageId, buildingInternalName);
                              break;
                          case 'noble':
                               // TODO: Call noble panel function
@@ -608,3 +609,8 @@ document.addEventListener('DOMContentLoaded', () => {
          console.warn('Village ID not available. Cannot initialize building queue.');
      }
 });
+
+// Funkcja do formatowania liczb z separatorami
+function formatNumber(number) {
+    return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+}

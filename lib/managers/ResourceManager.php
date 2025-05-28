@@ -1,4 +1,7 @@
 <?php
+// require_once 'lib/BuildingManager.php'; // Old path
+require_once __DIR__ . '/BuildingManager.php'; // Poprawiona ścieżka
+
 class ResourceManager {
     private $conn;
     private $buildingManager;

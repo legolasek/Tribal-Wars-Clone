@@ -6,9 +6,9 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
 require_once __DIR__ . '/lib/functions.php';
 // If user is logged in, prepare resource display
 if (isset($_SESSION['user_id'])) {
-    require_once __DIR__ . '/lib/VillageManager.php';
-    require_once __DIR__ . '/lib/ResourceManager.php'; // Potrzebujemy ResourceManager do produkcji
-    require_once __DIR__ . '/lib/BuildingManager.php'; // Poprawiona ścieżka
+    require_once __DIR__ . '/lib/managers/VillageManager.php';
+    require_once __DIR__ . '/lib/managers/ResourceManager.php'; // Potrzebujemy ResourceManager do produkcji
+    require_once __DIR__ . '/lib/managers/BuildingManager.php'; // Poprawiona ścieżka
     require_once __DIR__ . '/lib/managers/BuildingConfigManager.php'; // Ta ścieżka jest poprawna
 
     $vm = new VillageManager($conn);

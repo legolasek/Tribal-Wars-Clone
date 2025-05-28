@@ -1,6 +1,11 @@
 <?php
 require 'init.php';
-// require_once 'lib/VillageManager.php'; // VillageManager might not be needed here if we only handle message sending
+validateCSRF();
+
+require_once __DIR__ . '/lib/managers/UserManager.php'; // For getting recipient user ID
+require_once __DIR__ . '/lib/managers/MessageManager.php'; // For message operations
+require_once __DIR__ . '/lib/managers/NotificationManager.php'; // For notifications
+require_once __DIR__ . '/lib/functions.php'; // For addNotification (if still needed, or move to manager)
 
 // Zabezpieczenie dostępu - tylko dla zalogowanych
 if (!isset($_SESSION['user_id'])) {
@@ -17,12 +22,11 @@ if (!isset($_SESSION['user_id'])) {
 
 $user_id = $_SESSION['user_id'];
 $username = $_SESSION['username'];
-// $message = ''; // Zmienna $message do wyświetlania błędów w tradycyjny sposób nie będzie używana przy AJAX
 
-// Inicjalizacja menedżera wiosek i pobranie zasobów - Usunięto, jeśli niepotrzebne
-//$villageManager = new VillageManager($conn);
-//$village_id = $villageManager->getFirstVillage($user_id);
-//$village = $villageManager->getVillageInfo($village_id);
+// Inicjalizacja menedżerów
+$userManager = new UserManager($conn);
+$messageManager = new MessageManager($conn);
+$notificationManager = new NotificationManager($conn); // Assuming constructor takes $conn
 
 // Obsługa odpowiedzi na wiadomość (pre-fill formularza)
 $reply_to = isset($_GET['reply_to']) ? (int)$_GET['reply_to'] : 0;
@@ -33,6 +37,23 @@ $prefilled_subject = '';
 
 if ($reply_to > 0) {
     // Pobierz oryginalną wiadomość (tylko jeśli użytkownik jest odbiorcą)
+    // Użyj MessageManager do pobrania wiadomości
+    $original_message = $messageManager->getMessageByIdForUser($reply_to, $user_id); // Assuming this method checks receiver_id
+
+    if ($original_message) {
+        $recipient_username = $userManager->getUserById($original_message['sender_id'])['username'] ?? ''; // Get sender's username
+        $original_subject = $original_message['subject'];
+        $original_body = $original_message['body'];
+        
+        // Dodaj "Re:" na początku tematu, jeśli jeszcze go nie ma
+        if (strpos($original_subject, 'Re:') !== 0) {
+            $prefilled_subject = 'Re: ' . $original_subject;
+        } else {
+            $prefilled_subject = $original_subject;
+        }
+    }
+    // Remove manual database query
+    /*
     $stmt = $conn->prepare("
         SELECT m.subject, m.body, u.username 
         FROM messages m
@@ -56,6 +77,7 @@ if ($reply_to > 0) {
         }
     }
     $stmt->close();
+    */
 }
 
 // Obsługa wysyłania wiadomości (AJAX POST)
@@ -73,43 +95,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $response['message'] = 'Wszystkie pola są wymagane!';
     } else {
         // Znajdź odbiorcę po nazwie użytkownika
-        $stmt = $conn->prepare("SELECT id FROM users WHERE username = ? LIMIT 1");
-        $stmt->bind_param("s", $receiver_username);
-        $stmt->execute();
-        $result = $stmt->get_result();
+        // Użyj UserManager do znalezienia odbiorcy
+        $receiver = $userManager->getUserByUsername($receiver_username);
 
-        if ($row = $result->fetch_assoc()) {
-            $receiver_id = $row['id'];
-            $stmt->close();
-            
+        if ($receiver) {
+            $receiver_id = $receiver['id'];
+
             // Sprawdź, czy nie wysyłasz wiadomości do samego siebie
             if ($receiver_id == $user_id) {
                 $response['message'] = 'Nie możesz wysłać wiadomości do samego siebie.';
             } else {
-            // Wyślij wiadomość
-                $stmt2 = $conn->prepare("
-                    INSERT INTO messages (sender_id, receiver_id, subject, body, is_read, is_archived, is_sender_deleted) 
-                    VALUES (?, ?, ?, ?, 0, 0, 0)
-                ");
-            $stmt2->bind_param("iiss", $user_id, $receiver_id, $subject, $body);
-                
-            if ($stmt2->execute()) {
-                    $new_message_id = $conn->insert_id;
-                $stmt2->close();
-                    
-                    // Dodaj powiadomienie dla odbiorcy
-                    $notification_message = "Otrzymałeś nową wiadomość od {$username}";
-                    $notification_link = "view_message.php?id=" . $new_message_id;
-                    addNotification($conn, $receiver_id, 'info', $notification_message, $notification_link);
-                    
+                // Wyślij wiadomość przy użyciu MessageManager
+                $sendMessageResult = $messageManager->sendMessage($user_id, $receiver_id, $subject, $body);
+
+                if ($sendMessageResult['success']) {
                     $response['success'] = true;
                     $response['message'] = 'Wiadomość wysłana pomyślnie!';
-                    $response['newMessageId'] = $new_message_id;
-                    // Docelowo można przekierować lub odświeżyć listę wiadomości po stronie klienta
-                     $response['redirect'] = 'messages.php?tab=sent'; // Tymczasowe przekierowanie
+                    $response['newMessageId'] = $sendMessageResult['message_id'];
+                    $response['redirect'] = 'messages.php?tab=sent'; // Tymczasowe przekierowanie
 
-            } else {
-                    $response['message'] = 'Błąd podczas wysyłania wiadomości: ' . $conn->error;
+                     // Dodaj powiadomienie dla odbiorcy przy użyciu NotificationManager
+                     $notification_message = "Otrzymałeś nową wiadomość od {$username}";
+                     $notification_link = "view_message.php?id=" . $sendMessageResult['message_id'];
+                     $notificationManager->addNotification($receiver_id, 'info', $notification_message, $notification_link); // Assuming method signature
+
+                } else {
+                    $response['message'] = 'Błąd podczas wysyłania wiadomości.';
+                    // Optionally, get more detailed error from $sendMessageResult if provided
                 }
             }
         } else {
@@ -153,7 +165,7 @@ ob_start(); // Rozpocznij buforowanie wyjścia
             <label for="body">Treść wiadomości:</label>
             <textarea id="body" name="body" rows="10" required><?php 
             if ($reply_to > 0 && !empty($original_body)) {
-                echo "\n\n---\nW dniu " . date('d.m.Y', strtotime($original_body['sent_at'] ?? 'now')) . ", " . htmlspecialchars($recipient_username) . " napisał(a):\n"; // Użyj daty wysłania oryginalnej wiadomości
+                echo "\n\n---\nW dniu " . date('d.m.Y', strtotime($original_message['sent_at'] ?? 'now')) . ", " . htmlspecialchars($recipient_username) . " napisał(a):\n"; // Użyj daty wysłania originalnej wiadomości
                 // Dodaj cytowany tekst z wcięciem
                 $quoted_body = '';
                 $lines = explode("\n", $original_body);
@@ -194,70 +206,49 @@ ob_start(); // Rozpocznij buforowanie wyjścia
 $formHtml = ob_get_clean(); // Pobierz zawartość bufora i zakończ buforowanie
 
 // Sprawdź, czy żądanie jest AJAX
-$is_ajax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
+$is_ajax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest');
 
 if ($is_ajax) {
     // Zwróć tylko HTML formularza (jeśli potrzebne np. do popupu) lub tylko JSON po wysyłce POST
     if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-         header('Content-Type: application/json');
+         // If it's a GET request (e.g., to get the form HTML for a popup)
          echo json_encode([
-             'success' => true,
-             'html' => $formHtml,
-             'message' => 'Formularz ładowany pomyślnie.'
+             'status' => 'success',
+             'html' => $formHtml
          ]);
-    } else if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-         // Odpowiedź JSON dla POST została już wysłana na początku
-         // Nic więcej nie robimy tutaj.
-    } else {
-        header('Content-Type: application/json');
-        echo json_encode(['success' => false, 'message' => 'Nieobsługiwane żądanie AJAX.']);
+         exit();
     }
-    exit(); // Zakończ skrypt po odpowiedzi AJAX
-
+    // POST requests are handled and exit earlier
 } else {
-    // Dołącz pełny szablon dla bezpośredniego dostępu (GET request)
+    // If it's a standard page request (not AJAX)
     $pageTitle = 'Napisz wiadomość';
     require 'header.php';
-?>
-
-<div id="game-container">
-    <header id="main-header">
-        <div class="header-title">
-            <span class="game-logo">✉️</span>
-            <span>Napisz wiadomość</span>
+    ?>
+    <div id="game-container">
+        <?php // Add header ?>
+         <header id="main-header">
+             <div class="header-title">
+                 <span class="game-logo">📧</span>
+                 <span>Nowa wiadomość</span>
+             </div>
+             <?php // User section will be included by header.php if logic is there ?>
+             <?php if (isset($_SESSION['user_id']) && ($currentUserVillage = $villageManager->getFirstVillage($_SESSION['user_id']))): ?>
+              <div class="header-user">
+                  Gracz: <?= htmlspecialchars($_SESSION['username']) ?><br>
+                  <span class="village-name-display" data-village-id="<?= $currentUserVillage['id'] ?>"><?= htmlspecialchars($currentUserVillage['name']) ?> (<?= $currentUserVillage['x_coord'] ?>|<?= $currentUserVillage['y_coord'] ?>)</span>
+              </div>
+             <?php endif; ?>
+         </header>
+        <div id="main-content">
+            <main>
+                <?= $formHtml // Output the buffered form HTML ?>
+            </main>
         </div>
-        <div class="header-user">
-            Gracz: <?= htmlspecialchars($username) ?>
-            <div class="header-links">
-                <a href="game.php">Przegląd</a> | 
-                <a href="messages.php">Wiadomości</a> | 
-                <a href="logout.php">Wyloguj</a>
-            </div>
-        </div>
-    </header>
-
-    <div id="main-content">
-        <nav id="sidebar">
-            <ul>
-                <li><a href="game.php">Przegląd</a></li>
-                <li><a href="map.php">Mapa</a></li>
-                <li><a href="reports.php">Raporty</a></li>
-                <li><a href="messages.php" class="active">Wiadomości</a></li>
-                <li><a href="ranking.php">Ranking</a></li>
-                <li><a href="settings.php">Ustawienia</a></li>
-                <li><a href="logout.php">Wyloguj</a></li>
-            </ul>
-        </nav>
-        
-        <main>
-            <?= $formHtml ?>
-        </main>
     </div>
-</div>
-
-<?php
+    <?php
     require 'footer.php';
 }
+
 ?>
 
 <script>
