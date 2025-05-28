@@ -1,0 +1,949 @@
+// js/main.js - Główny plik JavaScript
+console.log('Skrypt JavaScript działa!');
+
+// Funkcja inicjalizująca timery budowy i rekrutacji
+function initializeBuildTimers() {
+    // Zatrzymaj wszystkie poprzednie timery przed inicjalizacją nowych
+    document.querySelectorAll('.build-timer').forEach(timerElement => {
+        if (timerElement.dataset.intervalId) {
+            clearInterval(parseInt(timerElement.dataset.intervalId));
+            delete timerElement.dataset.intervalId; // Usuń ID, aby można było zainicjować ponownie
+        }
+    });
+
+    const buildTimers = document.querySelectorAll('.build-timer');
+    buildTimers.forEach(timerElement => {
+        // Sprawdź, czy timer był już inicjalizowany w tej rundzie (po zatrzymaniu wszystkich)
+        if (!timerElement.dataset.intervalId) {
+            const endsAtTimestamp = parseInt(timerElement.dataset.endsAt, 10);
+            const isInBuildingPopup = timerElement.closest('.recruitment-queue') !== null;
+
+            function updateTimer() {
+                const now = Math.floor(Date.now() / 1000);
+                const remainingSeconds = endsAtTimestamp - now;
+
+                if (remainingSeconds <= 0) {
+                    timerElement.textContent = 'Ukończono!';
+                    
+                    // Jeśli timer jest w popupie rekrutacji, nie przeładowuj automatycznie
+                    if (!timerElement.dataset.reloaded && !isInBuildingPopup) {
+                        timerElement.dataset.reloaded = true;
+                        setTimeout(() => window.location.reload(), 1500);
+                    } else if (isInBuildingPopup) {
+                        // Dla timerów rekrutacji w popupach podświetl wiersz
+                        const row = timerElement.closest('tr');
+                        if (row) {
+                            row.classList.add('completed');
+                        }
+                    }
+                    
+                    // Zatrzymaj timer po zakończeniu
+                    if (timerElement.dataset.intervalId) {
+                        clearInterval(parseInt(timerElement.dataset.intervalId));
+                    }
+                    return;
+                }
+
+                const hours = Math.floor(remainingSeconds / 3600);
+                const minutes = Math.floor((remainingSeconds % 3600) / 60);
+                const seconds = remainingSeconds % 60;
+
+                timerElement.textContent = 
+                    `${hours.toString().padStart(2, '0')}:` +
+                    `${minutes.toString().padStart(2, '0')}:` +
+                    `${seconds.toString().padStart(2, '0')}`;
+            }
+
+            if (!isNaN(endsAtTimestamp)) {
+                updateTimer(); // Pierwsze uruchomienie
+                const intervalId = setInterval(updateTimer, 1000);
+                timerElement.dataset.intervalId = intervalId; // Zapisz ID interwału
+            }
+        }
+    });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Sprawdź, czy initialResources istnieje, w przeciwnym razie utwórz pusty obiekt
+    window.initialResources = window.initialResources || {
+        wood: 0,
+        clay: 0,
+        iron: 0,
+        last_update_timestamp: Math.floor(Date.now() / 1000),
+        warehouse_capacity: 1000
+    };
+    
+    // Aktualizacja surowców
+    const woodElement = document.getElementById('res-wood');
+    const clayElement = document.getElementById('res-clay');
+    const ironElement = document.getElementById('res-iron');
+    // const warehouseElement = document.getElementById('res-warehouse'); // ID nie istnieje w HTML
+    // const populationElement = document.getElementById('res-population'); // Jeśli będzie dynamiczna
+
+    let lastServerUpdateTimestamp = initialResources.last_update_timestamp;
+    let currentResources = {
+        wood: initialResources.wood,
+        clay: initialResources.clay,
+        iron: initialResources.iron,
+        warehouse_capacity: initialResources.warehouse_capacity
+    };
+    let productionRates = window.productionRates || {
+        wood: 0,
+        clay: 0,
+        iron: 0
+    };
+
+    function updateResourcesDisplay(currentWood, currentClay, currentIron) {
+        if (woodElement) woodElement.textContent = `Drewno ${Math.floor(currentWood)}`;
+        if (clayElement) clayElement.textContent = `Glina ${Math.floor(currentClay)}`;
+        if (ironElement) ironElement.textContent = `Żelazo ${Math.floor(currentIron)}`;
+        // Pojemność magazynu i populacja są na razie aktualizowane tylko przez PHP przy przeładowaniu
+        // if (warehouseElement) warehouseElement.textContent = `Pojemność: ${initialResources.warehouse_capacity}`;
+    }
+
+    function calculateProducedResources(elapsedSeconds) {
+        const woodProduced = (productionRates.wood / 3600) * elapsedSeconds;
+        const clayProduced = (productionRates.clay / 3600) * elapsedSeconds;
+        const ironProduced = (productionRates.iron / 3600) * elapsedSeconds;
+        return { woodProduced, clayProduced, ironProduced };
+    }
+
+    // Funkcja do pobierania surowców z serwera (AJAX)
+    function fetchResourcesFromServer() {
+        fetch('get_resources.php')
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    console.error('Błąd pobierania surowców:', data.error);
+                    return;
+                }
+                currentResources.wood = data.wood;
+                currentResources.clay = data.clay;
+                currentResources.iron = data.iron;
+                currentResources.warehouse_capacity = data.warehouse_capacity;
+                lastServerUpdateTimestamp = data.last_update_timestamp;
+                productionRates = data.production_rates;
+                updateResourcesDisplay(currentResources.wood, currentResources.clay, currentResources.iron);
+            })
+            .catch(err => {
+                console.error('Błąd połączenia z serwerem (surowce):', err);
+            });
+    }
+
+    // Nadpisuję updateResources, by korzystać z currentResources i productionRates
+    function updateResources() {
+        const now = Math.floor(Date.now() / 1000);
+        const elapsedSinceLastServerUpdate = now - lastServerUpdateTimestamp;
+
+        if (elapsedSinceLastServerUpdate > 0) {
+            const { woodProduced, clayProduced, ironProduced } = calculateProducedResources(elapsedSinceLastServerUpdate);
+            const currentWood = Math.min(currentResources.wood + woodProduced, currentResources.warehouse_capacity);
+            const currentClay = Math.min(currentResources.clay + clayProduced, currentResources.warehouse_capacity);
+            const currentIron = Math.min(currentResources.iron + ironProduced, currentResources.warehouse_capacity);
+            updateResourcesDisplay(currentWood, currentClay, currentIron);
+        }
+    }
+
+    // Aktualizuj surowce co sekundę (lokalnie)
+    if (woodElement && clayElement && ironElement) {
+        updateResources();
+        setInterval(updateResources, 1000);
+        // Co 10 sekund pobierz z serwera, by zsynchronizować licznik
+        setInterval(fetchResourcesFromServer, 10000);
+    }
+
+    // Odliczanie czasu budowy
+    const buildTimers = document.querySelectorAll('.build-timer'); // Użycie poprawnej klasy
+    buildTimers.forEach(timerElement => {
+        const endsAtTimestamp = parseInt(timerElement.dataset.endsAt, 10);
+        const listItem = timerElement.closest('li'); // Element li zawierający timer
+
+        function updateTimer() {
+            const now = Math.floor(Date.now() / 1000);
+            const remainingSeconds = endsAtTimestamp - now;
+
+            if (remainingSeconds <= 0) {
+                timerElement.textContent = 'Ukończono!';
+                // Można dodać automatyczne przeładowanie strony lub usunięcie elementu z kolejki
+                // np. listItem.remove(); lub window.location.reload();
+                // Dla celów demonstracyjnych, na razie zostawiamy tylko tekst.
+                // Przeładowanie strony nastąpi przy następnej akcji użytkownika lub automatycznie po pewnym czasie.
+                if (!timerElement.dataset.reloaded) { // Proste zabezpieczenie przed wielokrotnym przeładowaniem
+                    timerElement.dataset.reloaded = true;
+                    // Małe opóźnienie przed przeładowaniem, aby użytkownik zdążył zobaczyć "Ukończono"
+                    setTimeout(() => window.location.reload(), 1500);
+                }
+                return;
+            }
+
+            const hours = Math.floor(remainingSeconds / 3600);
+            const minutes = Math.floor((remainingSeconds % 3600) / 60);
+            const seconds = remainingSeconds % 60;
+
+            timerElement.textContent = 
+                `${hours.toString().padStart(2, '0')}:` + 
+                `${minutes.toString().padStart(2, '0')}:` + 
+                `${seconds.toString().padStart(2, '0')}`;
+        }
+
+        if (!isNaN(endsAtTimestamp)) {
+            updateTimer(); // Pierwsze uruchomienie
+            setInterval(updateTimer, 1000); // Aktualizuj co sekundę
+        }
+    });
+
+    // Referencje do popupu i tła
+    const buildingDetailsPopup = document.getElementById('building-details-popup');
+    const popupOverlay = document.getElementById('popup-overlay');
+    const popupBuildingName = document.getElementById('popup-building-name');
+    const popupBuildingLevel = document.getElementById('popup-building-level');
+    const popupBuildingInfo = document.getElementById('popup-building-info'); // Kontener na dodatkowe info
+    const popupUpgradeInfo = document.getElementById('popup-upgrade-info'); // Kontener na info o rozbudowie
+    const popupCloseBtn = document.getElementById('popup-close-btn');
+
+    // Pobierz ID wioski z atrybutu data-village-id
+    const villageViewGraphic = document.getElementById('village-view-graphic');
+    const villageId = villageViewGraphic ? villageViewGraphic.dataset.villageId : null;
+
+    if (!villageId) {
+        console.warn('Nie znaleziono ID wioski na stronie. Niektóre funkcje mogą być niedostępne.');
+        // Nie wyłączamy całego skryptu, pozwalamy na działanie innych funkcjonalności
+    }
+
+    // Funkcja do aktualizacji wyświetlanej kolejki budowy
+    function updateBuildingQueueDisplay(queueItems) {
+         const buildingQueueDiv = document.getElementById('building-queue');
+         if (!buildingQueueDiv) return;
+
+         let html = '<h3>Kolejka budowy:</h3>';
+         if (queueItems && queueItems.length > 0) {
+             queueItems.forEach(queueItem => {
+                 html += `<div class="queue-item" data-queue-id="${queueItem.id}">`;
+                 html += `<div>Rozbudowa <b>${queueItem.name_pl}</b> do poziomu ${queueItem.level_after}.`;
+                 html += ` Pozostały czas: <span class="build-timer" data-ends-at="${queueItem.ends_at}"></span></div>`;
+                 html += `<button class="cancel-button" data-queue-id="${queueItem.id}">Anuluj</button>`;
+                 html += '</div>';
+             });
+         } else {
+             html += '<p>Brak zleceń w kolejce budowy.</p>';
+         }
+         buildingQueueDiv.innerHTML = html;
+
+         // Zainicjuj ponownie timery po aktualizacji HTML
+         initializeBuildTimers();
+
+         // Dodaj event listener do przycisków Anuluj
+         const cancelButtons = buildingQueueDiv.querySelectorAll('.cancel-button');
+         cancelButtons.forEach(button => {
+             button.addEventListener('click', handleCancelButtonClick);
+         });
+     }
+
+    // Obsługa kliknięć w placeholdery budynków
+    const buildingPlaceholders = document.querySelectorAll('.building-placeholder');
+    if (buildingPlaceholders.length > 0 && buildingDetailsPopup && popupOverlay) {
+        buildingPlaceholders.forEach(placeholder => {
+            placeholder.addEventListener('click', function() {
+                const buildingDbId = this.dataset.buildingId; // ID z bazy danych village_buildings
+                const buildingType = this.dataset.buildingType; // Typ budynku (np. 'main_building', 'barracks')
+                const buildingLevel = this.dataset.level;
+
+                // Pokaż popup i overlay
+                if (popupBuildingName) popupBuildingName.textContent = 'Ładowanie...';
+                if (popupBuildingLevel) popupBuildingLevel.textContent = buildingLevel;
+                if (popupBuildingInfo) popupBuildingInfo.innerHTML = '<p>Pobieranie danych budynku...</p>';
+                if (popupUpgradeInfo) popupUpgradeInfo.innerHTML = '';
+                
+                // Zastosuj specjalną klasę dla ratusza
+                if (buildingType === 'main_building') {
+                    buildingDetailsPopup.classList.add('main-building-popup');
+                } else {
+                    buildingDetailsPopup.classList.remove('main-building-popup');
+                }
+                
+                buildingDetailsPopup.style.display = 'block';
+                popupOverlay.style.display = 'block';
+
+                // Pobierz szczegóły budynku z serwera
+                fetch('get_building_details.php?village_building_id=' + buildingDbId)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.error) {
+                            if (popupBuildingInfo) popupBuildingInfo.innerHTML = `<p class="error-message">${data.error}</p>`;
+                            return;
+                        }
+
+                        // Aktualizuj nazwę i poziom budynku
+                        if (popupBuildingName) popupBuildingName.textContent = data.name_pl;
+                        if (popupBuildingLevel) popupBuildingLevel.textContent = data.level;
+
+                        // Wyświetl informacje o budynku
+                        let buildingInfoHTML = '';
+                        
+                        // Dodaj informacje o produkcji (dla budynków produkcyjnych)
+                        if (data.production_type) {
+                            buildingInfoHTML += `<p><strong>Produkcja ${data.production_type_name}:</strong> ${data.production_per_hour}/h</p>`;
+                        }
+                        
+                        // Dodaj informacje o pojemności (dla magazynu)
+                        if (data.storage_capacity) {
+                            buildingInfoHTML += `<p><strong>Pojemność magazynu:</strong> ${data.storage_capacity}</p>`;
+                        }
+                        
+                        if (popupBuildingInfo) popupBuildingInfo.innerHTML = buildingInfoHTML;
+
+                        // Jeśli to ratusz (main_building), dodaj tabelę z budynkami do rozbudowy
+                        if (data.is_main_building && data.buildings_to_upgrade) {
+                            const buildingsToUpgrade = data.buildings_to_upgrade;
+                            let tableHTML = `
+                                <h4>Dostępne Budynki do Rozbudowy</h4>
+                                <table class="upgrade-buildings-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Budynek</th>
+                                            <th>Poziom</th>
+                                            <th>Koszt</th>
+                                            <th>Czas</th>
+                                            <th>Akcja</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                            `;
+                            
+                            const isAnyBuildingInQueue = buildingsToUpgrade.some(building => building.is_in_queue);
+                            
+                            buildingsToUpgrade.forEach(building => {
+                                tableHTML += `<tr>`;
+                                tableHTML += `<td>${building.name}</td>`;
+                                tableHTML += `<td>${building.current_level}</td>`;
+                                tableHTML += `<td>`;
+                                tableHTML += `<span class="resource-cost">
+                                    <img src="img/wood.png" alt="Drewno" class="res-icon-img"> ${building.upgrade_costs.wood}
+                                </span>`;
+                                tableHTML += `<span class="resource-cost">
+                                    <img src="img/clay.png" alt="Glina" class="res-icon-img"> ${building.upgrade_costs.clay}
+                                </span>`;
+                                tableHTML += `<span class="resource-cost">
+                                    <img src="img/iron.png" alt="Żelazo" class="res-icon-img"> ${building.upgrade_costs.iron}
+                                </span>`;
+                                tableHTML += `</td>`;
+                                tableHTML += `<td>${building.upgrade_time}</td>`;
+                                tableHTML += `<td>`;
+                                
+                                // Jeśli budynek jest w kolejce, pokaż komunikat
+                                if (building.is_in_queue) {
+                                    tableHTML += `<button disabled>W trakcie rozbudowy</button>`;
+                                }
+                                // Jeśli jakikolwiek budynek jest w kolejce, nie można rozpocząć nowej budowy
+                                else if (isAnyBuildingInQueue && !building.is_in_queue) {
+                                    tableHTML += `<button disabled>Kolejka zajęta</button>`;
+                                }
+                                // Jeśli brakuje zasobów, przycisk jest wyłączony
+                                else if (!building.has_enough_resources) {
+                                    tableHTML += `<button disabled>Brak zasobów</button>`;
+                                }
+                                // W przeciwnym razie pokaż przycisk do budowy
+                                else {
+                                    if (building.is_new) {
+                                        // Nowy budynek
+                                        tableHTML += `
+                                            <form action="upgrade_building.php" method="post" class="upgrade-form">
+                                                <input type="hidden" name="building_type_id" value="${building.building_type_id}">
+                                                <input type="hidden" name="village_id" value="${villageId}">
+                                                <input type="hidden" name="current_level" value="0">
+                                                <button type="submit">Zbuduj</button>
+                                            </form>
+                                        `;
+                                    } else {
+                                        // Istniejący budynek do rozbudowy
+                                        tableHTML += `
+                                            <form action="upgrade_building.php" method="post" class="upgrade-form">
+                                                <input type="hidden" name="village_building_id" value="${building.id}">
+                                                <input type="hidden" name="building_type_id" value="${building.building_type_id}">
+                                                <input type="hidden" name="current_level" value="${building.current_level}">
+                                                <button type="submit">Rozbuduj do ${building.next_level}</button>
+                                            </form>
+                                        `;
+                                    }
+                                }
+                                
+                                tableHTML += `</td>`;
+                                tableHTML += `</tr>`;
+                            });
+                            
+                            tableHTML += `
+                                    </tbody>
+                                </table>
+                            `;
+                            
+                            // Dodaj tabelę do popupu
+                            const upgradeTableContainer = document.createElement('div');
+                            upgradeTableContainer.className = 'main-building-upgrade-table';
+                            upgradeTableContainer.innerHTML = tableHTML;
+                            popupBuildingInfo.appendChild(upgradeTableContainer);
+                            
+                            // Dodaj obsługę kliknięć dla formularzy rozbudowy
+                            const upgradeForms = upgradeTableContainer.querySelectorAll('.upgrade-form');
+                            upgradeForms.forEach(form => {
+                                form.addEventListener('submit', handleUpgradeButtonClick);
+                            });
+                        }
+
+                        // Jeśli to koszary (barracks), dodaj interfejs rekrutacji jednostek
+                        if (data.is_barracks) {
+                            // Dodaj sekcję z aktualnymi jednostkami, jeśli jakieś istnieją
+                            if (Object.keys(data.current_units).length > 0) {
+                                const currentUnitsContainer = document.createElement('div');
+                                currentUnitsContainer.className = 'current-units-container';
+                                
+                                let currentUnitsHTML = `
+                                    <h4>Twoje jednostki</h4>
+                                    <table class="current-units-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Jednostka</th>
+                                                <th>Ilość</th>
+                                                <th>Atak/Obrona</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                `;
+                                
+                                // Dla każdej jednostki, którą gracz posiada
+                                for (const unitTypeId in data.current_units) {
+                                    const unit = data.current_units[unitTypeId];
+                                    const matchingUnit = data.available_units.find(u => u.id == unitTypeId);
+                                    
+                                    // Ścieżka do grafiki jednostki
+                                    const unitImage = `img/units/${unit.internal_name}.png`;
+                                    
+                                    currentUnitsHTML += `
+                                        <tr>
+                                            <td class="unit-cell">
+                                                <img src="${unitImage}" alt="${unit.name}" class="unit-icon">
+                                                ${unit.name}
+                                            </td>
+                                            <td>${unit.count}</td>
+                                            <td>${matchingUnit ? `${matchingUnit.attack}/${matchingUnit.defense}` : 'N/A'}</td>
+                                        </tr>
+                                    `;
+                                }
+                                
+                                currentUnitsHTML += `
+                                        </tbody>
+                                    </table>
+                                `;
+                                
+                                currentUnitsContainer.innerHTML = currentUnitsHTML;
+                                popupBuildingInfo.appendChild(currentUnitsContainer);
+                            }
+                            
+                            // Dodaj aktywne kolejki rekrutacji, jeśli istnieją
+                            if (data.recruitment_queue && data.recruitment_queue.length > 0) {
+                                const queueContainer = document.createElement('div');
+                                queueContainer.className = 'recruitment-queue-container';
+                                
+                                let queueHTML = `
+                                    <h4>Kolejka rekrutacji</h4>
+                                    <table class="recruitment-queue">
+                                        <thead>
+                                            <tr>
+                                                <th>Jednostka</th>
+                                                <th>Ilość</th>
+                                                <th>Ukończono</th>
+                                                <th>Pozostały czas</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                `;
+                                
+                                data.recruitment_queue.forEach(queue => {
+                                    // Ścieżka do grafiki jednostki
+                                    const unitImage = `img/units/${queue.unit_internal_name}.png`;
+                                    
+                                    queueHTML += `
+                                        <tr>
+                                            <td class="unit-cell">
+                                                <img src="${unitImage}" alt="${queue.unit_name}" class="unit-icon">
+                                                ${queue.unit_name}
+                                            </td>
+                                            <td>${queue.count}</td>
+                                            <td>${queue.count_finished}/${queue.count}</td>
+                                            <td>
+                                                <span class="build-timer" data-ends-at="${queue.finish_at}"></span>
+                                                <button class="cancel-recruitment-button" data-queue-id="${queue.id}">Anuluj</button>
+                                            </td>
+                                        </tr>
+                                    `;
+                                });
+                                
+                                queueHTML += `
+                                        </tbody>
+                                    </table>
+                                `;
+                                
+                                queueContainer.innerHTML = queueHTML;
+                                popupBuildingInfo.appendChild(queueContainer);
+                                
+                                // Inicjalizuj timery dla kolejki rekrutacji
+                                initializeBuildTimers();
+                            }
+                            
+                            // Dodaj formularz rekrutacji nowych jednostek
+                            const recruitmentContainer = document.createElement('div');
+                            recruitmentContainer.className = 'recruitment-container';
+                            
+                            let recruitmentHTML = `
+                                <h4>Rekrutuj jednostki</h4>
+                                ${!data.is_recruitment_possible ? '<p class="warning-message">Maksymalnie 2 aktywne kolejki rekrutacji!</p>' : ''}
+                                <form id="recruitment-form" action="recruit_units.php" method="post" class="recruitment-form">
+                                    <input type="hidden" name="village_id" value="${villageId}">
+                                    <input type="hidden" name="building_id" value="${buildingDbId}">
+                                    <table class="recruitment-units">
+                                        <thead>
+                                            <tr>
+                                                <th>Jednostka</th>
+                                                <th>Statystyki (A/O/S)</th>
+                                                <th>Koszt</th>
+                                                <th>Czas</th>
+                                                <th>Ilość</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                            `;
+                            
+                            data.available_units.forEach(unit => {
+                                const isDisabled = !data.is_recruitment_possible || !unit.has_enough_resources;
+                                const disabledReason = !data.is_recruitment_possible ? 'Kolejka zajęta' : 
+                                                  !unit.has_enough_resources ? 'Brak zasobów' : '';
+                                
+                                // Dodaj ścieżkę do grafiki jednostki
+                                const unitImage = `img/units/${unit.internal_name}.png`;
+                                
+                                recruitmentHTML += `
+                                    <tr>
+                                        <td>
+                                            <div class="unit-info">
+                                                <img src="${unitImage}" alt="${unit.name}" class="unit-icon">
+                                                <div>
+                                                    <strong>${unit.name}</strong>
+                                                    <small>Populacja: ${unit.population}</small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>${unit.attack}/${unit.defense}/${unit.speed}</td>
+                                        <td>
+                                            <span class="resource-cost">
+                                                <img src="img/wood.png" alt="Drewno" class="res-icon-img"> ${unit.costs.wood}
+                                            </span>
+                                            <span class="resource-cost">
+                                                <img src="img/clay.png" alt="Glina" class="res-icon-img"> ${unit.costs.clay}
+                                            </span>
+                                            <span class="resource-cost">
+                                                <img src="img/iron.png" alt="Żelazo" class="res-icon-img"> ${unit.costs.iron}
+                                            </span>
+                                        </td>
+                                        <td>${unit.training_time}</td>
+                                        <td>
+                                            <input type="number" name="recruit[${unit.id}]" min="0" max="100" value="0" 
+                                                   ${isDisabled ? 'disabled' : ''} 
+                                                   data-wood="${unit.costs.wood}" 
+                                                   data-clay="${unit.costs.clay}" 
+                                                   data-iron="${unit.costs.iron}"
+                                                   class="recruit-count">
+                                            ${disabledReason ? `<small class="error-message">${disabledReason}</small>` : ''}
+                                        </td>
+                                    </tr>
+                                `;
+                            });
+                            
+                            recruitmentHTML += `
+                                        </tbody>
+                                    </table>
+                                    <div class="recruitment-summary">
+                                        <p>
+                                            <strong>Koszt całkowity:</strong> 
+                                            <span id="total-wood">0</span> drewna, 
+                                            <span id="total-clay">0</span> gliny, 
+                                            <span id="total-iron">0</span> żelaza
+                                        </p>
+                                        <button type="submit" class="styled-btn" ${!data.is_recruitment_possible ? 'disabled' : ''}>Rekrutuj</button>
+                                    </div>
+                                </form>
+                            `;
+                            
+                            recruitmentContainer.innerHTML = recruitmentHTML;
+                            popupBuildingInfo.appendChild(recruitmentContainer);
+                            
+                            // Dodaj obsługę aktualizacji kosztów przy zmianie ilości jednostek
+                            const recruitInputs = recruitmentContainer.querySelectorAll('.recruit-count');
+                            const totalWoodSpan = recruitmentContainer.querySelector('#total-wood');
+                            const totalClaySpan = recruitmentContainer.querySelector('#total-clay');
+                            const totalIronSpan = recruitmentContainer.querySelector('#total-iron');
+                            
+                            function updateTotalCosts() {
+                                let totalWood = 0;
+                                let totalClay = 0;
+                                let totalIron = 0;
+                                
+                                recruitInputs.forEach(input => {
+                                    const count = parseInt(input.value) || 0;
+                                    totalWood += count * parseInt(input.dataset.wood);
+                                    totalClay += count * parseInt(input.dataset.clay);
+                                    totalIron += count * parseInt(input.dataset.iron);
+                                });
+                                
+                                totalWoodSpan.textContent = totalWood;
+                                totalClaySpan.textContent = totalClay;
+                                totalIronSpan.textContent = totalIron;
+                            }
+                            
+                            recruitInputs.forEach(input => {
+                                input.addEventListener('change', updateTotalCosts);
+                                input.addEventListener('input', updateTotalCosts);
+                            });
+                            
+                            // Dodaj obsługę formularza rekrutacji
+                            const recruitmentForm = recruitmentContainer.querySelector('#recruitment-form');
+                            recruitmentForm.addEventListener('submit', function(event) {
+                                event.preventDefault();
+                                
+                                // Sprawdź, czy wybrano jakiekolwiek jednostki
+                                let hasUnits = false;
+                                recruitInputs.forEach(input => {
+                                    if (parseInt(input.value) > 0) {
+                                        hasUnits = true;
+                                    }
+                                });
+                                
+                                if (!hasUnits) {
+                                    alert('Wybierz co najmniej jedną jednostkę do rekrutacji!');
+                                    return;
+                                }
+                                
+                                // Wyślij formularz przez AJAX
+                                const formData = new FormData(recruitmentForm);
+                                formData.append('ajax', '1');
+                                
+                                fetch(recruitmentForm.action, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                                if (data.error) {
+                                    alert('Błąd: ' + data.error);
+                                    return;
+                                }
+                                
+                                // Po sukcesie odśwież stronę
+                                window.location.reload();
+                            })
+                            .catch(error => {
+                                console.error('Błąd rekrutacji:', error);
+                                alert('Wystąpił błąd podczas rekrutacji jednostek. Spróbuj ponownie później.');
+                            });
+                        });
+                    }
+
+                    // Sprawdź, czy budynek jest w trakcie rozbudowy
+                    if (data.is_upgrading) {
+                        popupUpgradeInfo.innerHTML = `
+                            <div class="upgrade-in-progress">
+                                <p>Rozbudowa do poziomu ${data.level + 1} w toku.</p>
+                                <p>Pozostały czas: <span class="build-timer" data-ends-at="${data.upgrade_ends_at}"></span></p>
+                            </div>
+                        `;
+                        // Inicjalizuj timer dla rozbudowy
+                        initializeBuildTimers();
+                    } 
+                    // Sprawdź, czy można rozbudować budynek
+                    else if (data.can_upgrade) {
+                        // Wyświetl informacje o rozbudowie
+                        popupUpgradeInfo.innerHTML = `
+                            <div class="upgrade-info">
+                                <h4>Rozbudowa do poziomu ${data.level + 1}</h4>
+                                <p><strong>Koszt:</strong> 
+                                    <span class="resource-cost">
+                                        <img src="img/wood.png" alt="Drewno" class="res-icon-img"> ${data.upgrade_cost.wood}
+                                    </span>
+                                    <span class="resource-cost">
+                                        <img src="img/clay.png" alt="Glina" class="res-icon-img"> ${data.upgrade_cost.clay}
+                                    </span>
+                                    <span class="resource-cost">
+                                        <img src="img/iron.png" alt="Żelazo" class="res-icon-img"> ${data.upgrade_cost.iron}
+                                    </span>
+                                </p>
+                                <p><strong>Czas budowy:</strong> ${data.upgrade_time}</p>
+                                <form id="upgrade-form" action="upgrade_building.php" method="post">
+                                    <input type="hidden" name="village_building_id" value="${buildingDbId}">
+                                    <input type="hidden" name="building_type_id" value="${data.building_type_id}">
+                                    <input type="hidden" name="current_level" value="${data.level}">
+                                    <button type="submit" ${data.has_enough_resources ? '' : 'disabled'}>
+                                        ${data.has_enough_resources ? 'Rozbuduj do poziomu ' + (data.level + 1) : 'Brak zasobów'}
+                                    </button>
+                                </form>
+                            </div>
+                        `;
+                    } else {
+                        // Wyświetl informację, dlaczego nie można rozbudować
+                        popupUpgradeInfo.innerHTML = `
+                            <p class="upgrade-not-available">${data.upgrade_not_available_reason || 'Rozbudowa nie jest dostępna.'}</p>
+                        `;
+                    }
+
+                    // Dodaj obsługę anulowania rekrutacji
+                    const cancelRecruitmentButtons = popupBuildingInfo.querySelectorAll('.cancel-recruitment-button');
+                    cancelRecruitmentButtons.forEach(button => {
+                        button.addEventListener('click', function(event) {
+                            if (!confirm('Czy na pewno chcesz anulować rekrutację? Tylko ukończone jednostki zostaną dodane do wioski.')) {
+                                return;
+                            }
+                            
+                            const queueId = this.dataset.queueId;
+                            
+                            fetch('cancel_recruitment.php', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/x-www-form-urlencoded',
+                                },
+                                body: `queue_id=${queueId}`
+                            })
+                            .then(response => {
+                                // Przeładuj stronę po anulowaniu
+                                window.location.reload();
+                            })
+                            .catch(error => {
+                                console.error('Błąd anulowania rekrutacji:', error);
+                                alert('Wystąpił błąd podczas anulowania rekrutacji. Spróbuj ponownie później.');
+                            });
+                        });
+                    });
+                })
+                .catch(err => {
+                    console.error('Błąd pobierania danych budynku:', err);
+                    popupBuildingInfo.innerHTML = `<p class="error-message">Wystąpił błąd podczas pobierania danych budynku. Spróbuj ponownie później.</p>`;
+                });
+        });
+    });
+
+    // Zamknięcie popupu po kliknięciu przycisku
+    if (popupCloseBtn) {
+        popupCloseBtn.addEventListener('click', function() {
+            buildingDetailsPopup.style.display = 'none';
+            popupOverlay.style.display = 'none';
+            buildingDetailsPopup.classList.remove('main-building-popup');
+        });
+    }
+
+    // Zamknięcie popupu po kliknięciu tła
+    if (popupOverlay) {
+        popupOverlay.addEventListener('click', function() {
+            buildingDetailsPopup.style.display = 'none';
+            popupOverlay.style.display = 'none';
+            buildingDetailsPopup.classList.remove('main-building-popup');
+        });
+    }
+
+    // Usuwanie komunikatów po pewnym czasie
+    const messagesContainer = document.getElementById('messages-container'); // Użycie poprawnego ID
+    if (messagesContainer && messagesContainer.children.length > 0) {
+        setTimeout(() => {
+            messagesContainer.style.opacity = '0';
+            setTimeout(() => {
+                messagesContainer.innerHTML = '';
+                messagesContainer.style.opacity = '1'; // Przywróć na wypadek nowych komunikatów
+            }, 500); // Czas na animację zanikania
+        }, 5000); // Komunikat widoczny przez 5 sekund
+    }
+
+    // Funkcja do przetworzenia kliknięcia przycisku rozbudowy
+    function handleUpgradeButtonClick(event) {
+        event.preventDefault();
+        const form = event.currentTarget.closest('form');
+        const villageId = villageViewGraphic.dataset.villageId;
+        const buildingTypeId = form.querySelector('input[name="building_type_id"]').value;
+        const currentLevel = form.querySelector('input[name="current_level"]').value;
+        const villageBuildingId = form.querySelector('input[name="village_building_id"]')?.value || null;
+
+        // Tworzenie obiektu FormData i dodanie pól z formularza
+        const formData = new FormData(form);
+        formData.append('ajax', '1'); // Oznaczenie, że to żądanie AJAX
+
+        // Wysłanie żądania AJAX
+        fetch(form.action, {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                alert('Błąd: ' + data.error);
+                return;
+            }
+
+            // Jeśli wszystko poszło dobrze, dodaj zadanie do kolejki budowy
+            if (data.success && data.queue_item) {
+                // Aktualizuj lokalnie listę zadań w kolejce
+                const updatedQueueItems = window.initialBuildingQueueItems || [];
+                updatedQueueItems.push(data.queue_item);
+                window.initialBuildingQueueItems = updatedQueueItems;
+                
+                // Aktualizuj wyświetlanie kolejki
+                updateBuildingQueueDisplay(updatedQueueItems);
+                
+                // Aktualizuj stan zasobów
+                currentResources.wood -= data.resources_used.wood;
+                currentResources.clay -= data.resources_used.clay;
+                currentResources.iron -= data.resources_used.iron;
+                updateResourcesDisplay(currentResources.wood, currentResources.clay, currentResources.iron);
+                
+                // Zamknij popup
+                buildingDetailsPopup.style.display = 'none';
+                popupOverlay.style.display = 'none';
+                
+                // Dodaj klasę do placeholdera budynku, aby oznaczyć go jako rozbudowywany
+                const buildingPlaceholder = document.querySelector(`.building-placeholder[data-building-id="${villageBuildingId}"]`);
+                if (buildingPlaceholder) {
+                    buildingPlaceholder.classList.add('building-upgrading');
+                }
+                
+                // Wyświetl komunikat o sukcesie
+                const messageContainer = document.getElementById('messages-container');
+                if (messageContainer) {
+                    const successMessage = document.createElement('p');
+                    successMessage.className = 'success-message';
+                    successMessage.textContent = `Rozpoczęto rozbudowę ${data.queue_item.name_pl} do poziomu ${data.queue_item.level_after}!`;
+                    messageContainer.appendChild(successMessage);
+                    
+                    // Usuń komunikat po 5 sekundach
+                    setTimeout(() => {
+                        successMessage.remove();
+                    }, 5000);
+                }
+            }
+        })
+        .catch(err => {
+            console.error('Błąd podczas wysyłania żądania:', err);
+            alert('Wystąpił błąd podczas próby rozbudowy budynku. Spróbuj ponownie później.');
+        });
+    }
+
+    // Funkcja do obsługi anulowania zadania z kolejki budowy
+    function handleCancelButtonClick(event) {
+        if (!confirm('Czy na pewno chcesz anulować to zadanie budowy? Nie otrzymasz zwrotu zużytych surowców.')) {
+            return;
+        }
+
+        const queueId = event.currentTarget.dataset.queueId;
+        
+        fetch('cancel_upgrade.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: `queue_item_id=${queueId}&ajax=1`
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                alert('Błąd: ' + data.error);
+                return;
+            }
+            
+            if (data.success) {
+                // Usuń zadanie z lokalnej listy
+                window.initialBuildingQueueItems = (window.initialBuildingQueueItems || [])
+                    .filter(item => item.id != queueId);
+                    
+                // Aktualizuj wyświetlanie kolejki
+                updateBuildingQueueDisplay(window.initialBuildingQueueItems);
+                
+                // Usuń klasę upgrading z placeholdera budynku
+                const buildingPlaceholder = document.querySelector(`.building-placeholder[data-building-id="${data.village_building_id}"]`);
+                if (buildingPlaceholder) {
+                    buildingPlaceholder.classList.remove('building-upgrading');
+                }
+                
+                // Wyświetl komunikat o sukcesie
+                const messageContainer = document.getElementById('messages-container');
+                if (messageContainer) {
+                    const successMessage = document.createElement('p');
+                    successMessage.className = 'success-message';
+                    successMessage.textContent = 'Zadanie budowy zostało anulowane.';
+                    messageContainer.appendChild(successMessage);
+                    
+                    // Usuń komunikat po 5 sekundach
+                    setTimeout(() => {
+                        successMessage.remove();
+                    }, 5000);
+                }
+            }
+        })
+        .catch(err => {
+            console.error('Błąd podczas anulowania zadania:', err);
+            alert('Wystąpił błąd podczas próby anulowania zadania. Spróbuj ponownie później.');
+        });
+    }
+
+    // Inicjalizacja nasłuchiwania na formularze rozbudowy na stronie
+    document.addEventListener('submit', function(event) {
+        const form = event.target;
+        
+        // Sprawdź, czy to formularz rozbudowy (w popupie lub w tabeli)
+        if (form.action.includes('upgrade_building.php') || form.id === 'upgrade-form') {
+            handleUpgradeButtonClick(event);
+        }
+    });
+
+    // Inicjalizacja nasłuchiwania na przyciski anulowania w kolejce budowy
+    const cancelButtons = document.querySelectorAll('.cancel-button');
+    cancelButtons.forEach(button => {
+        button.addEventListener('click', handleCancelButtonClick);
+    });
+
+    // Funkcja pomocnicza do bezpiecznego przetwarzania stringów HTML
+    function htmlspecialchars(str) {
+        return str
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+    }
+
+    // Zainicjuj wyświetlanie kolejki budowy przy ładowaniu strony (teraz z tablicy)
+    if (window.initialBuildingQueueItems) {
+        updateBuildingQueueDisplay(window.initialBuildingQueueItems);
+    } else {
+         updateBuildingQueueDisplay([]); // Pusta kolejka (przekaż pustą tablicę)
+    }
+    
+    // Zainicjuj timery po załadowaniu strony
+    initializeBuildTimers();
+
+    // Obsługa formularza wysyłki zasobów z rynku
+    const sendResourcesForm = document.getElementById('send-resources-form');
+    if (sendResourcesForm) {
+        sendResourcesForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            const formData = new FormData(sendResourcesForm);
+            fetch('send_resources.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.reload();
+                } else {
+                    alert(data.error);
+                }
+            })
+            .catch(err => {
+                console.error('Błąd wysyłki zasobów:', err);
+                alert('Wystąpił błąd podczas wysyłania zasobów.');
+            });
+        });
+    }
+});

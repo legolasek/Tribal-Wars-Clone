@@ -1,0 +1,98 @@
+/*
+Style for login and registration forms.
+*/
+
+.form-container {
+    max-width: 400px;
+    margin: 60px auto;
+    padding: 40px;
+    background-color: var(--beige-light);
+    border-radius: var(--border-radius-large);
+    box-shadow: var(--box-shadow-hover);
+    border: 1px solid var(--beige-dark);
+    text-align: center;
+}
+
+.form-container h1 {
+    color: var(--brown-primary);
+    margin-bottom: 30px;
+    font-size: var(--font-size-xlarge);
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.form-container label {
+    display: block;
+    text-align: left;
+    margin-bottom: 8px;
+    color: var(--brown-secondary);
+    font-weight: bold;
+    font-size: var(--font-size-normal);
+}
+
+.form-container input[type="text"],
+.form-container input[type="email"],
+.form-container input[type="password"] {
+    width: 100%;
+    padding: 12px 15px;
+    margin-bottom: 20px;
+    border: 1px solid var(--beige-darker);
+    border-radius: var(--border-radius-small);
+    background-color: var(--beige-medium);
+    color: #333;
+    font-size: var(--font-size-normal);
+    box-shadow: var(--box-shadow-inset);
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+    box-sizing: border-box; /* Include padding and border in element's total width and height */
+}
+
+.form-container input[type="text"]:focus,
+.form-container input[type="email"]:focus,
+.form-container input[type="password"]:focus {
+    border-color: var(--brown-primary);
+    box-shadow: 0 0 5px rgba(var(--brown-primary-rgb), 0.5);
+    outline: none;
+}
+
+.form-container .btn-primary {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    font-size: var(--font-size-large);
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+
+.form-container .error-message {
+    color: var(--red-error);
+    background-color: var(--red-error-background);
+    border: 1px solid var(--red-error-border);
+    padding: 10px;
+    margin-bottom: 20px;
+    border-radius: var(--border-radius-small);
+    font-weight: bold;
+}
+
+.form-container p {
+    font-size: var(--font-size-normal);
+    color: #555;
+    margin-bottom: 10px;
+}
+
+.form-container p a {
+    color: var(--brown-primary);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+}
+
+.form-container p a:hover {
+    color: var(--brown-hover);
+    text-decoration: underline;
+}
+
+/* Basic responsiveness */
+@media (max-width: 500px) {
+    .form-container {
+        margin: 30px 15px;
+        padding: 30px 20px;
+    }
+} 

@@ -1,0 +1,760 @@
+[2025-05-27 00:43:20] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 26
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 00:43:25] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 26
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 00:43:51] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 26
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 00:43:57] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 26
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 00:44:13] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 26
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 00:44:20] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 26
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 00:44:22] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 26
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 00:44:22] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 26
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 00:44:23] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 26
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 00:44:31] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 26
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 00:44:43] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 26
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 00:44:47] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 26
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 00:44:53] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 26
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 00:48:15] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 28
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 00:48:37] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 28
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 00:48:40] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 28
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 00:48:55] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 28
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 00:48:59] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 28
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 00:49:00] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 28
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 00:49:01] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 28
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 00:49:02] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 28
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 00:49:02] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 28
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 00:49:07] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 28
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 00:49:10] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 28
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 00:49:11] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 28
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 00:49:12] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 28
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 00:49:12] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 28
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 00:49:27] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 28
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 00:55:33] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 28
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 00:55:37] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 28
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 00:55:39] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 28
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 00:55:41] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 28
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 00:55:43] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 28
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 00:55:44] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 28
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 00:55:49] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 28
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 00:56:05] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 28
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 00:56:07] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 28
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 00:57:52] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 28
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 00:57:55] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 28
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 00:57:56] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 28
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 01:00:50] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 28
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 01:00:51] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 28
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 01:00:56] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 28
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 01:00:58] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 28
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 01:01:02] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 28
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 01:01:04] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 28
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 01:01:07] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 28
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 01:01:10] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 28
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 01:01:17] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 28
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 01:01:24] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 28
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 01:01:52] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 28
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 01:01:55] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 28
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 01:01:57] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 28
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 01:01:58] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 28
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 01:01:59] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 28
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 01:02:10] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 28
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 01:02:15] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 28
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 01:02:34] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 28
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 01:02:39] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 28
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 01:02:40] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 28
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 01:03:01] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 28
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 01:03:07] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 28
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 01:03:13] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 28
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 01:04:33] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 28
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 01:04:44] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 28
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 01:04:58] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 28
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 01:07:45] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 28
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 01:07:48] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 28
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 01:07:53] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 28
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 01:07:58] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 28
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 01:08:03] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 28
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 01:08:08] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 28
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 01:08:13] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 28
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 01:08:18] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 28
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 01:08:23] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 28
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 01:08:28] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 28
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 01:08:33] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 28
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 01:08:38] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 28
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 01:08:43] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 28
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 01:08:48] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 28
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 01:08:48] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 28
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 01:11:08] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 28
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 01:12:19] EXCEPTION: Table 'tribal_wars_new.recruitment_queue' doesn't exist w C:\xampp\htdocs\ajax\get_resources.php linia 91
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(91): mysqli->prepare('\r\n        SELEC...')
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 01:12:23] EXCEPTION: Table 'tribal_wars_new.recruitment_queue' doesn't exist w C:\xampp\htdocs\ajax\get_resources.php linia 91
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(91): mysqli->prepare('\r\n        SELEC...')
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 01:12:28] EXCEPTION: Table 'tribal_wars_new.recruitment_queue' doesn't exist w C:\xampp\htdocs\ajax\get_resources.php linia 91
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(91): mysqli->prepare('\r\n        SELEC...')
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 01:12:33] EXCEPTION: Table 'tribal_wars_new.recruitment_queue' doesn't exist w C:\xampp\htdocs\ajax\get_resources.php linia 91
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(91): mysqli->prepare('\r\n        SELEC...')
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 01:12:38] EXCEPTION: Table 'tribal_wars_new.recruitment_queue' doesn't exist w C:\xampp\htdocs\ajax\get_resources.php linia 91
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(91): mysqli->prepare('\r\n        SELEC...')
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 01:12:43] EXCEPTION: Table 'tribal_wars_new.recruitment_queue' doesn't exist w C:\xampp\htdocs\ajax\get_resources.php linia 91
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(91): mysqli->prepare('\r\n        SELEC...')
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 01:12:48] EXCEPTION: Table 'tribal_wars_new.recruitment_queue' doesn't exist w C:\xampp\htdocs\ajax\get_resources.php linia 91
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(91): mysqli->prepare('\r\n        SELEC...')
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 01:12:53] EXCEPTION: Table 'tribal_wars_new.recruitment_queue' doesn't exist w C:\xampp\htdocs\ajax\get_resources.php linia 91
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(91): mysqli->prepare('\r\n        SELEC...')
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 01:13:01] EXCEPTION: Table 'tribal_wars_new.recruitment_queue' doesn't exist w C:\xampp\htdocs\ajax\get_resources.php linia 91
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(91): mysqli->prepare('\r\n        SELEC...')
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 01:13:05] EXCEPTION: Table 'tribal_wars_new.recruitment_queue' doesn't exist w C:\xampp\htdocs\ajax\get_resources.php linia 91
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(91): mysqli->prepare('\r\n        SELEC...')
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 01:17:48] EXCEPTION: Table 'tribal_wars_new.recruitment_queue' doesn't exist w C:\xampp\htdocs\ajax\get_resources.php linia 109
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(109): mysqli->prepare('\r\n        SELEC...')
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 01:17:51] EXCEPTION: Table 'tribal_wars_new.recruitment_queue' doesn't exist w C:\xampp\htdocs\ajax\get_resources.php linia 109
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(109): mysqli->prepare('\r\n        SELEC...')
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 01:18:11] EXCEPTION: Table 'tribal_wars_new.recruitment_queue' doesn't exist w C:\xampp\htdocs\ajax\get_resources.php linia 109
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(109): mysqli->prepare('\r\n        SELEC...')
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 01:18:14] EXCEPTION: Table 'tribal_wars_new.recruitment_queue' doesn't exist w C:\xampp\htdocs\ajax\get_resources.php linia 109
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(109): mysqli->prepare('\r\n        SELEC...')
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 01:18:45] EXCEPTION: Table 'tribal_wars_new.recruitment_queue' doesn't exist w C:\xampp\htdocs\ajax\get_resources.php linia 109
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(109): mysqli->prepare('\r\n        SELEC...')
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 01:18:47] EXCEPTION: Table 'tribal_wars_new.recruitment_queue' doesn't exist w C:\xampp\htdocs\ajax\get_resources.php linia 109
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(109): mysqli->prepare('\r\n        SELEC...')
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 01:19:16] EXCEPTION: Table 'tribal_wars_new.recruitment_queue' doesn't exist w C:\xampp\htdocs\ajax\get_resources.php linia 109
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(109): mysqli->prepare('\r\n        SELEC...')
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 01:19:31] EXCEPTION: Table 'tribal_wars_new.recruitment_queue' doesn't exist w C:\xampp\htdocs\ajax\get_resources.php linia 109
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(109): mysqli->prepare('\r\n        SELEC...')
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 01:24:02] EXCEPTION: Table 'tribal_wars_new.recruitment_queue' doesn't exist w C:\xampp\htdocs\ajax\get_resources.php linia 109
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(109): mysqli->prepare('\r\n        SELEC...')
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 01:24:20] EXCEPTION: Table 'tribal_wars_new.recruitment_queue' doesn't exist w C:\xampp\htdocs\ajax\get_resources.php linia 109
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(109): mysqli->prepare('\r\n        SELEC...')
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 01:31:01] ERROR: Constant DEBUG_MODE already defined w C:\xampp\htdocs\ajax\get_resources.php linia 10
+--------------------------------------------------------------------------------
+[2025-05-27 12:18:16] EXCEPTION: Unknown database 'tribal_wars_new' w C:\xampp\htdocs\lib\Database.php linia 19
+Trace: #0 C:\xampp\htdocs\lib\Database.php(19): mysqli->__construct('localhost', 'root', Object(SensitiveParameterValue), 'tribal_wars_new')
+#1 C:\xampp\htdocs\lib\Database.php(15): Database->connect()
+#2 C:\xampp\htdocs\init.php(31): Database->__construct('localhost', 'root', '', 'tribal_wars_new')
+#3 C:\xampp\htdocs\ajax\get_resources.php(6): require_once('C:\\xampp\\htdocs...')
+#4 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 16:22:35] ERROR: require_once(lib/UnitManager.php): Failed to open stream: No such file or directory w C:\xampp\htdocs\lib\VillageManager.php linia 213
+--------------------------------------------------------------------------------
+[2025-05-27 16:22:35] EXCEPTION: Failed opening required 'lib/UnitManager.php' (include_path='C:\xampp\php\PEAR') w C:\xampp\htdocs\lib\VillageManager.php linia 213
+Trace: #0 C:\xampp\htdocs\init.php(72): VillageManager->processCompletedTasksForVillage(1)
+#1 C:\xampp\htdocs\ajax\get_resources.php(6): require_once('C:\\xampp\\htdocs...')
+#2 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 16:55:29] ERROR: require_once(lib/UnitManager.php): Failed to open stream: No such file or directory w C:\xampp\htdocs\lib\VillageManager.php linia 213
+--------------------------------------------------------------------------------
+[2025-05-27 16:55:29] EXCEPTION: Failed opening required 'lib/UnitManager.php' (include_path='C:\xampp\php\PEAR') w C:\xampp\htdocs\lib\VillageManager.php linia 213
+Trace: #0 C:\xampp\htdocs\init.php(72): VillageManager->processCompletedTasksForVillage(1)
+#1 C:\xampp\htdocs\ajax\get_resources.php(6): require_once('C:\\xampp\\htdocs...')
+#2 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 19:11:50] ERROR: require_once(lib/UnitManager.php): Failed to open stream: No such file or directory w C:\xampp\htdocs\lib\VillageManager.php linia 213
+--------------------------------------------------------------------------------
+[2025-05-27 19:11:50] EXCEPTION: Failed opening required 'lib/UnitManager.php' (include_path='C:\xampp\php\PEAR') w C:\xampp\htdocs\lib\VillageManager.php linia 213
+Trace: #0 C:\xampp\htdocs\init.php(72): VillageManager->processCompletedTasksForVillage(1)
+#1 C:\xampp\htdocs\ajax\get_resources.php(6): require_once('C:\\xampp\\htdocs...')
+#2 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 19:16:19] ERROR: require_once(lib/UnitManager.php): Failed to open stream: No such file or directory w C:\xampp\htdocs\lib\VillageManager.php linia 213
+--------------------------------------------------------------------------------
+[2025-05-27 19:16:19] EXCEPTION: Failed opening required 'lib/UnitManager.php' (include_path='C:\xampp\php\PEAR') w C:\xampp\htdocs\lib\VillageManager.php linia 213
+Trace: #0 C:\xampp\htdocs\init.php(72): VillageManager->processCompletedTasksForVillage(1)
+#1 C:\xampp\htdocs\ajax\get_resources.php(6): require_once('C:\\xampp\\htdocs...')
+#2 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 19:16:22] ERROR: require_once(lib/UnitManager.php): Failed to open stream: No such file or directory w C:\xampp\htdocs\lib\VillageManager.php linia 213
+--------------------------------------------------------------------------------
+[2025-05-27 19:16:22] EXCEPTION: Failed opening required 'lib/UnitManager.php' (include_path='C:\xampp\php\PEAR') w C:\xampp\htdocs\lib\VillageManager.php linia 213
+Trace: #0 C:\xampp\htdocs\init.php(72): VillageManager->processCompletedTasksForVillage(1)
+#1 C:\xampp\htdocs\ajax\get_resources.php(6): require_once('C:\\xampp\\htdocs...')
+#2 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 19:23:05] ERROR: require_once(lib/UnitManager.php): Failed to open stream: No such file or directory w C:\xampp\htdocs\lib\VillageManager.php linia 213
+--------------------------------------------------------------------------------
+[2025-05-27 19:23:05] EXCEPTION: Failed opening required 'lib/UnitManager.php' (include_path='C:\xampp\php\PEAR') w C:\xampp\htdocs\lib\VillageManager.php linia 213
+Trace: #0 C:\xampp\htdocs\init.php(72): VillageManager->processCompletedTasksForVillage(1)
+#1 C:\xampp\htdocs\ajax\get_resources.php(6): require_once('C:\\xampp\\htdocs...')
+#2 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 19:27:17] ERROR: require_once(lib/UnitManager.php): Failed to open stream: No such file or directory w C:\xampp\htdocs\lib\VillageManager.php linia 213
+--------------------------------------------------------------------------------
+[2025-05-27 19:27:17] EXCEPTION: Failed opening required 'lib/UnitManager.php' (include_path='C:\xampp\php\PEAR') w C:\xampp\htdocs\lib\VillageManager.php linia 213
+Trace: #0 C:\xampp\htdocs\init.php(72): VillageManager->processCompletedTasksForVillage(1)
+#1 C:\xampp\htdocs\ajax\get_resources.php(6): require_once('C:\\xampp\\htdocs...')
+#2 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 19:28:56] ERROR: require_once(lib/UnitManager.php): Failed to open stream: No such file or directory w C:\xampp\htdocs\lib\VillageManager.php linia 213
+--------------------------------------------------------------------------------
+[2025-05-27 19:28:56] EXCEPTION: Failed opening required 'lib/UnitManager.php' (include_path='C:\xampp\php\PEAR') w C:\xampp\htdocs\lib\VillageManager.php linia 213
+Trace: #0 C:\xampp\htdocs\init.php(72): VillageManager->processCompletedTasksForVillage(1)
+#1 C:\xampp\htdocs\ajax\get_resources.php(6): require_once('C:\\xampp\\htdocs...')
+#2 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 19:46:05] ERROR: require_once(lib/UnitManager.php): Failed to open stream: No such file or directory w C:\xampp\htdocs\lib\VillageManager.php linia 213
+--------------------------------------------------------------------------------
+[2025-05-27 19:46:05] EXCEPTION: Failed opening required 'lib/UnitManager.php' (include_path='C:\xampp\php\PEAR') w C:\xampp\htdocs\lib\VillageManager.php linia 213
+Trace: #0 C:\xampp\htdocs\init.php(72): VillageManager->processCompletedTasksForVillage(1)
+#1 C:\xampp\htdocs\ajax\get_resources.php(6): require_once('C:\\xampp\\htdocs...')
+#2 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 19:55:46] ERROR: require_once(lib/UnitManager.php): Failed to open stream: No such file or directory w C:\xampp\htdocs\lib\VillageManager.php linia 213
+--------------------------------------------------------------------------------
+[2025-05-27 19:55:46] EXCEPTION: Failed opening required 'lib/UnitManager.php' (include_path='C:\xampp\php\PEAR') w C:\xampp\htdocs\lib\VillageManager.php linia 213
+Trace: #0 C:\xampp\htdocs\init.php(72): VillageManager->processCompletedTasksForVillage(1)
+#1 C:\xampp\htdocs\ajax\get_resources.php(6): require_once('C:\\xampp\\htdocs...')
+#2 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 20:05:04] ERROR: require_once(lib/UnitManager.php): Failed to open stream: No such file or directory w C:\xampp\htdocs\lib\VillageManager.php linia 213
+--------------------------------------------------------------------------------
+[2025-05-27 20:05:04] EXCEPTION: Failed opening required 'lib/UnitManager.php' (include_path='C:\xampp\php\PEAR') w C:\xampp\htdocs\lib\VillageManager.php linia 213
+Trace: #0 C:\xampp\htdocs\init.php(72): VillageManager->processCompletedTasksForVillage(1)
+#1 C:\xampp\htdocs\ajax\get_resources.php(6): require_once('C:\\xampp\\htdocs...')
+#2 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 20:09:16] ERROR: require_once(lib/UnitManager.php): Failed to open stream: No such file or directory w C:\xampp\htdocs\lib\VillageManager.php linia 213
+--------------------------------------------------------------------------------
+[2025-05-27 20:09:16] EXCEPTION: Failed opening required 'lib/UnitManager.php' (include_path='C:\xampp\php\PEAR') w C:\xampp\htdocs\lib\VillageManager.php linia 213
+Trace: #0 C:\xampp\htdocs\init.php(72): VillageManager->processCompletedTasksForVillage(1)
+#1 C:\xampp\htdocs\ajax\get_resources.php(6): require_once('C:\\xampp\\htdocs...')
+#2 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 20:15:53] ERROR: require_once(lib/UnitManager.php): Failed to open stream: No such file or directory w C:\xampp\htdocs\lib\VillageManager.php linia 213
+--------------------------------------------------------------------------------
+[2025-05-27 20:15:53] EXCEPTION: Failed opening required 'lib/UnitManager.php' (include_path='C:\xampp\php\PEAR') w C:\xampp\htdocs\lib\VillageManager.php linia 213
+Trace: #0 C:\xampp\htdocs\init.php(72): VillageManager->processCompletedTasksForVillage(1)
+#1 C:\xampp\htdocs\ajax\get_resources.php(6): require_once('C:\\xampp\\htdocs...')
+#2 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 20:16:09] ERROR: require_once(lib/UnitManager.php): Failed to open stream: No such file or directory w C:\xampp\htdocs\lib\VillageManager.php linia 213
+--------------------------------------------------------------------------------
+[2025-05-27 20:16:09] EXCEPTION: Failed opening required 'lib/UnitManager.php' (include_path='C:\xampp\php\PEAR') w C:\xampp\htdocs\lib\VillageManager.php linia 213
+Trace: #0 C:\xampp\htdocs\init.php(72): VillageManager->processCompletedTasksForVillage(1)
+#1 C:\xampp\htdocs\ajax\get_resources.php(6): require_once('C:\\xampp\\htdocs...')
+#2 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 20:19:21] ERROR: require_once(lib/UnitManager.php): Failed to open stream: No such file or directory w C:\xampp\htdocs\lib\VillageManager.php linia 213
+--------------------------------------------------------------------------------
+[2025-05-27 20:19:21] EXCEPTION: Failed opening required 'lib/UnitManager.php' (include_path='C:\xampp\php\PEAR') w C:\xampp\htdocs\lib\VillageManager.php linia 213
+Trace: #0 C:\xampp\htdocs\init.php(72): VillageManager->processCompletedTasksForVillage(1)
+#1 C:\xampp\htdocs\ajax\get_resources.php(6): require_once('C:\\xampp\\htdocs...')
+#2 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 20:20:18] ERROR: require_once(lib/ResearchManager.php): Failed to open stream: No such file or directory w C:\xampp\htdocs\lib\VillageManager.php linia 218
+--------------------------------------------------------------------------------
+[2025-05-27 20:20:18] EXCEPTION: Failed opening required 'lib/ResearchManager.php' (include_path='C:\xampp\php\PEAR') w C:\xampp\htdocs\lib\VillageManager.php linia 218
+Trace: #0 C:\xampp\htdocs\init.php(72): VillageManager->processCompletedTasksForVillage(1)
+#1 C:\xampp\htdocs\ajax\get_resources.php(6): require_once('C:\\xampp\\htdocs...')
+#2 {main}
+--------------------------------------------------------------------------------
+[2025-05-28 07:18:00] EXCEPTION: syntax error, unexpected token "}" w C:\xampp\htdocs\lib\BuildingManager.php linia 284
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(46): VillageManager->updateResources(1)
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-28 07:48:57] ERROR: require_once(lib/managers/BuildingConfigManager.php): Failed to open stream: No such file or directory w C:\xampp\htdocs\lib\BuildingManager.php linia 3
+--------------------------------------------------------------------------------
+[2025-05-28 07:48:57] EXCEPTION: Failed opening required 'lib/managers/BuildingConfigManager.php' (include_path='C:\xampp\php\PEAR') w C:\xampp\htdocs\lib\BuildingManager.php linia 3
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(95): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-28 07:48:59] ERROR: require_once(lib/managers/BuildingConfigManager.php): Failed to open stream: No such file or directory w C:\xampp\htdocs\lib\BuildingManager.php linia 3
+--------------------------------------------------------------------------------
+[2025-05-28 07:48:59] EXCEPTION: Failed opening required 'lib/managers/BuildingConfigManager.php' (include_path='C:\xampp\php\PEAR') w C:\xampp\htdocs\lib\BuildingManager.php linia 3
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(95): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-28 07:51:18] ERROR: require_once(lib/managers/BuildingConfigManager.php): Failed to open stream: No such file or directory w C:\xampp\htdocs\lib\BuildingManager.php linia 3
+--------------------------------------------------------------------------------
+[2025-05-28 07:51:18] EXCEPTION: Failed opening required 'lib/managers/BuildingConfigManager.php' (include_path='C:\xampp\php\PEAR') w C:\xampp\htdocs\lib\BuildingManager.php linia 3
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(95): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-28 07:55:23] ERROR: require_once(lib/managers/BuildingConfigManager.php): Failed to open stream: No such file or directory w C:\xampp\htdocs\lib\BuildingManager.php linia 3
+--------------------------------------------------------------------------------
+[2025-05-28 07:55:23] EXCEPTION: Failed opening required 'lib/managers/BuildingConfigManager.php' (include_path='C:\xampp\php\PEAR') w C:\xampp\htdocs\lib\BuildingManager.php linia 3
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(95): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-28 07:56:13] ERROR: require_once(lib/managers/BuildingConfigManager.php): Failed to open stream: No such file or directory w C:\xampp\htdocs\lib\BuildingManager.php linia 3
+--------------------------------------------------------------------------------
+[2025-05-28 07:56:13] EXCEPTION: Failed opening required 'lib/managers/BuildingConfigManager.php' (include_path='C:\xampp\php\PEAR') w C:\xampp\htdocs\lib\BuildingManager.php linia 3
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(95): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-28 07:56:20] ERROR: require_once(lib/managers/BuildingConfigManager.php): Failed to open stream: No such file or directory w C:\xampp\htdocs\lib\BuildingManager.php linia 3
+--------------------------------------------------------------------------------
+[2025-05-28 07:56:20] EXCEPTION: Failed opening required 'lib/managers/BuildingConfigManager.php' (include_path='C:\xampp\php\PEAR') w C:\xampp\htdocs\lib\BuildingManager.php linia 3
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(95): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-28 08:01:13] ERROR: require_once(lib/managers/BuildingConfigManager.php): Failed to open stream: No such file or directory w C:\xampp\htdocs\lib\BuildingManager.php linia 3
+--------------------------------------------------------------------------------
+[2025-05-28 08:01:13] EXCEPTION: Failed opening required 'lib/managers/BuildingConfigManager.php' (include_path='C:\xampp\php\PEAR') w C:\xampp\htdocs\lib\BuildingManager.php linia 3
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(95): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-28 08:02:59] ERROR: require_once(lib/managers/BuildingConfigManager.php): Failed to open stream: No such file or directory w C:\xampp\htdocs\lib\BuildingManager.php linia 3
+--------------------------------------------------------------------------------
+[2025-05-28 08:02:59] EXCEPTION: Failed opening required 'lib/managers/BuildingConfigManager.php' (include_path='C:\xampp\php\PEAR') w C:\xampp\htdocs\lib\BuildingManager.php linia 3
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(95): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-28 08:04:40] ERROR: require_once(lib/managers/BuildingConfigManager.php): Failed to open stream: No such file or directory w C:\xampp\htdocs\lib\BuildingManager.php linia 3
+--------------------------------------------------------------------------------
+[2025-05-28 08:04:40] EXCEPTION: Failed opening required 'lib/managers/BuildingConfigManager.php' (include_path='C:\xampp\php\PEAR') w C:\xampp\htdocs\lib\BuildingManager.php linia 3
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(95): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-28 08:05:27] ERROR: require_once(lib/managers/BuildingConfigManager.php): Failed to open stream: No such file or directory w C:\xampp\htdocs\lib\BuildingManager.php linia 3
+--------------------------------------------------------------------------------
+[2025-05-28 08:05:27] EXCEPTION: Failed opening required 'lib/managers/BuildingConfigManager.php' (include_path='C:\xampp\php\PEAR') w C:\xampp\htdocs\lib\BuildingManager.php linia 3
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(95): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-28 08:07:36] ERROR: require_once(lib/managers/BuildingConfigManager.php): Failed to open stream: No such file or directory w C:\xampp\htdocs\lib\BuildingManager.php linia 3
+--------------------------------------------------------------------------------
+[2025-05-28 08:07:36] EXCEPTION: Failed opening required 'lib/managers/BuildingConfigManager.php' (include_path='C:\xampp\php\PEAR') w C:\xampp\htdocs\lib\BuildingManager.php linia 3
+Trace: #0 C:\xampp\htdocs\lib\VillageManager.php(63): require_once()
+#1 C:\xampp\htdocs\ajax\get_resources.php(46): VillageManager->updateResources(Array)
+#2 {main}
+--------------------------------------------------------------------------------
+[2025-05-28 08:08:36] ERROR: require_once(lib/managers/BuildingConfigManager.php): Failed to open stream: No such file or directory w C:\xampp\htdocs\lib\BuildingManager.php linia 3
+--------------------------------------------------------------------------------
+[2025-05-28 08:08:36] EXCEPTION: Failed opening required 'lib/managers/BuildingConfigManager.php' (include_path='C:\xampp\php\PEAR') w C:\xampp\htdocs\lib\BuildingManager.php linia 3
+Trace: #0 C:\xampp\htdocs\lib\VillageManager.php(63): require_once()
+#1 C:\xampp\htdocs\ajax\get_resources.php(46): VillageManager->updateResources(Array)
+#2 {main}
+--------------------------------------------------------------------------------
+[2025-05-28 08:10:04] ERROR: require_once(lib/managers/BuildingConfigManager.php): Failed to open stream: No such file or directory w C:\xampp\htdocs\lib\BuildingManager.php linia 3
+--------------------------------------------------------------------------------
+[2025-05-28 08:10:04] EXCEPTION: Failed opening required 'lib/managers/BuildingConfigManager.php' (include_path='C:\xampp\php\PEAR') w C:\xampp\htdocs\lib\BuildingManager.php linia 3
+Trace: #0 C:\xampp\htdocs\lib\VillageManager.php(63): require_once()
+#1 C:\xampp\htdocs\ajax\get_resources.php(46): VillageManager->updateResources(Array)
+#2 {main}
+--------------------------------------------------------------------------------
+[2025-05-28 08:10:05] ERROR: require_once(lib/managers/BuildingConfigManager.php): Failed to open stream: No such file or directory w C:\xampp\htdocs\lib\BuildingManager.php linia 3
+--------------------------------------------------------------------------------
+[2025-05-28 08:10:05] EXCEPTION: Failed opening required 'lib/managers/BuildingConfigManager.php' (include_path='C:\xampp\php\PEAR') w C:\xampp\htdocs\lib\BuildingManager.php linia 3
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(95): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-28 08:11:16] ERROR: require_once(lib/managers/BuildingConfigManager.php): Failed to open stream: No such file or directory w C:\xampp\htdocs\lib\BuildingManager.php linia 3
+--------------------------------------------------------------------------------
+[2025-05-28 08:11:16] EXCEPTION: Failed opening required 'lib/managers/BuildingConfigManager.php' (include_path='C:\xampp\php\PEAR') w C:\xampp\htdocs\lib\BuildingManager.php linia 3
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(95): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-28 08:45:53] ERROR: require_once(lib/managers/BuildingConfigManager.php): Failed to open stream: No such file or directory w C:\xampp\htdocs\lib\BuildingManager.php linia 3
+--------------------------------------------------------------------------------
+[2025-05-28 08:45:53] EXCEPTION: Failed opening required 'lib/managers/BuildingConfigManager.php' (include_path='C:\xampp\php\PEAR') w C:\xampp\htdocs\lib\BuildingManager.php linia 3
+Trace: #0 C:\xampp\htdocs\lib\VillageManager.php(63): require_once()
+#1 C:\xampp\htdocs\ajax\get_resources.php(46): VillageManager->updateResources(Array)
+#2 {main}
+--------------------------------------------------------------------------------
+[2025-05-28 08:46:27] ERROR: require_once(lib/managers/BuildingConfigManager.php): Failed to open stream: No such file or directory w C:\xampp\htdocs\lib\BuildingManager.php linia 3
+--------------------------------------------------------------------------------
+[2025-05-28 08:46:27] EXCEPTION: Failed opening required 'lib/managers/BuildingConfigManager.php' (include_path='C:\xampp\php\PEAR') w C:\xampp\htdocs\lib\BuildingManager.php linia 3
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(95): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-28 08:47:50] ERROR: require_once(lib/managers/BuildingConfigManager.php): Failed to open stream: No such file or directory w C:\xampp\htdocs\lib\BuildingManager.php linia 3
+--------------------------------------------------------------------------------
+[2025-05-28 08:47:50] EXCEPTION: Failed opening required 'lib/managers/BuildingConfigManager.php' (include_path='C:\xampp\php\PEAR') w C:\xampp\htdocs\lib\BuildingManager.php linia 3
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(95): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-28 08:51:39] ERROR: require_once(lib/managers/BuildingConfigManager.php): Failed to open stream: No such file or directory w C:\xampp\htdocs\lib\BuildingManager.php linia 3
+--------------------------------------------------------------------------------
+[2025-05-28 08:51:39] EXCEPTION: Failed opening required 'lib/managers/BuildingConfigManager.php' (include_path='C:\xampp\php\PEAR') w C:\xampp\htdocs\lib\BuildingManager.php linia 3
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(95): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-28 08:55:37] ERROR: require_once(lib/managers/BuildingConfigManager.php): Failed to open stream: No such file or directory w C:\xampp\htdocs\lib\BuildingManager.php linia 3
+--------------------------------------------------------------------------------
+[2025-05-28 08:55:37] EXCEPTION: Failed opening required 'lib/managers/BuildingConfigManager.php' (include_path='C:\xampp\php\PEAR') w C:\xampp\htdocs\lib\BuildingManager.php linia 3
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(95): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-28 09:17:59] ERROR: require_once(lib/managers/BuildingConfigManager.php): Failed to open stream: No such file or directory w C:\xampp\htdocs\lib\BuildingManager.php linia 3
+--------------------------------------------------------------------------------
+[2025-05-28 09:17:59] EXCEPTION: Failed opening required 'lib/managers/BuildingConfigManager.php' (include_path='C:\xampp\php\PEAR') w C:\xampp\htdocs\lib\BuildingManager.php linia 3
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(95): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-28 09:18:04] ERROR: require_once(lib/managers/BuildingConfigManager.php): Failed to open stream: No such file or directory w C:\xampp\htdocs\lib\BuildingManager.php linia 3
+--------------------------------------------------------------------------------
+[2025-05-28 09:18:04] EXCEPTION: Failed opening required 'lib/managers/BuildingConfigManager.php' (include_path='C:\xampp\php\PEAR') w C:\xampp\htdocs\lib\BuildingManager.php linia 3
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(95): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-28 09:23:32] ERROR: require_once(lib/managers/BuildingConfigManager.php): Failed to open stream: No such file or directory w C:\xampp\htdocs\lib\BuildingManager.php linia 3
+--------------------------------------------------------------------------------
+[2025-05-28 09:23:32] EXCEPTION: Failed opening required 'lib/managers/BuildingConfigManager.php' (include_path='C:\xampp\php\PEAR') w C:\xampp\htdocs\lib\BuildingManager.php linia 3
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(95): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-28 09:23:36] ERROR: require_once(lib/managers/BuildingConfigManager.php): Failed to open stream: No such file or directory w C:\xampp\htdocs\lib\BuildingManager.php linia 3
+--------------------------------------------------------------------------------
+[2025-05-28 09:23:36] EXCEPTION: Failed opening required 'lib/managers/BuildingConfigManager.php' (include_path='C:\xampp\php\PEAR') w C:\xampp\htdocs\lib\BuildingManager.php linia 3
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(95): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-28 10:05:03] ERROR: require_once(lib/managers/BuildingConfigManager.php): Failed to open stream: No such file or directory w C:\xampp\htdocs\lib\BuildingManager.php linia 3
+--------------------------------------------------------------------------------
+[2025-05-28 10:05:03] EXCEPTION: Failed opening required 'lib/managers/BuildingConfigManager.php' (include_path='C:\xampp\php\PEAR') w C:\xampp\htdocs\lib\BuildingManager.php linia 3
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(95): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-28 10:05:04] ERROR: require_once(lib/managers/BuildingConfigManager.php): Failed to open stream: No such file or directory w C:\xampp\htdocs\lib\BuildingManager.php linia 3
+--------------------------------------------------------------------------------
+[2025-05-28 10:05:04] EXCEPTION: Failed opening required 'lib/managers/BuildingConfigManager.php' (include_path='C:\xampp\php\PEAR') w C:\xampp\htdocs\lib\BuildingManager.php linia 3
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(95): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-28 10:06:06] ERROR: require_once(lib/managers/BuildingConfigManager.php): Failed to open stream: No such file or directory w C:\xampp\htdocs\lib\BuildingManager.php linia 3
+--------------------------------------------------------------------------------
+[2025-05-28 10:06:06] EXCEPTION: Failed opening required 'lib/managers/BuildingConfigManager.php' (include_path='C:\xampp\php\PEAR') w C:\xampp\htdocs\lib\BuildingManager.php linia 3
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(95): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-28 10:06:26] ERROR: require_once(lib/managers/BuildingConfigManager.php): Failed to open stream: No such file or directory w C:\xampp\htdocs\lib\BuildingManager.php linia 3
+--------------------------------------------------------------------------------
+[2025-05-28 10:06:26] EXCEPTION: Failed opening required 'lib/managers/BuildingConfigManager.php' (include_path='C:\xampp\php\PEAR') w C:\xampp\htdocs\lib\BuildingManager.php linia 3
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(95): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-28 10:06:38] ERROR: require_once(lib/managers/BuildingConfigManager.php): Failed to open stream: No such file or directory w C:\xampp\htdocs\lib\BuildingManager.php linia 3
+--------------------------------------------------------------------------------
+[2025-05-28 10:06:38] EXCEPTION: Failed opening required 'lib/managers/BuildingConfigManager.php' (include_path='C:\xampp\php\PEAR') w C:\xampp\htdocs\lib\BuildingManager.php linia 3
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(95): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-28 10:55:10] ERROR: require_once(lib/managers/BuildingConfigManager.php): Failed to open stream: No such file or directory w C:\xampp\htdocs\lib\BuildingManager.php linia 3
+--------------------------------------------------------------------------------
+[2025-05-28 10:55:10] EXCEPTION: Failed opening required 'lib/managers/BuildingConfigManager.php' (include_path='C:\xampp\php\PEAR') w C:\xampp\htdocs\lib\BuildingManager.php linia 3
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(95): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-28 10:55:11] ERROR: require_once(lib/managers/BuildingConfigManager.php): Failed to open stream: No such file or directory w C:\xampp\htdocs\lib\BuildingManager.php linia 3
+--------------------------------------------------------------------------------
+[2025-05-28 10:55:11] EXCEPTION: Failed opening required 'lib/managers/BuildingConfigManager.php' (include_path='C:\xampp\php\PEAR') w C:\xampp\htdocs\lib\BuildingManager.php linia 3
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(95): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-28 10:56:55] ERROR: require_once(lib/managers/BuildingConfigManager.php): Failed to open stream: No such file or directory w C:\xampp\htdocs\lib\BuildingManager.php linia 3
+--------------------------------------------------------------------------------
+[2025-05-28 10:56:55] EXCEPTION: Failed opening required 'lib/managers/BuildingConfigManager.php' (include_path='C:\xampp\php\PEAR') w C:\xampp\htdocs\lib\BuildingManager.php linia 3
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(95): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-28 10:58:42] ERROR: require_once(lib/managers/BuildingConfigManager.php): Failed to open stream: No such file or directory w C:\xampp\htdocs\lib\BuildingManager.php linia 3
+--------------------------------------------------------------------------------
+[2025-05-28 10:58:42] EXCEPTION: Failed opening required 'lib/managers/BuildingConfigManager.php' (include_path='C:\xampp\php\PEAR') w C:\xampp\htdocs\lib\BuildingManager.php linia 3
+Trace: #0 C:\xampp\htdocs\lib\VillageManager.php(63): require_once()
+#1 C:\xampp\htdocs\ajax\get_resources.php(46): VillageManager->updateResources(1)
+#2 {main}
+--------------------------------------------------------------------------------
+[2025-05-28 11:06:11] ERROR: require_once(lib/managers/BuildingConfigManager.php): Failed to open stream: No such file or directory w C:\xampp\htdocs\lib\BuildingManager.php linia 3
+--------------------------------------------------------------------------------
+[2025-05-28 11:06:11] EXCEPTION: Failed opening required 'lib/managers/BuildingConfigManager.php' (include_path='C:\xampp\php\PEAR') w C:\xampp\htdocs\lib\BuildingManager.php linia 3
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(9): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-28 13:23:05] ERROR: require_once(lib/managers/BuildingConfigManager.php): Failed to open stream: No such file or directory w C:\xampp\htdocs\lib\BuildingManager.php linia 3
+--------------------------------------------------------------------------------
+[2025-05-28 13:23:05] EXCEPTION: Failed opening required 'lib/managers/BuildingConfigManager.php' (include_path='C:\xampp\php\PEAR') w C:\xampp\htdocs\lib\BuildingManager.php linia 3
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(9): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-28 13:26:16] ERROR: require_once(lib/managers/BuildingConfigManager.php): Failed to open stream: No such file or directory w C:\xampp\htdocs\lib\BuildingManager.php linia 3
+--------------------------------------------------------------------------------
+[2025-05-28 13:26:16] EXCEPTION: Failed opening required 'lib/managers/BuildingConfigManager.php' (include_path='C:\xampp\php\PEAR') w C:\xampp\htdocs\lib\BuildingManager.php linia 3
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(9): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-28 13:29:16] ERROR: require_once(lib/managers/BuildingConfigManager.php): Failed to open stream: No such file or directory w C:\xampp\htdocs\lib\BuildingManager.php linia 3
+--------------------------------------------------------------------------------
+[2025-05-28 13:29:16] EXCEPTION: Failed opening required 'lib/managers/BuildingConfigManager.php' (include_path='C:\xampp\php\PEAR') w C:\xampp\htdocs\lib\BuildingManager.php linia 3
+Trace: #0 C:\xampp\htdocs\ajax\get_resources.php(9): require_once()
+#1 {main}
+--------------------------------------------------------------------------------

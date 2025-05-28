@@ -1,0 +1,1330 @@
+[2025-05-27 00:43:33] EXCEPTION: mysqli_stmt::bind_param(): Argument #3 cannot be passed by reference w C:\xampp\htdocs\create_village.php linia 38
+Trace: #0 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 00:43:48] EXCEPTION: mysqli_stmt::bind_param(): Argument #3 cannot be passed by reference w C:\xampp\htdocs\create_village.php linia 38
+Trace: #0 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 00:44:03] EXCEPTION: Unknown column 'world_id' in 'where clause' w C:\xampp\htdocs\ranking.php linia 23
+Trace: #0 C:\xampp\htdocs\ranking.php(23): mysqli->prepare('SELECT COUNT(*)...')
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 00:44:46] ERROR: Trying to access array offset on value of type null w C:\xampp\htdocs\map.php linia 20
+--------------------------------------------------------------------------------
+[2025-05-27 00:44:46] ERROR: Trying to access array offset on value of type null w C:\xampp\htdocs\map.php linia 21
+--------------------------------------------------------------------------------
+[2025-05-27 00:44:46] ERROR: Trying to access array offset on value of type null w C:\xampp\htdocs\map.php linia 123
+--------------------------------------------------------------------------------
+[2025-05-27 00:44:46] ERROR: Trying to access array offset on value of type null w C:\xampp\htdocs\map.php linia 123
+--------------------------------------------------------------------------------
+[2025-05-27 00:44:51] EXCEPTION: mysqli_stmt::bind_param(): Argument #3 cannot be passed by reference w C:\xampp\htdocs\create_village.php linia 38
+Trace: #0 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 00:44:52] ERROR: Trying to access array offset on value of type null w C:\xampp\htdocs\map.php linia 20
+--------------------------------------------------------------------------------
+[2025-05-27 00:44:52] ERROR: Trying to access array offset on value of type null w C:\xampp\htdocs\map.php linia 21
+--------------------------------------------------------------------------------
+[2025-05-27 00:44:52] ERROR: Trying to access array offset on value of type null w C:\xampp\htdocs\map.php linia 123
+--------------------------------------------------------------------------------
+[2025-05-27 00:44:52] ERROR: Trying to access array offset on value of type null w C:\xampp\htdocs\map.php linia 123
+--------------------------------------------------------------------------------
+[2025-05-27 00:48:19] EXCEPTION: mysqli_stmt::bind_param(): Argument #3 cannot be passed by reference w C:\xampp\htdocs\create_village.php linia 38
+Trace: #0 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 00:49:30] EXCEPTION: mysqli_stmt::bind_param(): Argument #3 cannot be passed by reference w C:\xampp\htdocs\create_village.php linia 38
+Trace: #0 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 00:55:56] EXCEPTION: The number of elements in the type definition string must match the number of bind variables w C:\xampp\htdocs\create_village.php linia 68
+Trace: #0 C:\xampp\htdocs\create_village.php(68): mysqli_stmt->bind_param('iiisiiiiiii', 1, 1, 'Wioska gracza P...', 119, 261, 500, 500, 500, 1000, 0)
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 00:57:59] EXCEPTION: Unknown column 'bq.starts_at' in 'field list' w C:\xampp\htdocs\game.php linia 248
+Trace: #0 C:\xampp\htdocs\game.php(248): mysqli->prepare('\n    SELECT bq....')
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 12:17:56] EXCEPTION: Unknown database 'tribal_wars_new' w C:\xampp\htdocs\lib\Database.php linia 19
+Trace: #0 C:\xampp\htdocs\lib\Database.php(19): mysqli->__construct('localhost', 'root', Object(SensitiveParameterValue), 'tribal_wars_new')
+#1 C:\xampp\htdocs\lib\Database.php(15): Database->connect()
+#2 C:\xampp\htdocs\init.php(31): Database->__construct('localhost', 'root', '', 'tribal_wars_new')
+#3 C:\xampp\htdocs\index.php(2): require('C:\\xampp\\htdocs...')
+#4 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 12:35:38] ERROR: session_start(): Ignoring session_start() because a session is already active w C:\xampp\htdocs\map.php linia 6
+--------------------------------------------------------------------------------
+[2025-05-27 20:18:16] EXCEPTION: Call to undefined method UnitManager::processRecruitmentQueue() w C:\xampp\htdocs\lib\VillageManager.php linia 215
+Trace: #0 C:\xampp\htdocs\init.php(72): VillageManager->processCompletedTasksForVillage(1)
+#1 C:\xampp\htdocs\game.php(2): require('C:\\xampp\\htdocs...')
+#2 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 20:21:49] EXCEPTION: Call to undefined method UnitManager::getAvailableUnitsForRecruitment() w C:\xampp\htdocs\get_recruitment_panel.php linia 27
+Trace: #0 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 20:21:49] EXCEPTION: Call to undefined method UnitManager::getRecruitmentQueue() w C:\xampp\htdocs\get_recruitment_queue.php linia 27
+Trace: #0 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 20:21:49] EXCEPTION: Call to undefined method ResearchManager::getVillageResearches() w C:\xampp\htdocs\get_current_research.php linia 27
+Trace: #0 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 20:23:43] EXCEPTION: Call to undefined method UnitManager::getAvailableUnitsForRecruitment() w C:\xampp\htdocs\get_recruitment_panel.php linia 27
+Trace: #0 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 20:23:43] EXCEPTION: Call to undefined method UnitManager::getRecruitmentQueue() w C:\xampp\htdocs\get_recruitment_queue.php linia 27
+Trace: #0 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 20:23:43] EXCEPTION: Call to undefined method ResearchManager::getVillageResearches() w C:\xampp\htdocs\get_current_research.php linia 27
+Trace: #0 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 20:27:06] EXCEPTION: Call to undefined method UnitManager::getRecruitmentQueue() w C:\xampp\htdocs\get_recruitment_queue.php linia 27
+Trace: #0 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 20:27:06] EXCEPTION: Call to undefined method ResearchManager::getVillageResearches() w C:\xampp\htdocs\get_current_research.php linia 27
+Trace: #0 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 20:27:06] EXCEPTION: Call to undefined method UnitManager::getAvailableUnitsForRecruitment() w C:\xampp\htdocs\get_recruitment_panel.php linia 27
+Trace: #0 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 20:28:41] EXCEPTION: Call to undefined method UnitManager::getAvailableUnitsForRecruitment() w C:\xampp\htdocs\get_recruitment_panel.php linia 27
+Trace: #0 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 20:28:41] EXCEPTION: Call to undefined method UnitManager::getRecruitmentQueue() w C:\xampp\htdocs\get_recruitment_queue.php linia 27
+Trace: #0 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 20:28:41] EXCEPTION: Call to undefined method ResearchManager::getVillageResearches() w C:\xampp\htdocs\get_current_research.php linia 27
+Trace: #0 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 20:31:52] EXCEPTION: Call to undefined method UnitManager::getRecruitmentQueue() w C:\xampp\htdocs\get_recruitment_queue.php linia 27
+Trace: #0 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 20:31:52] EXCEPTION: Call to undefined method UnitManager::getAvailableUnitsForRecruitment() w C:\xampp\htdocs\get_recruitment_panel.php linia 27
+Trace: #0 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 20:31:52] EXCEPTION: Call to undefined method ResearchManager::getVillageResearches() w C:\xampp\htdocs\get_current_research.php linia 27
+Trace: #0 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 20:35:03] EXCEPTION: Call to undefined method UnitManager::getAvailableUnitsForRecruitment() w C:\xampp\htdocs\get_recruitment_panel.php linia 27
+Trace: #0 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 20:35:03] EXCEPTION: Call to undefined method UnitManager::getRecruitmentQueue() w C:\xampp\htdocs\get_recruitment_queue.php linia 27
+Trace: #0 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 20:35:03] EXCEPTION: Call to undefined method ResearchManager::getVillageResearches() w C:\xampp\htdocs\get_current_research.php linia 27
+Trace: #0 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 20:35:58] EXCEPTION: Call to undefined method UnitManager::getAvailableUnitsForRecruitment() w C:\xampp\htdocs\get_recruitment_panel.php linia 27
+Trace: #0 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 20:35:58] EXCEPTION: Call to undefined method UnitManager::getRecruitmentQueue() w C:\xampp\htdocs\get_recruitment_queue.php linia 27
+Trace: #0 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 20:35:58] EXCEPTION: Call to undefined method ResearchManager::getVillageResearches() w C:\xampp\htdocs\get_current_research.php linia 27
+Trace: #0 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 20:37:04] EXCEPTION: Call to undefined method UnitManager::getAvailableUnitsForRecruitment() w C:\xampp\htdocs\get_recruitment_panel.php linia 27
+Trace: #0 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 20:37:04] EXCEPTION: Call to undefined method ResearchManager::getVillageResearches() w C:\xampp\htdocs\get_current_research.php linia 27
+Trace: #0 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 20:37:04] EXCEPTION: Call to undefined method UnitManager::getRecruitmentQueue() w C:\xampp\htdocs\get_recruitment_queue.php linia 27
+Trace: #0 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 20:38:13] EXCEPTION: Call to undefined method UnitManager::getRecruitmentQueue() w C:\xampp\htdocs\get_recruitment_queue.php linia 27
+Trace: #0 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 20:38:14] EXCEPTION: Call to undefined method UnitManager::getAvailableUnitsForRecruitment() w C:\xampp\htdocs\get_recruitment_panel.php linia 27
+Trace: #0 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 20:38:14] EXCEPTION: Call to undefined method ResearchManager::getVillageResearches() w C:\xampp\htdocs\get_current_research.php linia 27
+Trace: #0 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 21:32:34] EXCEPTION: Call to undefined method UnitManager::getAvailableUnitsForRecruitment() w C:\xampp\htdocs\get_recruitment_panel.php linia 27
+Trace: #0 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 21:32:34] EXCEPTION: Call to undefined method ResearchManager::getVillageResearches() w C:\xampp\htdocs\get_current_research.php linia 27
+Trace: #0 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 21:32:34] EXCEPTION: Call to undefined method UnitManager::getRecruitmentQueue() w C:\xampp\htdocs\get_recruitment_queue.php linia 27
+Trace: #0 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 22:37:09] EXCEPTION: Call to undefined method ResearchManager::getVillageResearches() w C:\xampp\htdocs\get_current_research.php linia 27
+Trace: #0 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 22:37:09] EXCEPTION: Call to undefined method UnitManager::getRecruitmentQueue() w C:\xampp\htdocs\get_recruitment_queue.php linia 27
+Trace: #0 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 22:37:09] EXCEPTION: Call to undefined method UnitManager::getAvailableUnitsForRecruitment() w C:\xampp\htdocs\get_recruitment_panel.php linia 27
+Trace: #0 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 22:44:00] EXCEPTION: Call to undefined method UnitManager::getAvailableUnitsForRecruitment() w C:\xampp\htdocs\get_recruitment_panel.php linia 27
+Trace: #0 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 22:44:00] EXCEPTION: Call to undefined method ResearchManager::getVillageResearches() w C:\xampp\htdocs\get_current_research.php linia 27
+Trace: #0 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 22:44:00] EXCEPTION: Call to undefined method UnitManager::getRecruitmentQueue() w C:\xampp\htdocs\get_recruitment_queue.php linia 27
+Trace: #0 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 22:47:00] EXCEPTION: Call to undefined method BuildingManager::getVillageBuildingLevel() w C:\xampp\htdocs\get_research_panel.php linia 35
+Trace: #0 {main}
+--------------------------------------------------------------------------------
+[2025-05-28 07:18:05] EXCEPTION: syntax error, unexpected token "}" w C:\xampp\htdocs\lib\BuildingManager.php linia 284
+Trace: #0 C:\xampp\htdocs\header.php(14): VillageManager->updateResources(1)
+#1 C:\xampp\htdocs\world_select.php(58): require('C:\\xampp\\htdocs...')
+#2 {main}
+--------------------------------------------------------------------------------
+[2025-05-28 07:18:07] EXCEPTION: syntax error, unexpected token "}" w C:\xampp\htdocs\lib\BuildingManager.php linia 284
+Trace: #0 C:\xampp\htdocs\header.php(14): VillageManager->updateResources(1)
+#1 C:\xampp\htdocs\login.php(62): require('C:\\xampp\\htdocs...')
+#2 {main}
+--------------------------------------------------------------------------------
+[2025-05-28 07:18:08] EXCEPTION: syntax error, unexpected token "}" w C:\xampp\htdocs\lib\BuildingManager.php linia 284
+Trace: #0 {main}
+--------------------------------------------------------------------------------
+[2025-05-28 07:18:09] EXCEPTION: syntax error, unexpected token "}" w C:\xampp\htdocs\lib\BuildingManager.php linia 284
+Trace: #0 {main}
+--------------------------------------------------------------------------------
+[2025-05-28 07:18:09] EXCEPTION: syntax error, unexpected token "}" w C:\xampp\htdocs\lib\BuildingManager.php linia 284
+Trace: #0 {main}
+--------------------------------------------------------------------------------
+[2025-05-28 07:18:10] EXCEPTION: syntax error, unexpected token "}" w C:\xampp\htdocs\lib\BuildingManager.php linia 284
+Trace: #0 {main}
+--------------------------------------------------------------------------------
+[2025-05-28 07:18:10] EXCEPTION: syntax error, unexpected token "}" w C:\xampp\htdocs\lib\BuildingManager.php linia 284
+Trace: #0 {main}
+--------------------------------------------------------------------------------
+[2025-05-28 07:18:12] EXCEPTION: syntax error, unexpected token "}" w C:\xampp\htdocs\lib\BuildingManager.php linia 284
+Trace: #0 {main}
+--------------------------------------------------------------------------------
+[2025-05-28 07:20:06] EXCEPTION: syntax error, unexpected token "}" w C:\xampp\htdocs\lib\BuildingManager.php linia 257
+Trace: #0 {main}
+--------------------------------------------------------------------------------
+[2025-05-28 07:23:50] EXCEPTION: syntax error, unexpected token "}" w C:\xampp\htdocs\lib\BuildingManager.php linia 257
+Trace: #0 {main}
+--------------------------------------------------------------------------------
+[2025-05-28 07:23:54] EXCEPTION: syntax error, unexpected token "}" w C:\xampp\htdocs\lib\BuildingManager.php linia 257
+Trace: #0 {main}
+--------------------------------------------------------------------------------
+[2025-05-28 07:26:53] EXCEPTION: Too few arguments to function BuildingManager::__construct(), 1 passed in C:\xampp\htdocs\game.php on line 5 and exactly 2 expected w C:\xampp\htdocs\lib\BuildingManager.php linia 9
+Trace: #0 C:\xampp\htdocs\game.php(5): BuildingManager->__construct(Object(mysqli))
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-28 07:29:42] EXCEPTION: Call to undefined method VillageManager::getFirstVillageInfo() w C:\xampp\htdocs\game.php linia 25
+Trace: #0 {main}
+--------------------------------------------------------------------------------
+[2025-05-28 07:30:49] ERROR: Trying to access array offset on value of type int w C:\xampp\htdocs\game.php linia 32
+--------------------------------------------------------------------------------
+[2025-05-28 07:30:49] EXCEPTION: Unknown column 'bq.level' in 'field list' w C:\xampp\htdocs\game.php linia 38
+Trace: #0 C:\xampp\htdocs\game.php(38): mysqli->prepare('SELECT bq.id, b...')
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-28 07:39:24] EXCEPTION: Unknown column 'farm_capacity' in 'field list' w C:\xampp\htdocs\lib\VillageManager.php linia 552
+Trace: #0 C:\xampp\htdocs\lib\VillageManager.php(552): mysqli->prepare('\n            SE...')
+#1 C:\xampp\htdocs\game.php(25): VillageManager->getFirstVillage(1)
+#2 {main}
+--------------------------------------------------------------------------------
+[2025-05-28 07:45:01] EXCEPTION: Unknown column 'farm_capacity' in 'field list' w C:\xampp\htdocs\lib\VillageManager.php linia 552
+Trace: #0 C:\xampp\htdocs\lib\VillageManager.php(552): mysqli->prepare('\n            SE...')
+#1 C:\xampp\htdocs\game.php(25): VillageManager->getFirstVillage(1)
+#2 {main}
+--------------------------------------------------------------------------------
+[2025-05-28 07:48:38] EXCEPTION: Unknown column 'farm_capacity' in 'field list' w C:\xampp\htdocs\lib\VillageManager.php linia 552
+Trace: #0 C:\xampp\htdocs\lib\VillageManager.php(552): mysqli->prepare('\n            SE...')
+#1 C:\xampp\htdocs\game.php(25): VillageManager->getFirstVillage(1)
+#2 {main}
+--------------------------------------------------------------------------------
+[2025-05-28 07:48:57] ERROR: Array to string conversion w C:\xampp\htdocs\header.php linia 150
+--------------------------------------------------------------------------------
+[2025-05-28 07:48:57] EXCEPTION: Too few arguments to function BuildingManager::__construct(), 1 passed in C:\xampp\htdocs\lib\VillageManager.php on line 606 and exactly 2 expected w C:\xampp\htdocs\lib\BuildingManager.php linia 9
+Trace: #0 C:\xampp\htdocs\lib\VillageManager.php(606): BuildingManager->__construct(Object(mysqli))
+#1 C:\xampp\htdocs\header.php(160): VillageManager->getResourceProduction(Array, 'wood')
+#2 C:\xampp\htdocs\login.php(62): require('C:\\xampp\\htdocs...')
+#3 {main}
+--------------------------------------------------------------------------------
+[2025-05-28 07:48:59] ERROR: Array to string conversion w C:\xampp\htdocs\header.php linia 150
+--------------------------------------------------------------------------------
+[2025-05-28 07:48:59] EXCEPTION: Too few arguments to function BuildingManager::__construct(), 1 passed in C:\xampp\htdocs\lib\VillageManager.php on line 606 and exactly 2 expected w C:\xampp\htdocs\lib\BuildingManager.php linia 9
+Trace: #0 C:\xampp\htdocs\lib\VillageManager.php(606): BuildingManager->__construct(Object(mysqli))
+#1 C:\xampp\htdocs\header.php(160): VillageManager->getResourceProduction(Array, 'wood')
+#2 C:\xampp\htdocs\admin_login.php(33): require('C:\\xampp\\htdocs...')
+#3 {main}
+--------------------------------------------------------------------------------
+[2025-05-28 07:51:18] ERROR: Array to string conversion w C:\xampp\htdocs\header.php linia 150
+--------------------------------------------------------------------------------
+[2025-05-28 07:51:18] EXCEPTION: ResourceManager::getHourlyProductionRate(): Argument #1 ($village_id) must be of type int, array given, called in C:\xampp\htdocs\lib\VillageManager.php on line 586 w C:\xampp\htdocs\lib\ResourceManager.php linia 40
+Trace: #0 C:\xampp\htdocs\lib\VillageManager.php(586): ResourceManager->getHourlyProductionRate(Array, 'wood')
+#1 C:\xampp\htdocs\header.php(160): VillageManager->getResourceProduction(Array, 'wood')
+#2 C:\xampp\htdocs\login.php(62): require('C:\\xampp\\htdocs...')
+#3 {main}
+--------------------------------------------------------------------------------
+[2025-05-28 07:55:23] ERROR: Array to string conversion w C:\xampp\htdocs\header.php linia 150
+--------------------------------------------------------------------------------
+[2025-05-28 07:55:23] EXCEPTION: ResourceManager::getHourlyProductionRate(): Argument #1 ($village_id) must be of type int, array given, called in C:\xampp\htdocs\lib\VillageManager.php on line 586 w C:\xampp\htdocs\lib\ResourceManager.php linia 40
+Trace: #0 C:\xampp\htdocs\lib\VillageManager.php(586): ResourceManager->getHourlyProductionRate(Array, 'wood')
+#1 C:\xampp\htdocs\header.php(160): VillageManager->getResourceProduction(Array, 'wood')
+#2 C:\xampp\htdocs\login.php(62): require('C:\\xampp\\htdocs...')
+#3 {main}
+--------------------------------------------------------------------------------
+[2025-05-28 07:56:21] EXCEPTION: Unknown column 'bq.level' in 'field list' w C:\xampp\htdocs\lib\VillageManager.php linia 217
+Trace: #0 C:\xampp\htdocs\lib\VillageManager.php(217): mysqli->prepare('SELECT bq.id, b...')
+#1 C:\xampp\htdocs\lib\VillageManager.php(166): VillageManager->processBuildingQueue(1)
+#2 C:\xampp\htdocs\game.php(39): VillageManager->processCompletedTasksForVillage(1)
+#3 {main}
+--------------------------------------------------------------------------------
+[2025-05-28 07:58:58] EXCEPTION: Too few arguments to function BattleManager::__construct(), 1 passed in C:\xampp\htdocs\game.php on line 54 and exactly 2 expected w C:\xampp\htdocs\lib\BattleManager.php linia 16
+Trace: #0 C:\xampp\htdocs\game.php(54): BattleManager->__construct(Object(mysqli))
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-28 07:59:02] EXCEPTION: Too few arguments to function BattleManager::__construct(), 1 passed in C:\xampp\htdocs\game.php on line 54 and exactly 2 expected w C:\xampp\htdocs\lib\BattleManager.php linia 16
+Trace: #0 C:\xampp\htdocs\game.php(54): BattleManager->__construct(Object(mysqli))
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-28 08:00:28] EXCEPTION: Call to undefined method BuildingConfigManager::getAllBuildingConfigs() w C:\xampp\htdocs\game.php linia 75
+Trace: #0 {main}
+--------------------------------------------------------------------------------
+[2025-05-28 08:01:13] ERROR: Undefined variable $resourceManager w C:\xampp\htdocs\game.php linia 131
+--------------------------------------------------------------------------------
+[2025-05-28 08:01:13] EXCEPTION: Call to a member function getHourlyProductionRate() on null w C:\xampp\htdocs\game.php linia 131
+Trace: #0 {main}
+--------------------------------------------------------------------------------
+[2025-05-28 08:02:20] EXCEPTION: Too few arguments to function ResourceManager::__construct(), 1 passed in C:\xampp\htdocs\game.php on line 15 and exactly 2 expected w C:\xampp\htdocs\lib\ResourceManager.php linia 6
+Trace: #0 C:\xampp\htdocs\game.php(15): ResourceManager->__construct(Object(mysqli))
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-28 08:02:59] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 296
+--------------------------------------------------------------------------------
+[2025-05-28 08:02:59] EXCEPTION: Call to undefined function getBuildingActionText() w C:\xampp\htdocs\game.php linia 298
+Trace: #0 {main}
+--------------------------------------------------------------------------------
+[2025-05-28 08:04:40] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 321
+--------------------------------------------------------------------------------
+[2025-05-28 08:04:40] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 321
+--------------------------------------------------------------------------------
+[2025-05-28 08:04:40] EXCEPTION: Call to undefined method BuildingConfigManager::getProductionOrCapacityInfo() w C:\xampp\htdocs\game.php linia 280
+Trace: #0 {main}
+--------------------------------------------------------------------------------
+[2025-05-28 08:05:27] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 321
+--------------------------------------------------------------------------------
+[2025-05-28 08:05:27] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 321
+--------------------------------------------------------------------------------
+[2025-05-28 08:05:27] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 321
+--------------------------------------------------------------------------------
+[2025-05-28 08:05:27] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 321
+--------------------------------------------------------------------------------
+[2025-05-28 08:05:27] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 321
+--------------------------------------------------------------------------------
+[2025-05-28 08:05:27] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 321
+--------------------------------------------------------------------------------
+[2025-05-28 08:05:27] ERROR: Undefined variable $queue_item w C:\xampp\htdocs\game.php linia 338
+--------------------------------------------------------------------------------
+[2025-05-28 08:06:46] EXCEPTION: Too few arguments to function BuildingManager::getBuildingQueueItem(), 1 passed in C:\xampp\htdocs\game.php on line 137 and exactly 2 expected w C:\xampp\htdocs\lib\BuildingManager.php linia 352
+Trace: #0 C:\xampp\htdocs\game.php(137): BuildingManager->getBuildingQueueItem(1)
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-28 08:07:35] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 324
+--------------------------------------------------------------------------------
+[2025-05-28 08:07:35] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 324
+--------------------------------------------------------------------------------
+[2025-05-28 08:07:35] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 324
+--------------------------------------------------------------------------------
+[2025-05-28 08:07:35] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 324
+--------------------------------------------------------------------------------
+[2025-05-28 08:07:35] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 324
+--------------------------------------------------------------------------------
+[2025-05-28 08:07:35] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 324
+--------------------------------------------------------------------------------
+[2025-05-28 08:08:35] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 324
+--------------------------------------------------------------------------------
+[2025-05-28 08:08:35] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 324
+--------------------------------------------------------------------------------
+[2025-05-28 08:08:35] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 324
+--------------------------------------------------------------------------------
+[2025-05-28 08:08:35] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 324
+--------------------------------------------------------------------------------
+[2025-05-28 08:08:35] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 324
+--------------------------------------------------------------------------------
+[2025-05-28 08:08:35] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 324
+--------------------------------------------------------------------------------
+[2025-05-28 08:10:03] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 324
+--------------------------------------------------------------------------------
+[2025-05-28 08:10:03] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 324
+--------------------------------------------------------------------------------
+[2025-05-28 08:10:03] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 324
+--------------------------------------------------------------------------------
+[2025-05-28 08:10:03] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 324
+--------------------------------------------------------------------------------
+[2025-05-28 08:10:03] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 324
+--------------------------------------------------------------------------------
+[2025-05-28 08:10:03] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 324
+--------------------------------------------------------------------------------
+[2025-05-28 08:10:05] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 324
+--------------------------------------------------------------------------------
+[2025-05-28 08:10:05] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 324
+--------------------------------------------------------------------------------
+[2025-05-28 08:10:05] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 324
+--------------------------------------------------------------------------------
+[2025-05-28 08:10:05] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 324
+--------------------------------------------------------------------------------
+[2025-05-28 08:10:05] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 324
+--------------------------------------------------------------------------------
+[2025-05-28 08:10:05] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 324
+--------------------------------------------------------------------------------
+[2025-05-28 08:11:16] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 325
+--------------------------------------------------------------------------------
+[2025-05-28 08:11:16] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 325
+--------------------------------------------------------------------------------
+[2025-05-28 08:11:16] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 325
+--------------------------------------------------------------------------------
+[2025-05-28 08:11:16] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 325
+--------------------------------------------------------------------------------
+[2025-05-28 08:11:16] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 325
+--------------------------------------------------------------------------------
+[2025-05-28 08:11:16] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 325
+--------------------------------------------------------------------------------
+[2025-05-28 08:45:52] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 325
+--------------------------------------------------------------------------------
+[2025-05-28 08:45:52] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 325
+--------------------------------------------------------------------------------
+[2025-05-28 08:45:52] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 325
+--------------------------------------------------------------------------------
+[2025-05-28 08:45:52] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 325
+--------------------------------------------------------------------------------
+[2025-05-28 08:45:52] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 325
+--------------------------------------------------------------------------------
+[2025-05-28 08:45:52] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 325
+--------------------------------------------------------------------------------
+[2025-05-28 08:47:50] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 332
+--------------------------------------------------------------------------------
+[2025-05-28 08:47:50] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 332
+--------------------------------------------------------------------------------
+[2025-05-28 08:47:50] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 332
+--------------------------------------------------------------------------------
+[2025-05-28 08:47:50] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 332
+--------------------------------------------------------------------------------
+[2025-05-28 08:47:50] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 332
+--------------------------------------------------------------------------------
+[2025-05-28 08:47:50] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 332
+--------------------------------------------------------------------------------
+[2025-05-28 08:51:39] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 332
+--------------------------------------------------------------------------------
+[2025-05-28 08:51:39] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 332
+--------------------------------------------------------------------------------
+[2025-05-28 08:51:39] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 332
+--------------------------------------------------------------------------------
+[2025-05-28 08:51:39] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 332
+--------------------------------------------------------------------------------
+[2025-05-28 08:51:39] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 332
+--------------------------------------------------------------------------------
+[2025-05-28 08:51:39] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 332
+--------------------------------------------------------------------------------
+[2025-05-28 08:55:37] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 332
+--------------------------------------------------------------------------------
+[2025-05-28 08:55:37] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 332
+--------------------------------------------------------------------------------
+[2025-05-28 08:55:37] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 332
+--------------------------------------------------------------------------------
+[2025-05-28 08:55:37] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 332
+--------------------------------------------------------------------------------
+[2025-05-28 08:55:37] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 332
+--------------------------------------------------------------------------------
+[2025-05-28 08:55:37] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 332
+--------------------------------------------------------------------------------
+[2025-05-28 09:17:59] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 332
+--------------------------------------------------------------------------------
+[2025-05-28 09:17:59] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 332
+--------------------------------------------------------------------------------
+[2025-05-28 09:17:59] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 332
+--------------------------------------------------------------------------------
+[2025-05-28 09:17:59] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 332
+--------------------------------------------------------------------------------
+[2025-05-28 09:17:59] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 332
+--------------------------------------------------------------------------------
+[2025-05-28 09:17:59] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 332
+--------------------------------------------------------------------------------
+[2025-05-28 09:18:04] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 332
+--------------------------------------------------------------------------------
+[2025-05-28 09:18:04] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 332
+--------------------------------------------------------------------------------
+[2025-05-28 09:18:04] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 332
+--------------------------------------------------------------------------------
+[2025-05-28 09:18:04] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 332
+--------------------------------------------------------------------------------
+[2025-05-28 09:18:04] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 332
+--------------------------------------------------------------------------------
+[2025-05-28 09:18:04] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 332
+--------------------------------------------------------------------------------
+[2025-05-28 09:23:32] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 332
+--------------------------------------------------------------------------------
+[2025-05-28 09:23:32] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 332
+--------------------------------------------------------------------------------
+[2025-05-28 09:23:32] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 332
+--------------------------------------------------------------------------------
+[2025-05-28 09:23:32] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 332
+--------------------------------------------------------------------------------
+[2025-05-28 09:23:32] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 332
+--------------------------------------------------------------------------------
+[2025-05-28 09:23:32] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 332
+--------------------------------------------------------------------------------
+[2025-05-28 10:05:04] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 332
+--------------------------------------------------------------------------------
+[2025-05-28 10:05:04] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 332
+--------------------------------------------------------------------------------
+[2025-05-28 10:05:04] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 332
+--------------------------------------------------------------------------------
+[2025-05-28 10:05:04] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 332
+--------------------------------------------------------------------------------
+[2025-05-28 10:05:04] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 332
+--------------------------------------------------------------------------------
+[2025-05-28 10:05:04] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 332
+--------------------------------------------------------------------------------
+[2025-05-28 10:06:06] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 332
+--------------------------------------------------------------------------------
+[2025-05-28 10:06:06] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 332
+--------------------------------------------------------------------------------
+[2025-05-28 10:06:06] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 332
+--------------------------------------------------------------------------------
+[2025-05-28 10:06:06] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 332
+--------------------------------------------------------------------------------
+[2025-05-28 10:06:06] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 332
+--------------------------------------------------------------------------------
+[2025-05-28 10:06:06] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 332
+--------------------------------------------------------------------------------
+[2025-05-28 10:06:26] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 332
+--------------------------------------------------------------------------------
+[2025-05-28 10:06:26] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 332
+--------------------------------------------------------------------------------
+[2025-05-28 10:06:26] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 332
+--------------------------------------------------------------------------------
+[2025-05-28 10:06:26] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 332
+--------------------------------------------------------------------------------
+[2025-05-28 10:06:26] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 332
+--------------------------------------------------------------------------------
+[2025-05-28 10:06:26] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 332
+--------------------------------------------------------------------------------
+[2025-05-28 10:55:11] ERROR: Undefined array key "x" w C:\xampp\htdocs\game.php linia 154
+--------------------------------------------------------------------------------
+[2025-05-28 10:55:11] ERROR: Undefined array key "y" w C:\xampp\htdocs\game.php linia 154
+--------------------------------------------------------------------------------
+[2025-05-28 10:55:11] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 10:55:11] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 10:55:11] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 10:55:11] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 10:55:11] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 10:55:11] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 10:58:41] ERROR: Undefined array key "x" w C:\xampp\htdocs\game.php linia 154
+--------------------------------------------------------------------------------
+[2025-05-28 10:58:41] ERROR: Undefined array key "y" w C:\xampp\htdocs\game.php linia 154
+--------------------------------------------------------------------------------
+[2025-05-28 10:58:41] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 10:58:41] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 10:58:42] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 10:58:42] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 10:58:42] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 10:58:42] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 11:02:20] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 11:02:20] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 11:02:20] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 11:02:20] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 11:02:20] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 11:02:20] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 11:06:11] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 11:06:11] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 11:06:11] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 11:06:11] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 11:06:11] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 11:06:11] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 13:23:05] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 13:23:05] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 13:23:05] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 13:23:05] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 13:23:05] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 13:23:05] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 13:26:16] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 13:26:16] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 13:26:16] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 13:26:16] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 13:26:16] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 13:26:16] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 13:29:16] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 13:29:16] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 13:29:16] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 13:29:16] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 13:29:16] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 13:29:16] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 13:49:40] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 13:49:40] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 13:49:40] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 13:49:40] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 13:49:40] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 13:49:40] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 13:53:50] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 13:53:50] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 13:53:50] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 13:53:50] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 13:53:50] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 13:53:51] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 14:01:49] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 14:01:49] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 14:01:49] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 14:01:49] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 14:01:50] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 14:01:50] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 14:04:48] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 14:04:48] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 14:04:48] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 14:04:48] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 14:04:48] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 14:04:48] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 14:10:42] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 14:10:42] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 14:10:42] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 14:10:42] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 14:10:42] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 14:10:42] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 14:14:25] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 14:14:25] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 14:14:25] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 14:14:25] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 14:14:25] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 14:14:25] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 14:16:58] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 14:16:58] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 14:16:58] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 14:16:58] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 14:16:58] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 14:16:58] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 14:19:40] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 14:19:40] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 14:19:40] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 14:19:40] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 14:19:40] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 14:19:40] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 14:21:55] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 14:21:55] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 14:21:55] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 14:21:55] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 14:21:55] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 14:21:55] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 14:22:24] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 14:22:24] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 14:22:24] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 14:22:24] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 14:22:24] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 14:22:24] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 14:22:35] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 14:22:35] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 14:22:35] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 14:22:35] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 14:22:35] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 14:22:35] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 14:30:49] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 14:30:49] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 14:30:49] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 14:30:49] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 14:30:49] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 14:30:49] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 14:32:54] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 14:32:54] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 14:32:54] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 14:32:54] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 14:32:54] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 14:32:54] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 14:33:02] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 14:33:02] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 14:33:02] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 14:33:02] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 14:33:02] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 14:33:02] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 14:33:10] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 14:33:10] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 14:33:10] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 14:33:10] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 14:33:10] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 14:33:10] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 14:49:12] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 14:49:12] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 14:49:12] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 14:49:12] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 14:49:12] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 14:49:12] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 15:01:45] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 15:01:45] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 15:01:45] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 15:01:45] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 15:01:45] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 15:01:45] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 15:04:06] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 15:04:06] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 15:04:06] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 15:04:06] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 15:04:06] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 15:04:06] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 15:12:36] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 15:12:36] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 15:12:36] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 15:12:36] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 15:12:36] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 15:12:36] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 15:22:20] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 15:22:20] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 15:22:20] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 15:22:20] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 15:22:20] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 15:22:20] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 15:25:53] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 15:25:53] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 15:25:53] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 15:25:53] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 15:25:53] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 15:25:53] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 15:29:00] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 15:29:00] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 15:29:00] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 15:29:00] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 15:29:00] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 15:29:00] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 15:34:52] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 15:34:52] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 15:34:52] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 15:34:52] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 15:34:52] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 15:34:52] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 15:35:20] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 15:35:20] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 15:35:20] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 15:35:20] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 15:35:20] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 15:35:20] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 15:36:08] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 15:36:08] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 15:36:08] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 15:36:08] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 15:36:08] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 15:36:08] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 15:57:38] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 15:57:38] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 15:57:38] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 15:57:38] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 15:57:38] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 15:57:38] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 361
+--------------------------------------------------------------------------------
+[2025-05-28 16:27:02] EXCEPTION: Unknown column 'population_cost' in 'field list' w C:\xampp\htdocs\lib\managers\BuildingConfigManager.php linia 33
+Trace: #0 C:\xampp\htdocs\lib\managers\BuildingConfigManager.php(33): mysqli->prepare('SELECT *, popul...')
+#1 C:\xampp\htdocs\lib\BuildingManager.php(20): BuildingConfigManager->getBuildingConfig('sawmill')
+#2 C:\xampp\htdocs\lib\ResourceManager.php(31): BuildingManager->getHourlyProduction('sawmill', 1)
+#3 C:\xampp\htdocs\lib\ResourceManager.php(80): ResourceManager->getProductionRates(1)
+#4 C:\xampp\htdocs\lib\VillageManager.php(77): ResourceManager->updateVillageResources(Array)
+#5 C:\xampp\htdocs\lib\VillageManager.php(144): VillageManager->updateResources(1)
+#6 C:\xampp\htdocs\game.php(42): VillageManager->processCompletedTasksForVillage(1)
+#7 {main}
+--------------------------------------------------------------------------------
+[2025-05-28 16:30:42] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 16:30:42] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 16:30:42] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 16:30:42] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 16:30:42] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 16:30:42] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 16:35:59] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 16:35:59] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 16:35:59] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 16:35:59] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 16:35:59] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 16:35:59] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 16:36:09] EXCEPTION: Too few arguments to function BattleManager::__construct(), 1 passed in C:\xampp\htdocs\reports.php on line 16 and exactly 2 expected w C:\xampp\htdocs\lib\BattleManager.php linia 16
+Trace: #0 C:\xampp\htdocs\reports.php(16): BattleManager->__construct(Object(mysqli))
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-28 16:36:43] EXCEPTION: Too few arguments to function BattleManager::processCompletedAttacks(), 0 passed in C:\xampp\htdocs\reports.php on line 23 and exactly 1 expected w C:\xampp\htdocs\lib\BattleManager.php linia 344
+Trace: #0 C:\xampp\htdocs\reports.php(23): BattleManager->processCompletedAttacks()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-28 16:37:07] EXCEPTION: Unknown column 'br.id' in 'field list' w C:\xampp\htdocs\reports.php linia 87
+Trace: #0 C:\xampp\htdocs\reports.php(87): mysqli->prepare('\n    SELECT \n  ...')
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-28 16:37:48] EXCEPTION: Unknown column 'br.is_read_by_attacker' in 'field list' w C:\xampp\htdocs\reports.php linia 87
+Trace: #0 C:\xampp\htdocs\reports.php(87): mysqli->prepare('\n    SELECT \n  ...')
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-28 16:38:41] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 16:38:41] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 16:38:41] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 16:38:41] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 16:38:41] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 16:38:41] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 16:38:49] ERROR: require_once(../lib/BuildingManager.php): Failed to open stream: No such file or directory w C:\xampp\htdocs\get_building_details.php linia 12
+--------------------------------------------------------------------------------
+[2025-05-28 16:38:49] EXCEPTION: Failed opening required '../lib/BuildingManager.php' (include_path='C:\xampp\php\PEAR') w C:\xampp\htdocs\get_building_details.php linia 12
+Trace: #0 {main}
+--------------------------------------------------------------------------------
+[2025-05-28 16:38:56] ERROR: require_once(../lib/BuildingManager.php): Failed to open stream: No such file or directory w C:\xampp\htdocs\get_building_details.php linia 12
+--------------------------------------------------------------------------------
+[2025-05-28 16:38:56] EXCEPTION: Failed opening required '../lib/BuildingManager.php' (include_path='C:\xampp\php\PEAR') w C:\xampp\htdocs\get_building_details.php linia 12
+Trace: #0 {main}
+--------------------------------------------------------------------------------
+[2025-05-28 16:43:39] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 16:43:39] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 16:43:39] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 16:43:39] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 16:43:39] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 16:43:39] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 16:55:57] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 16:55:57] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 16:55:57] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 16:55:57] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 16:55:57] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 16:55:57] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 16:55:57] EXCEPTION: Call to undefined method ResourceManager::getResourceProduction() w C:\xampp\htdocs\ajax\get_resources.php linia 38
+Trace: #0 C:\xampp\htdocs\ajax_proxy.php(7): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-28 16:56:13] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 16:56:13] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 16:56:13] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 16:56:13] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 16:56:13] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 16:56:13] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 16:56:13] EXCEPTION: Call to undefined method ResourceManager::getResourceProduction() w C:\xampp\htdocs\ajax\get_resources.php linia 38
+Trace: #0 C:\xampp\htdocs\ajax_proxy.php(7): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-28 16:57:20] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 16:57:20] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 16:57:20] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 16:57:20] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 16:57:20] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 16:57:20] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 16:57:21] EXCEPTION: Call to undefined method ResourceManager::getResourceProduction() w C:\xampp\htdocs\ajax\get_resources.php linia 39
+Trace: #0 C:\xampp\htdocs\ajax_proxy.php(7): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-28 17:02:15] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 17:02:15] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 17:02:15] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 17:02:15] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 17:02:15] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 17:02:16] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 17:02:16] EXCEPTION: Call to undefined method ResourceManager::getResourceProduction() w C:\xampp\htdocs\ajax\get_resources.php linia 39
+Trace: #0 C:\xampp\htdocs\ajax_proxy.php(7): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-28 17:04:20] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 17:04:20] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 17:04:20] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 17:04:20] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 17:04:20] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 17:04:20] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 17:04:21] EXCEPTION: Call to undefined method ResourceManager::getResourceProduction() w C:\xampp\htdocs\ajax\get_resources.php linia 50
+Trace: #0 C:\xampp\htdocs\ajax_proxy.php(7): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-28 17:10:49] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 17:10:49] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 17:10:49] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 17:10:49] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 17:10:49] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 17:10:49] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 17:15:10] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 17:15:10] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 17:15:10] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 17:15:10] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 17:15:10] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 17:15:10] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 17:16:46] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 17:16:46] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 17:16:46] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 17:16:46] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 17:16:46] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 17:16:46] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 17:17:02] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 17:17:02] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 17:17:02] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 17:17:02] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 17:17:02] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 17:17:02] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 17:35:20] ERROR: Undefined array key "wood_production_per_hour" w C:\xampp\htdocs\header.php linia 150
+--------------------------------------------------------------------------------
+[2025-05-28 17:35:20] ERROR: Undefined array key "clay_production_per_hour" w C:\xampp\htdocs\header.php linia 154
+--------------------------------------------------------------------------------
+[2025-05-28 17:35:20] ERROR: Undefined array key "iron_production_per_hour" w C:\xampp\htdocs\header.php linia 158
+--------------------------------------------------------------------------------
+[2025-05-28 17:35:20] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 17:35:20] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 17:35:20] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 17:35:20] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 17:35:20] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 17:35:20] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 17:56:48] ERROR: Undefined array key "wood_production_per_hour" w C:\xampp\htdocs\header.php linia 150
+--------------------------------------------------------------------------------
+[2025-05-28 17:56:48] ERROR: Undefined array key "clay_production_per_hour" w C:\xampp\htdocs\header.php linia 154
+--------------------------------------------------------------------------------
+[2025-05-28 17:56:48] ERROR: Undefined array key "iron_production_per_hour" w C:\xampp\htdocs\header.php linia 158
+--------------------------------------------------------------------------------
+[2025-05-28 17:56:48] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 17:56:48] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 17:56:48] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 17:56:48] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 17:56:48] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 17:56:48] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 18:58:44] ERROR: Undefined array key "wood_production_per_hour" w C:\xampp\htdocs\header.php linia 150
+--------------------------------------------------------------------------------
+[2025-05-28 18:58:44] ERROR: Undefined array key "clay_production_per_hour" w C:\xampp\htdocs\header.php linia 154
+--------------------------------------------------------------------------------
+[2025-05-28 18:58:44] ERROR: Undefined array key "iron_production_per_hour" w C:\xampp\htdocs\header.php linia 158
+--------------------------------------------------------------------------------
+[2025-05-28 18:58:44] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 18:58:44] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 18:58:44] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 18:58:44] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 18:58:44] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 18:58:44] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 18:59:39] ERROR: Undefined array key "wood_production_per_hour" w C:\xampp\htdocs\header.php linia 150
+--------------------------------------------------------------------------------
+[2025-05-28 18:59:39] ERROR: Undefined array key "clay_production_per_hour" w C:\xampp\htdocs\header.php linia 154
+--------------------------------------------------------------------------------
+[2025-05-28 18:59:39] ERROR: Undefined array key "iron_production_per_hour" w C:\xampp\htdocs\header.php linia 158
+--------------------------------------------------------------------------------
+[2025-05-28 18:59:41] ERROR: Undefined array key "wood_production_per_hour" w C:\xampp\htdocs\header.php linia 150
+--------------------------------------------------------------------------------
+[2025-05-28 18:59:41] ERROR: Undefined array key "clay_production_per_hour" w C:\xampp\htdocs\header.php linia 154
+--------------------------------------------------------------------------------
+[2025-05-28 18:59:41] ERROR: Undefined array key "iron_production_per_hour" w C:\xampp\htdocs\header.php linia 158
+--------------------------------------------------------------------------------
+[2025-05-28 18:59:44] ERROR: Undefined array key "wood_production_per_hour" w C:\xampp\htdocs\header.php linia 150
+--------------------------------------------------------------------------------
+[2025-05-28 18:59:44] ERROR: Undefined array key "clay_production_per_hour" w C:\xampp\htdocs\header.php linia 154
+--------------------------------------------------------------------------------
+[2025-05-28 18:59:44] ERROR: Undefined array key "iron_production_per_hour" w C:\xampp\htdocs\header.php linia 158
+--------------------------------------------------------------------------------
+[2025-05-28 18:59:44] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 18:59:44] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 18:59:44] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 18:59:44] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 18:59:44] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 18:59:44] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 19:01:17] EXCEPTION: Too few arguments to function ResourceManager::__construct(), 1 passed in C:\xampp\htdocs\header.php on line 12 and exactly 2 expected w C:\xampp\htdocs\lib\ResourceManager.php linia 6
+Trace: #0 C:\xampp\htdocs\header.php(12): ResourceManager->__construct(Object(mysqli))
+#1 C:\xampp\htdocs\game.php(141): require('C:\\xampp\\htdocs...')
+#2 {main}
+--------------------------------------------------------------------------------
+[2025-05-28 19:02:13] ERROR: require_once(lib/managers/BuildingManager.php): Failed to open stream: No such file or directory w C:\xampp\htdocs\header.php linia 11
+--------------------------------------------------------------------------------
+[2025-05-28 19:02:13] EXCEPTION: Failed opening required 'lib/managers/BuildingManager.php' (include_path='C:\xampp\php\PEAR') w C:\xampp\htdocs\header.php linia 11
+Trace: #0 C:\xampp\htdocs\game.php(141): require()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-28 19:02:48] ERROR: require_once(C:\xampp\htdocs/lib/managers/BuildingManager.php): Failed to open stream: No such file or directory w C:\xampp\htdocs\header.php linia 11
+--------------------------------------------------------------------------------
+[2025-05-28 19:02:48] EXCEPTION: Failed opening required 'C:\xampp\htdocs/lib/managers/BuildingManager.php' (include_path='C:\xampp\php\PEAR') w C:\xampp\htdocs\header.php linia 11
+Trace: #0 C:\xampp\htdocs\game.php(141): require()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-28 19:05:43] EXCEPTION: Call to undefined method ResourceManager::getHourlyProduction() w C:\xampp\htdocs\header.php linia 34
+Trace: #0 C:\xampp\htdocs\game.php(141): require()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-28 19:06:10] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 19:06:10] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 19:06:10] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 19:06:10] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 19:06:10] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 19:06:10] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 19:10:52] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 19:10:52] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 19:10:52] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 19:10:52] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 19:10:52] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 19:10:52] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 19:17:20] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 19:17:20] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 19:17:20] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 19:17:20] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 19:17:20] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 19:17:20] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 19:21:37] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 19:21:37] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 19:21:37] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 19:21:37] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 19:21:37] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 19:21:37] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 19:29:16] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 363
+--------------------------------------------------------------------------------
+[2025-05-28 19:29:16] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 363
+--------------------------------------------------------------------------------
+[2025-05-28 19:29:16] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 363
+--------------------------------------------------------------------------------
+[2025-05-28 19:29:16] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 363
+--------------------------------------------------------------------------------
+[2025-05-28 19:29:16] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 363
+--------------------------------------------------------------------------------
+[2025-05-28 19:29:16] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 363
+--------------------------------------------------------------------------------
+[2025-05-28 21:28:03] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 21:28:03] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 21:28:03] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 21:28:03] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 21:28:03] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 21:28:03] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 21:28:57] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 21:28:57] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 21:28:57] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 21:28:57] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 21:28:57] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 21:28:57] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 21:36:24] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 21:36:24] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 21:36:24] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 21:36:24] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 21:36:24] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 21:36:24] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 21:38:17] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 21:38:17] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 21:38:17] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 21:38:17] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 21:38:17] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------
+[2025-05-28 21:38:17] ERROR: Undefined array key "id" w C:\xampp\htdocs\game.php linia 355
+--------------------------------------------------------------------------------

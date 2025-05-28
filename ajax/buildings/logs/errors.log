@@ -1,0 +1,132 @@
+[2025-05-27 01:01:10] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 28
+Trace: #0 C:\xampp\htdocs\ajax\buildings\get_status.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 01:02:15] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 28
+Trace: #0 C:\xampp\htdocs\ajax\buildings\get_status.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 01:02:34] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 28
+Trace: #0 C:\xampp\htdocs\ajax\buildings\get_status.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 01:02:40] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 28
+Trace: #0 C:\xampp\htdocs\ajax\buildings\get_status.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 01:03:01] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 28
+Trace: #0 C:\xampp\htdocs\ajax\buildings\get_status.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 01:03:07] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 28
+Trace: #0 C:\xampp\htdocs\ajax\buildings\get_status.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 01:03:13] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 28
+Trace: #0 C:\xampp\htdocs\ajax\buildings\get_status.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 01:04:33] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 28
+Trace: #0 C:\xampp\htdocs\ajax\buildings\get_status.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 01:04:44] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 28
+Trace: #0 C:\xampp\htdocs\ajax\buildings\get_status.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 01:04:58] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 28
+Trace: #0 C:\xampp\htdocs\ajax\buildings\get_status.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 01:07:45] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 28
+Trace: #0 C:\xampp\htdocs\ajax\buildings\get_status.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 01:07:48] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 28
+Trace: #0 C:\xampp\htdocs\ajax\buildings\get_status.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 01:07:58] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 28
+Trace: #0 C:\xampp\htdocs\ajax\buildings\get_status.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 01:08:08] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 28
+Trace: #0 C:\xampp\htdocs\ajax\buildings\get_status.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 01:08:18] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 28
+Trace: #0 C:\xampp\htdocs\ajax\buildings\get_status.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 01:08:28] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 28
+Trace: #0 C:\xampp\htdocs\ajax\buildings\get_status.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 01:08:38] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 28
+Trace: #0 C:\xampp\htdocs\ajax\buildings\get_status.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 01:08:48] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 28
+Trace: #0 C:\xampp\htdocs\ajax\buildings\get_status.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 01:08:48] EXCEPTION: Class "Database" not found w C:\xampp\htdocs\init.php linia 28
+Trace: #0 C:\xampp\htdocs\ajax\buildings\get_status.php(6): require_once()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 16:22:35] ERROR: require_once(lib/UnitManager.php): Failed to open stream: No such file or directory w C:\xampp\htdocs\lib\VillageManager.php linia 213
+--------------------------------------------------------------------------------
+[2025-05-27 16:22:35] EXCEPTION: Failed opening required 'lib/UnitManager.php' (include_path='C:\xampp\php\PEAR') w C:\xampp\htdocs\lib\VillageManager.php linia 213
+Trace: #0 C:\xampp\htdocs\init.php(72): VillageManager->processCompletedTasksForVillage(1)
+#1 C:\xampp\htdocs\ajax\buildings\get_status.php(6): require_once('C:\\xampp\\htdocs...')
+#2 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 16:22:45] ERROR: require_once(lib/UnitManager.php): Failed to open stream: No such file or directory w C:\xampp\htdocs\lib\VillageManager.php linia 213
+--------------------------------------------------------------------------------
+[2025-05-27 16:22:45] EXCEPTION: Failed opening required 'lib/UnitManager.php' (include_path='C:\xampp\php\PEAR') w C:\xampp\htdocs\lib\VillageManager.php linia 213
+Trace: #0 C:\xampp\htdocs\init.php(72): VillageManager->processCompletedTasksForVillage(1)
+#1 C:\xampp\htdocs\ajax\buildings\get_status.php(6): require_once('C:\\xampp\\htdocs...')
+#2 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 16:22:55] ERROR: require_once(lib/UnitManager.php): Failed to open stream: No such file or directory w C:\xampp\htdocs\lib\VillageManager.php linia 213
+--------------------------------------------------------------------------------
+[2025-05-27 16:22:55] EXCEPTION: Failed opening required 'lib/UnitManager.php' (include_path='C:\xampp\php\PEAR') w C:\xampp\htdocs\lib\VillageManager.php linia 213
+Trace: #0 C:\xampp\htdocs\init.php(72): VillageManager->processCompletedTasksForVillage(1)
+#1 C:\xampp\htdocs\ajax\buildings\get_status.php(6): require_once('C:\\xampp\\htdocs...')
+#2 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 16:23:05] ERROR: require_once(lib/UnitManager.php): Failed to open stream: No such file or directory w C:\xampp\htdocs\lib\VillageManager.php linia 213
+--------------------------------------------------------------------------------
+[2025-05-27 16:23:05] EXCEPTION: Failed opening required 'lib/UnitManager.php' (include_path='C:\xampp\php\PEAR') w C:\xampp\htdocs\lib\VillageManager.php linia 213
+Trace: #0 C:\xampp\htdocs\init.php(72): VillageManager->processCompletedTasksForVillage(1)
+#1 C:\xampp\htdocs\ajax\buildings\get_status.php(6): require_once('C:\\xampp\\htdocs...')
+#2 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 16:55:26] ERROR: require_once(lib/UnitManager.php): Failed to open stream: No such file or directory w C:\xampp\htdocs\lib\VillageManager.php linia 213
+--------------------------------------------------------------------------------
+[2025-05-27 16:55:26] EXCEPTION: Failed opening required 'lib/UnitManager.php' (include_path='C:\xampp\php\PEAR') w C:\xampp\htdocs\lib\VillageManager.php linia 213
+Trace: #0 C:\xampp\htdocs\init.php(72): VillageManager->processCompletedTasksForVillage(1)
+#1 C:\xampp\htdocs\ajax\buildings\get_status.php(6): require_once('C:\\xampp\\htdocs...')
+#2 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 16:55:29] ERROR: require_once(lib/UnitManager.php): Failed to open stream: No such file or directory w C:\xampp\htdocs\lib\VillageManager.php linia 213
+--------------------------------------------------------------------------------
+[2025-05-27 16:55:29] EXCEPTION: Failed opening required 'lib/UnitManager.php' (include_path='C:\xampp\php\PEAR') w C:\xampp\htdocs\lib\VillageManager.php linia 213
+Trace: #0 C:\xampp\htdocs\init.php(72): VillageManager->processCompletedTasksForVillage(1)
+#1 C:\xampp\htdocs\ajax\buildings\get_status.php(6): require_once('C:\\xampp\\htdocs...')
+#2 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 17:15:07] ERROR: require_once(lib/UnitManager.php): Failed to open stream: No such file or directory w C:\xampp\htdocs\lib\VillageManager.php linia 213
+--------------------------------------------------------------------------------
+[2025-05-27 17:15:07] EXCEPTION: Failed opening required 'lib/UnitManager.php' (include_path='C:\xampp\php\PEAR') w C:\xampp\htdocs\lib\VillageManager.php linia 213
+Trace: #0 C:\xampp\htdocs\init.php(72): VillageManager->processCompletedTasksForVillage(1)
+#1 C:\xampp\htdocs\ajax\buildings\get_status.php(6): require_once('C:\\xampp\\htdocs...')
+#2 {main}
+--------------------------------------------------------------------------------
+[2025-05-27 20:09:10] ERROR: require_once(lib/UnitManager.php): Failed to open stream: No such file or directory w C:\xampp\htdocs\lib\VillageManager.php linia 213
+--------------------------------------------------------------------------------
+[2025-05-27 20:09:10] EXCEPTION: Failed opening required 'lib/UnitManager.php' (include_path='C:\xampp\php\PEAR') w C:\xampp\htdocs\lib\VillageManager.php linia 213
+Trace: #0 C:\xampp\htdocs\init.php(72): VillageManager->processCompletedTasksForVillage(1)
+#1 C:\xampp\htdocs\ajax\buildings\get_status.php(6): require_once('C:\\xampp\\htdocs...')
+#2 {main}
+--------------------------------------------------------------------------------

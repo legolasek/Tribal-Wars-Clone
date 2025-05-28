@@ -1,0 +1,20 @@
+CREATE TABLE IF NOT EXISTS villages (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    world_id INT NOT NULL DEFAULT 1,
+    name VARCHAR(100) NOT NULL,
+    x_coord INT NOT NULL,
+    y_coord INT NOT NULL,
+    wood INT DEFAULT 0,
+    clay INT DEFAULT 0,
+    iron INT DEFAULT 0,
+    warehouse_capacity INT DEFAULT 1000,
+    population INT DEFAULT 100,
+    farm_capacity INT DEFAULT 0,
+    points INT DEFAULT 0,
+    last_resource_update TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (world_id) REFERENCES worlds(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    UNIQUE (x_coord, y_coord, world_id)
+);
