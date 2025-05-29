@@ -101,9 +101,9 @@ async function fetchAndRenderResearchPanel(villageId, buildingInternalName) {
                                            villageResources.clay >= cost.clay &&
                                            villageResources.iron >= cost.iron;
 
-                         html += `<td><img src="img/resources/wood.png" title="Drewno" alt="Drewno"> ${formatNumber(cost.wood)}</td>`;
-                         html += `<td><img src="img/resources/clay.png" title="Glina" alt="Glina"> ${formatNumber(cost.clay)}</td>`;
-                         html += `<td><img src="img/resources/iron.png" title="Żelazo" alt="Żelazo"> ${formatNumber(cost.iron)}</td>`;
+                         html += `<td><img src="img/wood.png" title="Drewno" alt="Drewno"> ${formatNumber(cost.wood)}</td>`;
+                         html += `<td><img src="img/stone.png" title="Glina" alt="Glina"> ${formatNumber(cost.clay)}</td>`;
+                         html += `<td><img src="img/iron.png" title="Żelazo" alt="Żelazo"> ${formatNumber(cost.iron)}</td>`;
                          html += `<td>${formatDuration(time)}</td>`;
                          html += `<td>
                             <form action="start_research.php" method="post" class="research-form">

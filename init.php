@@ -89,7 +89,7 @@ if (isset($_SESSION['user_id'])) {
 
 } else {
     // Jeśli użytkownik nie jest zalogowany, przekieruj na stronę logowania, chyba że to strona publiczna
-    $public_pages = ['index.php', 'login.php', 'register.php', 'install.php', 'admin_login.php', 'db_verify.php', 'favicon.ico', 'css/', 'js/', 'img/', 'ajax/']; // Dodaj inne publiczne ścieżki (katalogi i ajax)
+    $public_pages = ['index.php', 'auth/login.php', 'auth/register.php', 'install.php', 'admin/admin_login.php', 'admin/db_verify.php', 'favicon.ico', 'css/', 'js/', 'img/', 'ajax/']; // Dodaj inne publiczne ścieżki (katalogi i ajax)
     $current_path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
     $current_path = trim($current_path, '/');
     

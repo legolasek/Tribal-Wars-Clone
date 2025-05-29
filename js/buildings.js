@@ -32,62 +32,135 @@ function updateTimers() {
         const progressContainer = timerElement.closest('.item-progress');
         const progressBarFill = progressContainer ? progressContainer.querySelector('.progress-fill') : null;
 
+        // Znajdź powiązany element kolejki (np. dla budowy)
+        const queueItemElement = timerElement.closest('.queue-item'); // Zakładamy, że timer jest wewnątrz .queue-item
+
+        // Znajdź tag img powiązany z tym zadaniem na mapie lub liście budynków
+        let buildingImage = null;
+        let internalName = null;
+
+        if (queueItemElement && queueItemElement.dataset.buildingInternalName) {
+             internalName = queueItemElement.dataset.buildingInternalName;
+             // Spróbuj znaleźć grafikę na mapie (placeholder)
+             const buildingPlaceholder = document.querySelector(`.building-placeholder[data-building-internal-name='${internalName}']`);
+             if (buildingPlaceholder) {
+                 buildingImage = buildingPlaceholder.querySelector('.building-graphic');
+             }
+             // TODO: Jeśli nie znaleziono na mapie (np. jesteśmy w widoku innym niż game.php), spróbuj znaleźć na liście budynków
+             // To wymagałoby upewnienia się, że elementy listy budynków w game.php (lub innym widoku)
+             // zawierają tag <img> z klasą building-graphic i atrybutem data-building-internal-name
+             // Obecnie game.php generuje listę BEZ grafik budynków w itemach.
+        }
+
+
         if (remainingTime > 0) {
             timerElement.textContent = formatDuration(remainingTime);
-            
+
             // Oblicz i zaktualizuj pasek postępu
             if (progressBarFill && timerElement.dataset.startTime) { // Potrzebujemy start_time do obliczeń
                  const startTime = parseInt(timerElement.dataset.startTime, 10);
                  const duration = finishTime - startTime;
                  // Unikaj dzielenia przez zero, jeśli czas trwania jest 0 lub ujemny (natychmiastowe zadania)
-                 const progress = duration > 0 ? ((duration - remainingTime) / duration) * 100 : 100; 
+                 const progress = duration > 0 ? ((duration - remainingTime) / duration) * 100 : 100;
                  progressBarFill.style.width = `${Math.min(100, Math.max(0, progress))}%`; // Upewnij się, że szerokość jest między 0% a 100%
+            }
+
+            // Zmień grafikę na GIF, jeśli istnieje i nie jest już GIFem
+            if (buildingImage) {
+                const currentSrc = buildingImage.src;
+                // Sprawdź, czy istnieje odpowiadający plik .gif (proste sprawdzenie rozszerzenia)
+                // Bardziej zaawansowane sprawdzanie wymagałoby dodatkowych żądań lub mapy dostępnych grafik
+                if (currentSrc.endsWith('.png')) {
+                    const gifSrc = currentSrc.replace('.png', '.gif');
+                     // TODO: Opcjonalnie, sprawdź, czy gifSrc zwraca 200 OK. Na razie zakładamy, że jeśli jest PNG, jest też GIF.
+                    buildingImage.src = gifSrc;
+                }
             }
 
         } else {
             timerElement.textContent = 'Zakończono!';
             timerElement.classList.add('timer-finished');
             if (progressBarFill) progressBarFill.style.width = '100%'; // Upewnij się, że pasek jest pełny
-            timerElement.removeAttribute('data-ends-at'); // Zatrzymaj odświeżanie tego timera
+            // NIE usuwaj data-ends-at od razu, aby ostatnia aktualizacja mogła ustawić "Zakończono!" i 100% paska
+            // Usunięcie elementu kolejki z DOM następuje poniżej, co też skutecznie zatrzyma odświeżanie
+
+             // Zmień grafikę z powrotem na PNG, jeśli jest GIFem
+            if (buildingImage) {
+                const currentSrc = buildingImage.src;
+                if (currentSrc.endsWith('.gif')) {
+                    const pngSrc = currentSrc.replace('.gif', '.png');
+                    buildingImage.src = pngSrc;
+                }
+            }
 
             // Znajdź powiązany element budynku (building-item i building-placeholder)
-            const queueItemElement = timerElement.closest('.queue-item');
-            if (queueItemElement) {
-                const buildingNameElement = queueItemElement.querySelector('.building-name');
-                if (buildingNameElement) {
-                    // Zakładamy, że nazwa budynku w kolejce odpowiada internal_name z building_types
-                    const buildingInternalName = buildingNameElement.textContent.trim(); // Może wymagać innej logiki do pobrania internal_name
-                    
-                    // Usuń klasę building-upgrading z odpowiedniego placeholdera
-                    const buildingPlaceholder = document.querySelector(`.building-placeholder[data-building-internal-name='${buildingInternalName}']`);
-                    if (buildingPlaceholder) {
-                        buildingPlaceholder.classList.remove('building-upgrading');
-                    }
-                     // Znajdź building-item i usuń status 'w trakcie rozbudowy'
+            // Logic to update building item status and re-enable upgrade button
+            // This part is already mostly implemented and should handle updating the list view
+
+             const queueItemElementToRemove = timerElement.closest('.queue-item');
+            if (queueItemElementToRemove) {
+                // Pobierz internal_name zanim usuniesz element
+                const buildingInternalName = queueItemElementToRemove.dataset.buildingInternalName;
+
+                // Usuń element kolejki z DOM
+                queueItemElementToRemove.remove();
+
+                // Po usunięciu elementu kolejki, zaktualizuj status budynku na liście i mapie
+                if (buildingInternalName) {
+                     // Usuń klasę building-upgrading z odpowiedniego placeholdera (jeśli była dodana w PHP/JS)
+                     const buildingPlaceholder = document.querySelector(`.building-placeholder[data-building-internal-name='${buildingInternalName}']`);
+                     if (buildingPlaceholder) {
+                         buildingPlaceholder.classList.remove('building-upgrading');
+                         // Zmiana grafiki na PNG odbywa się powyżej, w bloku else dla remainingTime <= 0
+                     }
+                     // Znajdź building-item i zaktualizuj jego status (np. usuń status 'w trakcie rozbudowy')
                      const buildingItem = document.querySelector(`.building-item[data-internal-name='${buildingInternalName}']`);
                       if (buildingItem) {
-                           // Znajdź status i timer i usuń je lub zaktualizuj
+                           // Tutaj można dodać logikę aktualizacji wyświetlanego poziomu budynku
+                           // i stanu przycisku rozbudowy na liście budynków.
+                           // Ta część kodu poniżej jest już obecna i może wymagać dostosowania
+                           // w zależności od tego, jak BuildingManager::processCompletedTasksForVillage
+                           // wpływa na wyświetlane dane na liście.
                            const statusElement = buildingItem.querySelector('.upgrade-status');
-                           if (statusElement) statusElement.textContent = `Rozbudowa do poziomu ${parseInt(buildingItem.dataset.currentLevel || 0, 10) + 1}:`;
+                           if (statusElement && statusElement.textContent.includes('W trakcie rozbudowy')) {
+                                // Idealnie, powinniśmy pobrać nowy poziom budynku po zakończeniu budowy
+                                // Ale na razie możemy po prostu zaktualizować tekst statusu.
+                                statusElement.textContent = `Rozbudowa do poziomu ${parseInt(buildingItem.dataset.currentLevel || 0, 10) + 1}:`; // Może być niepoprawne jeśli VillageManager nie zaktualizował DOM
+                           }
                            const timerElementInItem = buildingItem.querySelector('.upgrade-timer');
                            if (timerElementInItem) timerElementInItem.remove();
-                           
-                           // Włącz przycisk rozbudowy, jeśli nie osiągnięto max poziomu
-                           const upgradeButton = buildingItem.querySelector('.upgrade-button');
-                           if (upgradeButton && !buildingItem.dataset.maxLevel || parseInt(buildingItem.dataset.currentLevel || 0, 10) + 1 <= parseInt(buildingItem.dataset.maxLevel || Infinity, 10)) { // Sprawdź max poziom
-                               upgradeButton.disabled = false;
-                               upgradeButton.classList.remove('btn-secondary');
-                               upgradeButton.classList.add('btn-primary');
-                           }
+
+                            // Ponownie włącz przycisk rozbudowy
+                            // Upewnij się, że selektor przycisku jest poprawny i dotyczy przycisku rozbudowy w building-item
+                            const upgradeButton = buildingItem.querySelector('.upgrade-button'); // Zakładając, że przycisk rozbudowy ma klasę 'upgrade-button'
+                            // Jeśli przycisk rozbudowy ma inną klasę lub strukturę, zaktualizuj selektor.
+                            // W game.php przycisk rozbudowy ma klasę 'upgrade-building-button'
+                            const upgradeButtonInItem = buildingItem.querySelector('.upgrade-building-button'); // Poprawiony selektor
+                             if (upgradeButtonInItem) {
+                                 upgradeButtonInItem.disabled = false;
+                                 upgradeButtonInItem.classList.remove('btn-secondary');
+                                 upgradeButtonInItem.classList.add('btn-primary');
+                                 // Usuń powód niedostępności, jeśli istniał
+                                 const reasonElement = buildingItem.querySelector('.upgrade-unavailable-reason'); // Zakładając taką klasę
+                                 if(reasonElement) reasonElement.style.display = 'none';
+                                 // Potencjalnie zaktualizuj tekst przycisku do nowego poziomu
+                                 // updateBuildingItemLevelAndButtonText(buildingItem, data.new_level); // Wymaga funkcji i danych o nowym poziomie
+                            }
+                             // Potencjalnie zaktualizuj wyświetlany poziom na liście budynków
+                             // Wymaga dodatkowego zapytania lub aktualizacji danych na stronie
+                            // const levelElement = buildingItem.querySelector('.building-level'); // Zakładając taki element w building-item h3 lub span
+                            // if (levelElement) {
+                            //      // update level text
+                            // }
                       }
                 }
-                // Usuń element kolejki z DOM
-                queueItemElement.remove();
             }
-            
-            updateBuildingQueue(); // Odśwież kolejkę (np. jeśli były inne zadania w tle, co na razie jest wyłączone)
+
+
+            updateBuildingQueue(); // Odśwież kolejkę (może być pusta teraz)
             if (window.resourceUpdater) {
-                 window.resourceUpdater.fetchUpdate(); // Aktualizuj zasoby (populacja, magazyn)
+                 // Aktualizuj zasoby - VillageManager powinien to zrobić, ale wymuśmy odświeżenie
+                 window.resourceUpdater.fetchUpdate();
              }
         }
     });
@@ -95,9 +168,12 @@ function updateTimers() {
 
 document.addEventListener('DOMContentLoaded', () => {
     const popupOverlay = document.getElementById('popup-overlay');
-    const buildingDetailsPopup = document.getElementById('building-details-popup');
-    const popupCloseBtn = document.getElementById('popup-close-btn');
+    const buildingDetailsPopup = document.getElementById('building-action-popup');
+    // Upewnij się, że element popupCloseBtn jest wyszukiwany po upewnieniu się, że buildingDetailsPopup istnieje
+    const popupCloseBtn = buildingDetailsPopup ? buildingDetailsPopup.querySelector('.close-button') : null;
 
+    // Elementy wewnątrz popupu (przydałoby się umieścić w osobnym obiekcie/klasie dla porządku)
+    // Dodano sprawdzenia null przy pobieraniu elementów
     const popupBuildingName = document.getElementById('popup-building-name');
     const popupBuildingDescription = document.getElementById('popup-building-description');
     const popupCurrentLevel = document.getElementById('popup-current-level');
@@ -110,6 +186,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const popupUpgradeReason = document.getElementById('popup-upgrade-reason');
     const popupUpgradeButton = document.getElementById('popup-upgrade-button');
     const popupActionContent = document.getElementById('popup-action-content');
+     const buildingDetailsContent = document.getElementById('building-details-content'); // Dodany element do przełączania widoków w popupie
+
 
     let currentVillageId = window.currentVillageId; // Pobierz ID wioski z globalnej zmiennej
 
@@ -121,24 +199,29 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // Pokaż loader i wyczyść poprzednią zawartość
-        popupBuildingName.textContent = 'Ładowanie...';
-        popupBuildingDescription.textContent = '';
-        popupCurrentLevel.textContent = '';
-        popupProductionInfo.textContent = '';
-        popupCapacityInfo.textContent = '';
-        popupNextLevel.textContent = '';
-        popupUpgradeCosts.textContent = '';
-        popupUpgradeTime.textContent = '';
-        popupRequirements.innerHTML = '';
-        popupUpgradeReason.textContent = '';
-        popupUpgradeButton.style.display = 'none';
-        popupActionContent.innerHTML = '';
-        popupActionContent.style.display = 'none'; // Hide action content initially
-        document.getElementById('building-details-content').style.display = 'block'; // Show details content
+        if (popupBuildingName) popupBuildingName.textContent = 'Ładowanie...';
+        if (popupBuildingDescription) popupBuildingDescription.textContent = '';
+        if (popupCurrentLevel) popupCurrentLevel.textContent = '';
+        if (popupProductionInfo) popupProductionInfo.textContent = '';
+        if (popupCapacityInfo) popupCapacityInfo.textContent = '';
+        if (popupNextLevel) popupNextLevel.textContent = '';
+        if (popupUpgradeCosts) popupUpgradeCosts.innerHTML = ''; // Użyj innerHTML bo zawiera znaczniki
+        if (popupUpgradeTime) popupUpgradeTime.textContent = '';
+        if (popupRequirements) popupRequirements.innerHTML = ''; // Użyj innerHTML
+        if (popupUpgradeReason) popupUpgradeReason.textContent = '';
+        if (popupUpgradeButton) popupUpgradeButton.style.display = 'none';
+        if (popupActionContent) {
+            popupActionContent.innerHTML = '';
+            popupActionContent.style.display = 'none'; // Hide action content initially
+        }
+        if (buildingDetailsContent) buildingDetailsContent.style.display = 'block'; // Show details content
 
-        buildingDetailsPopup.classList.remove('main-building-popup'); // Resetuj klasę dla ratusza
-        buildingDetailsPopup.style.display = 'block';
-        popupOverlay.style.display = 'block';
+
+        if (buildingDetailsPopup) {
+             buildingDetailsPopup.classList.remove('main-building-popup'); // Resetuj klasę dla ratusza
+             buildingDetailsPopup.style.display = 'block';
+        }
+        if (popupOverlay) popupOverlay.style.display = 'block';
 
         try {
             const response = await fetch(`get_building_details.php?village_id=${villageId}&building_internal_name=${internalName}`);
@@ -146,161 +229,199 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (data.error) {
                 console.error('Błąd pobierania detali budynku:', data.error);
-                window.toastManager.showToast(data.error, 'error');
+                if (window.toastManager) window.toastManager.showToast(data.error, 'error');
                 closeBuildingDetailsPopup();
                 return;
             }
 
-            // Wypełnij popup danymi
-            popupBuildingName.textContent = `${data.name_pl} (Poziom ${data.level})`;
-            popupBuildingDescription.textContent = data.description_pl;
-            popupCurrentLevel.textContent = data.level;
+            // Wypełnij popup danymi (dodano sprawdzenia null dla elementów)
+            if (popupBuildingName) popupBuildingName.textContent = `${data.name_pl} (Poziom ${data.level})`;
+            if (popupBuildingDescription) popupBuildingDescription.textContent = data.description_pl;
+            if (popupCurrentLevel) popupCurrentLevel.textContent = data.level;
 
             // Informacje o produkcji/pojemności
             if (data.production_info) {
                 if (data.production_info.type === 'production') {
-                    popupProductionInfo.textContent = `Produkcja: ${formatNumber(data.production_info.amount_per_hour)}/godz. ${data.production_info.resource_type}`;
-                    if (data.production_info.amount_per_hour_next_level) {
-                        popupProductionInfo.textContent += ` (Nast. poz.: +${formatNumber(data.production_info.amount_per_hour_next_level)})`;
+                    if (popupProductionInfo) {
+                        popupProductionInfo.textContent = `Produkcja: ${formatNumber(data.production_info.amount_per_hour)}/godz. ${data.production_info.resource_type}`;
+                        if (data.production_info.amount_per_hour_next_level) {
+                            popupProductionInfo.textContent += ` (Nast. poz.: +${formatNumber(data.production_info.amount_per_hour_next_level)})`;
+                        }
+                        popupProductionInfo.style.display = 'block';
                     }
-                    popupProductionInfo.style.display = 'block';
-                    popupCapacityInfo.style.display = 'none';
+                    if (popupCapacityInfo) popupCapacityInfo.style.display = 'none';
                 } else if (data.production_info.type === 'capacity') {
-                    popupCapacityInfo.textContent = `Pojemność: ${formatNumber(data.production_info.amount)}`;
-                    if (data.production_info.amount_next_level) {
-                        popupCapacityInfo.textContent += ` (Nast. poz.: ${formatNumber(data.production_info.amount_next_level)})`;
-                    }
-                    popupCapacityInfo.style.display = 'block';
-                    popupProductionInfo.style.display = 'none';
+                     if (popupCapacityInfo) {
+                        popupCapacityInfo.textContent = `Pojemność: ${formatNumber(data.production_info.amount)}`;
+                        if (data.production_info.amount_next_level) {
+                            popupCapacityInfo.textContent += ` (Nast. poz.: ${formatNumber(data.production_info.amount_next_level)})`;
+                        }
+                        popupCapacityInfo.style.display = 'block';
+                     }
+                    if (popupProductionInfo) popupProductionInfo.style.display = 'none';
+                } else {
+                    if (popupProductionInfo) popupProductionInfo.style.display = 'none';
+                    if (popupCapacityInfo) popupCapacityInfo.style.display = 'none';
                 }
-            } else {
-                popupProductionInfo.style.display = 'none';
-                popupCapacityInfo.style.display = 'none';
+            } else { // No production_info type
+                if (popupProductionInfo) popupProductionInfo.style.display = 'none';
+                if (popupCapacityInfo) popupCapacityInfo.style.display = 'none';
             }
 
             // Informacje o rozbudowie
              // Only show upgrade section if the building can be upgraded
+             // Zakładamy istnienie elementu building-upgrade-section w HTML popupu
              const buildingUpgradeSection = document.getElementById('building-upgrade-section');
              if (buildingUpgradeSection) {
                  if (data.level < data.max_level) {
                      buildingUpgradeSection.style.display = 'block';
                       if (data.is_upgrading) {
-                          popupNextLevel.textContent = data.queue_level_after;
-                          popupUpgradeCosts.innerHTML = `<p class="upgrade-status">W trakcie rozbudowy do poziomu ${data.queue_level_after}.</p>`;
-                          popupUpgradeTime.innerHTML = `<p class="upgrade-timer" data-ends-at="${data.queue_finish_time}">${getRemainingTimeText(data.queue_finish_time)}</p>`;
-                          popupUpgradeButton.style.display = 'none';
-                          popupUpgradeReason.textContent = data.upgrade_not_available_reason;
-                          popupUpgradeReason.style.display = 'block';
-                      } else {
-                          popupNextLevel.textContent = data.level + 1;
+                          if (popupNextLevel) popupNextLevel.textContent = data.queue_level_after;
+                          if (popupUpgradeCosts) popupUpgradeCosts.innerHTML = `<p class="upgrade-status">W trakcie rozbudowy do poziomu ${data.queue_level_after}.</p>`;
+                           // Sprawdzamy istnienie elementu timera przed ustawieniem innerHTML
+                          if (popupUpgradeTime) popupUpgradeTime.innerHTML = `<p class="upgrade-timer" data-ends-at="${data.queue_finish_time}">${getRemainingTimeText(data.queue_finish_time)}</p>`;
+                          if (popupUpgradeButton) popupUpgradeButton.style.display = 'none';
+                          if (popupUpgradeReason) {
+                            popupUpgradeReason.textContent = data.upgrade_not_available_reason;
+                            popupUpgradeReason.style.display = 'block';
+                          }
+                      } else { // Not upgrading
+                          if (popupNextLevel) popupNextLevel.textContent = data.level + 1;
                           if (data.upgrade_costs) {
-                              popupUpgradeCosts.innerHTML = `Koszt: 
-                                  <span class="resource-cost wood"><img src="img/resources/wood.png" alt="Drewno"> ${formatNumber(data.upgrade_costs.wood)}</span> 
-                                  <span class="resource-cost clay"><img src="img/resources/clay.png" alt="Glina"> ${formatNumber(data.upgrade_costs.clay)}</span> 
-                                  <span class="resource-cost iron"><img src="img/resources/iron.png" alt="Żelazo"> ${formatNumber(data.upgrade_costs.iron)}</span>`;
-                              popupUpgradeTime.textContent = `Czas budowy: ${data.upgrade_time_formatted}`;
+                              if (popupUpgradeCosts) {
+                                // Używamy względnych ścieżek do grafik zasobów w popupie
+                                popupUpgradeCosts.innerHTML = `Koszt:
+                                    <span class="resource-cost wood"><img src="../img/ds_graphic/wood.png" alt="Drewno"> ${formatNumber(data.upgrade_costs.wood)}</span>
+                                    <span class="resource-cost clay"><img src="../img/ds_graphic/stone.png" alt="Glina"> ${formatNumber(data.upgrade_costs.clay)}</span>
+                                    <span class="resource-cost iron"><img src="../img/ds_graphic/iron.png" alt="Żelazo"> ${formatNumber(data.upgrade_costs.iron)}</span>`;
+                              }
+                              if (popupUpgradeTime) popupUpgradeTime.textContent = `Czas budowy: ${data.upgrade_time_formatted}`;
 
                               // Wymagania
                               if (data.requirements && data.requirements.length > 0) {
-                                  let reqHtml = '<div class="building-requirements"><p>Wymagania:</p><ul>';
-                                  data.requirements.forEach(req => {
-                                      const isMet = req.met;
-                                      const requirementClass = isMet ? 'requirement-met' : 'requirement-not-met';
-                                      const statusText = isMet ? '(Spełnione)' : ' (Wymagany)';
-                                      reqHtml += `<li class="${requirementClass}">${req.name_pl} (Poziom ${req.required_level}, Twój poziom: ${req.current_level}) ${statusText}</li>`;
-                                  });
-                                  reqHtml += '</ul></div>';
-                                  popupRequirements.innerHTML = reqHtml;
-                                  popupRequirements.style.display = 'block';
+                                  if (popupRequirements) {
+                                      let reqHtml = '<div class="building-requirements"><p>Wymagania:</p><ul>';
+                                      data.requirements.forEach(req => {
+                                          const isMet = req.met;
+                                          const requirementClass = isMet ? 'requirement-met' : 'requirement-not-met';
+                                          const statusText = isMet ? '(Spełnione)' : ' (Wymagany)';
+                                          reqHtml += `<li class="${requirementClass}">${req.name_pl} (Poziom ${req.required_level}, Twój poziom: ${req.current_level}) ${statusText}</li>`;
+                                      });
+                                      reqHtml += '</ul></div>';
+                                      popupRequirements.innerHTML = reqHtml;
+                                      popupRequirements.style.display = 'block';
+                                  }
                               } else {
-                                  popupRequirements.style.display = 'none';
+                                  if (popupRequirements) popupRequirements.style.display = 'none';
                               }
 
                               if (data.can_upgrade) {
-                                  popupUpgradeButton.style.display = 'block';
-                                  popupUpgradeButton.textContent = `Rozbuduj do poziomu ${data.level + 1}`;
-                                  popupUpgradeButton.dataset.villageId = villageId;
-                                  popupUpgradeButton.dataset.buildingInternalName = internalName;
-                                  popupUpgradeButton.dataset.currentLevel = data.level;
-                                  popupUpgradeReason.style.display = 'none';
-                              } else {
-                                  popupUpgradeButton.style.display = 'none';
-                                  popupUpgradeReason.textContent = data.upgrade_not_available_reason;
-                                  popupUpgradeReason.style.display = 'block';
+                                  if (popupUpgradeButton) {
+                                      popupUpgradeButton.style.display = 'block';
+                                      popupUpgradeButton.textContent = `Rozbuduj do poziomu ${data.level + 1}`;
+                                      popupUpgradeButton.dataset.villageId = villageId;
+                                      popupUpgradeButton.dataset.buildingInternalName = internalName;
+                                      popupUpgradeButton.dataset.currentLevel = data.level;
+                                  }
+                                  if (popupUpgradeReason) popupUpgradeReason.style.display = 'none';
+                              } else { // Cannot upgrade (e.g., insufficient resources, missing requirements)
+                                  if (popupUpgradeButton) popupUpgradeButton.style.display = 'none';
+                                  if (popupUpgradeReason) {
+                                    popupUpgradeReason.textContent = data.upgrade_not_available_reason || 'Brak danych do rozbudowy.';
+                                    popupUpgradeReason.style.display = 'block';
+                                  }
                               }
-                          } else {
-                              popupUpgradeCosts.textContent = 'Nie można obliczyć kosztów rozbudowy.';
-                              popupUpgradeTime.textContent = '';
-                              popupUpgradeButton.style.display = 'none';
-                              popupUpgradeReason.textContent = data.upgrade_not_available_reason || 'Brak danych do rozbudowy.';
-                              popupUpgradeReason.style.display = 'block';
+                          } else { // No upgrade costs data
+                              if (popupUpgradeCosts) popupUpgradeCosts.textContent = 'Nie można obliczyć kosztów rozbudowy.';
+                              if (popupUpgradeTime) popupUpgradeTime.textContent = '';
+                              if (popupUpgradeButton) popupUpgradeButton.style.display = 'none';
+                              if (popupUpgradeReason) {
+                                popupUpgradeReason.textContent = data.upgrade_not_available_reason || 'Brak danych do rozbudowy.';
+                                popupUpgradeReason.style.display = 'block';
+                              }
                           }
                       }
-                 } else {
-                     buildingUpgradeSection.style.display = 'none'; // Hide if max level
+                 } else { // Max level reached
+                     if (buildingUpgradeSection) buildingUpgradeSection.style.display = 'none'; // Hide if max level
                      // Still show max level info in the main details area
-                     popupNextLevel.textContent = data.max_level;
-                     popupUpgradeCosts.innerHTML = ''; // Clear upgrade costs section
-                     popupUpgradeTime.textContent = '';
-                     popupRequirements.innerHTML = '';
-                     popupUpgradeReason.textContent = 'Osiągnięto maksymalny poziom.';
-                      popupUpgradeReason.style.display = 'block';
+                     if (popupNextLevel) popupNextLevel.textContent = data.max_level;
+                     if (popupUpgradeCosts) popupUpgradeCosts.innerHTML = ''; // Clear upgrade costs section
+                     if (popupUpgradeTime) popupUpgradeTime.textContent = '';
+                     if (popupRequirements) popupRequirements.innerHTML = '';
+                     if (popupUpgradeReason) {
+                        popupUpgradeReason.textContent = 'Osiągnięto maksymalny poziom.';
+                        popupUpgradeReason.style.display = 'block';
+                     }
                  }
              }
 
             // Specjalna obsługa dla Ratusza (Main Building)
-            if (internalName === 'main_building') {
+            if (buildingDetailsPopup && internalName === 'main_building') {
                 buildingDetailsPopup.classList.add('main-building-popup');
                 // Tutaj można załadować listę wszystkich budynków do rozbudowy
                 // fetchAndRenderAllBuildingsForMainBuilding(villageId); // Będzie wywołane przez building-action-button
             } else {
-                buildingDetailsPopup.classList.remove('main-building-popup');
+                if (buildingDetailsPopup) buildingDetailsPopup.classList.remove('main-building-popup');
             }
 
-            // Uruchom timery w popupie (dla kolejki budowy, jeśli jest)
-            updateTimers(); // Funkcja z game.php - działa na elementach z data-ends-at
+            // Uruchom timery w popupie (dla kolejki budowy, jeśli jest) - nie jest potrzebne, globalny interwał już działa na wszystkich timerach
+            // updateTimers();
             // The interval is already running globally
-            
-        } catch (error) {
+
+         } catch (error) {
             console.error('Błąd AJAX pobierania detali budynku:', error);
-            window.toastManager.showToast('Błąd komunikacji z serwerem podczas pobierania detali.', 'error');
+            if (window.toastManager) window.toastManager.showToast('Błąd komunikacji z serwera podczas pobierania detali.', 'error');
             closeBuildingDetailsPopup();
         }
     }
 
     // Funkcja do zamykania popupu
     function closeBuildingDetailsPopup() {
-        buildingDetailsPopup.style.display = 'none';
-        popupOverlay.style.display = 'none';
-        popupActionContent.innerHTML = ''; // Wyczyść zawartość akcji
-        popupActionContent.style.display = 'none'; // Hide action content
-        document.getElementById('building-details-content').style.display = 'block'; // Show details content
-         // Clear timer interval if it's only for popup
-         // clearInterval(popupTimerInterval); // Need to manage intervals carefully
+        if (buildingDetailsPopup) buildingDetailsPopup.style.display = 'none';
+        if (popupOverlay) popupOverlay.style.display = 'none';
+        if (popupActionContent) {
+            popupActionContent.innerHTML = ''; // Wyczyść zawartość akcji
+            popupActionContent.style.display = 'none'; // Hide action content
+        }
+        if (buildingDetailsContent) buildingDetailsContent.style.display = 'block'; // Show details content
+         // Clear timer interval if it's only for popup - NIE jest potrzebne, timery są globalne
+         // clearInterval(popupTimerInterval);
     }
 
     // Obsługa kliknięć na placeholdery budynków - Otwiera popup z detalami
-    document.querySelectorAll('.building-placeholder').forEach(placeholder => {
-        placeholder.addEventListener('click', function() {
-            const internalName = this.dataset.buildingInternalName;
-            openBuildingDetailsPopup(currentVillageId, internalName);
+    // Używamy delegacji zdarzeń na kontenerze nadrzędnym, bo placeholdery mogą być dynamicznie ładowane/aktualizowane
+    const villageViewGraphic = document.getElementById('village-view-graphic');
+    if (villageViewGraphic) {
+        villageViewGraphic.addEventListener('click', function(event) {
+            const placeholder = event.target.closest('.building-placeholder');
+            if (placeholder) {
+                const internalName = placeholder.dataset.buildingInternalName;
+                 if (window.currentVillageId) { // Sprawdź, czy villageId jest dostępne
+                      openBuildingDetailsPopup(window.currentVillageId, internalName);
+                 } else {
+                      console.error('Village ID not available to open building details.');
+                 }
+            }
         });
-    });
+    }
 
-    // Handle building action button clicks (using event delegation)
-    // These buttons are likely INSIDE the building details popup now
+
+    // Handle building action button clicks (using event delegation) - buttons might be inside the popup
     document.addEventListener('click', async function(event) {
-        const button = event.target.closest('.building-action-button'); // Use closest to handle clicks on child elements
+        const button = event.target.closest('.building-action-button');
 
         if (button) {
             event.preventDefault();
-            const villageBuildingId = button.dataset.villageBuildingId;
+             // Prefer village_id from global variable if available, otherwise from button data
+            const villageId = window.currentVillageId || button.dataset.villageId;
             const buildingInternalName = button.dataset.buildingInternalName;
-             const actionContent = document.getElementById('popup-action-content');
-             const detailsContent = document.getElementById('building-details-content');
+             const actionContent = document.getElementById('popup-action-content'); // Upewnij się, że to jest ID kontenera w popupie
+             const detailsContent = document.getElementById('building-details-content'); // Upewnij się, że to jest ID kontenera w popupie
 
-            if (!actionContent || !detailsContent || !currentVillageId || !buildingInternalName) {
+
+            if (!actionContent || !detailsContent || !villageId || !buildingInternalName) {
                  console.error('Missing elements or data for building action.');
+                 if (window.toastManager) window.toastManager.showToast('Błąd: brak danych do wykonania akcji.', 'error');
                  return;
              }
 
@@ -314,143 +435,166 @@ document.addEventListener('DOMContentLoaded', () => {
             try {
                  // Fetch and render content based on building internal name
                  // This uses the get_building_action.php endpoint
-                 const response = await fetch(`get_building_action.php?building_id=${villageBuildingId}&building_type=${buildingInternalName}`);
+                 // Pass village_id and internal_name
+                 const response = await fetch(`get_building_action.php?village_id=${villageId}&building_internal_name=${buildingInternalName}`); // Zmieniono parametr building_type na building_internal_name
                  const data = await response.json();
 
-                 if (data.status === 'success') {
-                     // Based on the response, call the appropriate rendering function
+                 if (data.status === 'success' && actionContent) {
+                     // Wstaw zawartość akcji do kontenera
+                     actionContent.innerHTML = data.html; // Zakładamy, że odpowiedź zawiera HTML w polu 'html'
+                     actionContent.style.display = 'block';
+                     detailsContent.style.display = 'none'; // Upewnij się, że szczegóły są ukryte
+
+                     // Po załadowaniu treści akcji, uruchom timery wewnątrz tej treści, jeśli istnieją
+                     updateTimers(); // Uruchom ponownie timery dla nowej zawartości
+
+                     // TODO: Tutaj można dodać specyficzną inicjalizację JS dla paneli (np. panel rekrutacji)
+                     // W zależności od data.action_type można wywołać odpowiednie funkcje inicjalizacyjne
                      switch(data.action_type) {
-                         case 'recruit_barracks':
-                         case 'recruit_stable':
-                         case 'recruit_siege': // Warsztat
-                             // Assumes fetchAndRenderRecruitmentPanel is available (e.g., in units.js and included)
-                              // Need to pass buildingInternalName to the render function
-                             fetchAndRenderRecruitmentPanel(currentVillageId, buildingInternalName); // Pass internal name
-                             break;
-                         case 'research':
-                             // Assumes fetchAndRenderResearchPanel is available (e.g., in research.js and included)
-                              fetchAndRenderResearchPanel(currentVillageId, buildingInternalName);
-                             break;
-                         case 'trade':
-                             // Assumes fetchAndRenderMarketPanel is available (e.g., in market.js and included)
-                              fetchAndRenderMarketPanel(currentVillageId, buildingInternalName);
+                          case 'recruit_barracks':
+                          case 'recruit_stable':
+                          case 'recruit_workshop': // Poprawiono z siege na workshop zgodnie z nazwami
+                              // Inicjalizacja panelu rekrutacji, jeśli potrzebne (np. dodanie event listenerów do przycisków rekrutacji)
+                               // Zakładamy, że renderowanie panelu i dodawanie event listenerów dzieje się w fetchAndRenderRecruitmentPanel lub podobnej funkcji wywołanej wcześniej.
+                               // Jeśli panel rekrutacji ma własne timery, updateTimers() je znajdzie.
                               break;
-                         case 'manage_village':
-                             // TODO: Call main building management panel function
-                              // Note: Main building action might display alongside details or replace. Adjust display logic.
-                              // Assumes fetchAndRenderMainBuildingPanel is available (e.g., in main_building.js and included)
-                             fetchAndRenderMainBuildingPanel(currentVillageId, buildingInternalName);
-                             break;
-                         case 'noble':
-                              // TODO: Call noble panel function
-                               fetchAndRenderNoblePanel(currentVillageId, buildingInternalName);
+                          case 'research':
+                              // Inicjalizacja panelu badań
                               break;
-                         case 'mint':
-                             // TODO: Call mint panel function
-                              fetchAndRenderMintPanel(currentVillageId, buildingInternalName);
-                             break;
-                         case 'info_production': // Tartak, Cegielnia, Huta
-                         case 'info': // Magazyn
-                             // These might just show info, can use the details data directly or refine this
-                             // For now, if it's just info, maybe openBuildingDetailsPopup handles it?
-                             // Re-enable button and go back to details view
-                              button.disabled = false;
-                              button.textContent = 'Szczegóły/Akcja'; // Restore original text
-                              actionContent.style.display = 'none';
-                              detailsContent.style.display = 'block';
-                              // The details are already loaded, no need to refetch
-                             break;
-                         default:
-                             // Fallback for unexpected action types
-                             actionContent.innerHTML = '<p>Nieznana akcja budynku.</p>';
-                             button.disabled = false;
-                             button.textContent = 'Szczegóły/Akcja';
-                             detailsContent.style.display = 'none'; // Keep action content visible with error
-                             break;
+                           case 'trade':
+                              // Inicjalizacja panelu handlu
+                              break;
+                           case 'main_building':
+                              // Inicjalizacja panelu ratusza
+                              break;
+                            case 'noble':
+                              // Inicjalizacja panelu szlachcica
+                              break;
+                            case 'mint':
+                              // Inicjalizacja panelu mennicy
+                              break;
+                           // Add cases for other building panels as they are implemented
                      }
-                 } else {
+
+
+                 } else if (actionContent) {
                      // Handle server-side errors
                      actionContent.innerHTML = '<p>Błąd ładowania akcji: ' + (data.message || data.error || 'Nieznany błąd') + '</p>';
-                     window.toastManager.showToast(data.message || data.error || 'Błąd serwera.', 'error');
-                     button.disabled = false;
-                     button.textContent = 'Szczegóły/Akcja';
-                     // Keep action content visible with error message
+                     if (window.toastManager) window.toastManager.showToast(data.message || data.error || 'Błąd serwera.', 'error');
+                     actionContent.style.display = 'block'; // Pokaż komunikat o błędzie w sekcji akcji
                      detailsContent.style.display = 'none';
                  }
 
             } catch (error) {
                 console.error('Błąd AJAX pobierania akcji budynku:', error);
-                actionContent.innerHTML = '<p>Błąd komunikacji z serwera.</p>';
-                window.toastManager.showToast('Błąd komunikacji z serwera podczas pobierania akcji.', 'error');
-                button.disabled = false;
-                button.textContent = 'Szczegóły/Akcja';
-                 // Keep action content visible with error message
-                 detailsContent.style.display = 'none';
+                 if (actionContent) {
+                    actionContent.innerHTML = '<p>Błąd komunikacji z serwera.</p>';
+                    actionContent.style.display = 'block';
+                 }
+                if (window.toastManager) window.toastManager.showToast('Błąd komunikacji z serwera podczas pobierania akcji.', 'error');
+                 if (detailsContent) detailsContent.style.display = 'none';
             }
+        } else if (event.target.classList.contains('upgrade-building-button')) { // Obsługa kliknięcia na przycisk "Rozbuduj" na liście budynków
+             // Ta logika jest już zaimplementowana w bloku event listenera dla popupUpgradeButton click
+             // Jeśli chcesz, aby przyciski na liście też działały (obecnie nie mają addEventListener),
+             // można przenieść logikę z popupUpgradeButton.addEventListener tutaj i dostosować pobieranie danych.
+             // Na razie pozostawiamy obsługę rozbudowy tylko przez przycisk w popupie, co jest standardowe.
         }
     });
+
+     // Pomocnicza funkcja do pobierania tekstu akcji budynku (dopasuj do PHP)
+     // Ta funkcja powinna być zsynchronizowana z getBuildingActionText w PHP
+     function getBuildingActionText(internalName) {
+          switch(internalName) {
+               case 'main_building': return 'Zarządzaj wioską';
+               case 'barracks': return 'Rekrutuj jednostki';
+               case 'stable': return 'Rekrutuj jednostki';
+               case 'workshop': return 'Rekrutuj jednostki';
+               case 'academy': return 'Badaj technologie';
+               case 'market': return 'Handluj surowcami';
+               case 'statue': return 'Widok szlachcica';
+               case 'church': return 'Kościół';
+               case 'first_church': return 'Pierwszy Kościół';
+               case 'mint': return 'Mennica';
+               // For production buildings (wood_production, clay_pit, iron_mine, farm) and others (warehouse, wall, watchtower)
+               // The action might just be "Szczegóły" or similar, handled by the details popup itself.
+               default: return 'Akcja'; // Domyślny tekst, jeśli brak specyficznej akcji
+          }
+     }
+
 
     // Obsługa kliknięcia na przycisk zamknięcia popupu
-    popupCloseBtn.addEventListener('click', closeBuildingDetailsPopup);
-    popupOverlay.addEventListener('click', closeBuildingDetailsPopup); // Zamknij po kliknięciu na overlay
+    if (popupCloseBtn) {
+        popupCloseBtn.addEventListener('click', closeBuildingDetailsPopup);
+    }
+    if (popupOverlay) {
+        popupOverlay.addEventListener('click', closeBuildingDetailsPopup); // Zamknij po kliknięciu na overlay
+    }
 
     // Obsługa kliknięcia na przycisk "Rozbuduj" w popupie
-    popupUpgradeButton.addEventListener('click', async function() {
-        const button = this;
-        const villageId = button.dataset.villageId;
-        const buildingInternalName = button.dataset.buildingInternalName;
-        const currentLevel = button.dataset.currentLevel;
+    if (popupUpgradeButton) {
+        popupUpgradeButton.addEventListener('click', async function() {
+            const button = this;
+            const villageId = button.dataset.villageId;
+            const buildingInternalName = button.dataset.buildingInternalName;
+            const currentLevel = button.dataset.currentLevel;
 
-        // Disable button and show loading
-         button.disabled = true;
-         button.textContent = 'Rozbudowa...';
+            // Disable button and show loading
+             button.disabled = true;
+             button.textContent = 'Rozbudowa...';
 
-        // Wyślij żądanie AJAX do upgrade_building.php
-        try {
-            const response = await fetch('upgrade_building.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                body: `village_id=${villageId}&building_type_internal_name=${buildingInternalName}&current_level=${currentLevel}&csrf_token=${document.querySelector('meta[name="csrf-token"]').content}`
-            });
-            const data = await response.json();
+            // Wyślij żądanie AJAX do upgrade_building.php
+            try {
+                const response = await fetch('upgrade_building.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: `village_id=${villageId}&building_type_internal_name=${buildingInternalName}&current_level=${currentLevel}&csrf_token=${document.querySelector('meta[name="csrf-token"]').content}`
+                });
+                const data = await response.json();
 
-            if (data.status === 'success') {
-                window.toastManager.showToast(data.message, 'success');
-                // Close popup after successful upgrade initiation (optional, but common)
-                closeBuildingDetailsPopup(); // Close popup
-                // Zaktualizuj zasoby
-                if (window.resourceUpdater) {
-                    window.resourceUpdater.fetchUpdate();
+                if (data.status === 'success') {
+                    if (window.toastManager) window.toastManager.showToast(data.message, 'success');
+                    // Close popup after successful upgrade initiation (optional, but common)
+                    closeBuildingDetailsPopup(); // Close popup
+                    // Zaktualizuj zasoby
+                    if (window.resourceUpdater) {
+                        window.resourceUpdater.fetchUpdate();
+                    }
+                    // Zaktualizuj kolejkę budowy (should happen automatically or by polling)
+                    updateBuildingQueue(); // Wymuś odświeżenie kolejki
+
+                } else {
+                     if (window.toastManager) window.toastManager.showToast(data.message || 'Błąd rozbudowy.', 'error');
                 }
-                // Zaktualizuj kolejkę budowy (should happen automatically or by polling)
-                // updateBuildingQueue(); // If not using polling, call this
-
-            } else {
-                window.toastManager.showToast(data.message || 'Błąd rozbudowy.', 'error');
-            }
-        } catch (error) {
-            console.error('Błąd AJAX rozbudowy:', error);
-            window.toastManager.showToast('Błąd komunikacji z serwerem podczas rozbudowy.', 'error');
-        } finally {
+            } catch (error) {
+                console.error('Błąd AJAX rozbudowy:', error);
+                if (window.toastManager) window.toastManager.showToast('Błąd komunikacji z serwera podczas rozbudowy.', 'error');
+            } finally {
              // Re-enable button regardless of success or failure
              button.disabled = false;
-             button.textContent = `Rozbuduj do poziomu ${parseInt(currentLevel, 10) + 1}`;
-        }
-    });
+             button.textContent = `Rozbuduj do poziomu ${parseInt(currentLevel, 10) + 1}`
+             button.textContent = `Rozbuduj do poziomu ${parseInt(currentLevel, 10) + 1}`; // Aktualizuj tekst przycisku
+            }
+        });
+    }
+
 
     // Funkcja do aktualizacji kolejki budowy
     async function updateBuildingQueue() {
-        const buildingQueueList = document.getElementById('building-queue-list');
-        if (!buildingQueueList || !currentVillageId) return;
+        const buildingQueueList = document.getElementById('building-queue-list'); // Upewnij się, że taki element istnieje w game.php
+        if (!buildingQueueList || !window.currentVillageId) return; // Użyj globalnej zmiennej
+
 
         // Optional: Show a loading indicator for the queue itself
-        // buildingQueueList.innerHTML = '<p class="queue-empty">Ładowanie kolejki...</p>';
+        buildingQueueList.innerHTML = '<p class="queue-empty">Ładowanie kolejki budowy...</p>'; // Dodano komunikat ładowania
+
 
         try {
-            const response = await fetch(`ajax/buildings/get_queue.php?village_id=${currentVillageId}`);
+            // Użyj globalnej zmiennej villageId
+            const response = await fetch(`ajax/buildings/get_queue.php?village_id=${window.currentVillageId}`);
             const data = await response.json();
 
             if (data.status === 'success') {
@@ -459,7 +603,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 if (queueItem) {
                     const queueHtml = `
-                        <div class="queue-item current">
+                        <div class="queue-item current" data-building-internal-name="${queueItem.building_internal_name}"> <!-- Dodano atrybut building-internal-name -->
                             <div class="item-header">
                                 <div class="item-title">
                                     <span class="building-name">${queueItem.building_name_pl}</span>
@@ -479,28 +623,28 @@ document.addEventListener('DOMContentLoaded', () => {
                     `;
                     buildingQueueList.innerHTML = queueHtml;
                     // Uruchom timery ponownie dla nowo dodanego elementu
-                    updateTimers(); // This should be called after the new element is in the DOM
+                    // updateTimers(); // Globalny interwał to zrobi
                 } else {
                     buildingQueueList.innerHTML = '<p class="queue-empty">Brak zadań w kolejce budowy.</p>';
                 }
             } else {
                 console.error('Błąd pobierania kolejki budowy:', data.message);
-                window.toastManager.showToast('Błąd pobierania kolejki budowy.', 'error');
-                 buildingQueueList.innerHTML = '<p class="queue-empty error">Błąd ładowania kolejki.</p>'; // Show error state
+                if (window.toastManager) window.toastManager.showToast('Błąd pobierania kolejki budowy.', 'error');
+                 if (buildingQueueList) buildingQueueList.innerHTML = '<p class="queue-empty error">Błąd ładowania kolejki.</p>'; // Show error state
             }
         } catch (error) {
             console.error('Błąd AJAX kolejki budowy:', error);
-            window.toastManager.showToast('Błąd komunikacji z serwera podczas pobierania kolejki budowy.', 'error');
-             buildingQueueList.innerHTML = '<p class="queue-empty error">Błąd komunikacji z serwera.</p>'; // Show error state
+             if (window.toastManager) window.toastManager.showToast('Błąd komunikacji z serwera podczas pobierania kolejki budowy.', 'error');
+             if (buildingQueueList) buildingQueueList.innerHTML = '<p class="queue-empty error">Błąd komunikacji z serwera.</p>'; // Show error state
         }
     }
 
     // === Obsługa anulowania zadania budowy ===
-    // Dodaj event listener do przycisku anulowania w kolejce budowy
+    // Dodaj event listener do przycisku anulowania w kolejce budowy (używamy delegacji zdarzeń)
     document.addEventListener('click', async function(event) {
         const cancelButton = event.target.closest('.cancel-button');
         // Ensure it's a building cancel button, not recruitment (if they use the same class)
-         if (!cancelButton || cancelButton.classList.contains('recruitment')) return; // Added check for recruitment class
+         if (!cancelButton || cancelButton.classList.contains('recruitment-cancel-button')) return; // Upewnij się, że to przycisk anulowania budowy
 
         const queueItemId = cancelButton.dataset.queueId;
         if (!queueItemId) {
@@ -530,7 +674,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await response.json();
 
             if (data.success) {
-                window.toastManager.showToast(data.message, 'success');
+                if (window.toastManager) window.toastManager.showToast(data.message, 'success');
                 // Zaktualizuj zasoby
                 if (window.resourceUpdater && data.village_info) {
                     // Możemy bezpośrednio zaktualizować dane zasobów w resourceUpdater
@@ -551,41 +695,56 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 // Ponownie włącz przycisk rozbudowy dla anulowanego budynku
                 // Znajdź element building-item lub building-placeholder na podstawie internal_name
-                const buildingItem = document.querySelector(`.building-item[data-internal-name='${data.building_internal_name}']`);
-                const buildingPlaceholder = document.querySelector(`.building-placeholder[data-building-internal-name='${data.building_internal_name}']`);
-                
-                if (buildingItem) {
-                    // Znajdź przycisk rozbudowy w tym building-item i włącz go
-                    const upgradeButton = buildingItem.querySelector('.upgrade-button');
-                    if (upgradeButton) {
-                        upgradeButton.disabled = false;
-                        upgradeButton.classList.remove('btn-secondary');
-                         upgradeButton.classList.add('btn-primary');
-                         // Usuń powód niedostępności, jeśli istniał
-                         const reasonElement = buildingItem.querySelector('.upgrade-unavailable-reason');
-                         if(reasonElement) reasonElement.style.display = 'none';
+                const buildingInternalNameAfterCancel = data.building_internal_name; // Pobierz internal_name z odpowiedzi serwera
+                if (buildingInternalNameAfterCancel) {
+                    const buildingItem = document.querySelector(`.building-item[data-internal-name='${buildingInternalNameAfterCancel}']`);
+                    const buildingPlaceholder = document.querySelector(`.building-placeholder[data-building-internal-name='${buildingInternalNameAfterCancel}']`);
+
+                    if (buildingItem) {
+                         // Znajdź przycisk rozbudowy w tym building-item i włącz go
+                        const upgradeButton = buildingItem.querySelector('.upgrade-button'); // Upewnij się, że selektor jest poprawny
+                        if (upgradeButton) {
+                            upgradeButton.disabled = false;
+                            upgradeButton.classList.remove('btn-secondary');
+                            upgradeButton.classList.add('btn-primary');
+                            // Usuń powód niedostępności, jeśli istniał
+                            const reasonElement = buildingItem.querySelector('.upgrade-unavailable-reason'); // Zakładając taką klasę
+                            if(reasonElement) reasonElement.style.display = 'none';
+                        }
+                         // Usuń status 'w trakcie rozbudowy' i timer
+                         const statusElement = buildingItem.querySelector('.upgrade-status');
+                         if (statusElement && statusElement.textContent.includes('W trakcie rozbudowy')) {
+                              // Aktualizujemy tekst statusu - możemy próbować odgadnąć nowy poziom lub po prostu usunąć status budowy
+                               // Idealnie, odpowiedź serwera powinna zawierać nowy poziom budynku
+                               // Jeśli data.new_level jest dostępne: statusElement.textContent = `Poziom ${data.new_level}:`;
+                               // W przeciwnym razie, po prostu resetujemy do ogólnego statusu
+                               statusElement.textContent = `Rozbudowa do poziomu ${parseInt(buildingItem.dataset.currentLevel || 0, 10) + 1}:`; // Może być niepoprawne, jeśli anulowano ostatni poziom
+                         }
+                         const timerElement = buildingItem.querySelector('.upgrade-timer'); // Upewnij się, że selektor jest poprawny
+                         if (timerElement) timerElement.remove();
                     }
-                     // Usuń status 'w trakcie rozbudowy' i timer
-                     const statusElement = buildingItem.querySelector('.upgrade-status');
-                     if (statusElement && statusElement.textContent.includes('W trakcie rozbudowy')) {
-                          // Decide what text to show - maybe the next level or just level?
-                          // For now, maybe just remove the 'W trakcie' part or clear it
-                           statusElement.textContent = `Poziom ${parseInt(buildingItem.dataset.currentLevel, 10)}:`; // Reset to current level display
+
+                     if (buildingPlaceholder) {
+                        buildingPlaceholder.classList.remove('building-upgrading');
+                         // Po anulowaniu, zmień grafikę z powrotem na PNG, jeśli była GIFem
+                         const buildingImage = buildingPlaceholder.querySelector('.building-graphic');
+                          if (buildingImage) {
+                              const currentSrc = buildingImage.src;
+                              if (currentSrc.endsWith('.gif')) {
+                                  const pngSrc = currentSrc.replace('.gif', '.png');
+                                  buildingImage.src = pngSrc;
+                              }
+                          }
                      }
-                     const timerElement = buildingItem.querySelector('.upgrade-timer');
-                     if (timerElement) timerElement.remove();
                 }
 
-                 if (buildingPlaceholder) {
-                     buildingPlaceholder.classList.remove('building-upgrading');
-                 }
 
             } else {
-                window.toastManager.showToast(data.error || data.message || 'Błąd anulowania budowy.', 'error');
+                 if (window.toastManager) window.toastManager.showToast(data.error || data.message || 'Błąd anulowania budowy.', 'error');
             }
         } catch (error) {
             console.error('Błąd AJAX anulowania budowy:', error);
-            window.toastManager.showToast('Błąd komunikacji z serwera podczas anulowania.', 'error');
+            if (window.toastManager) window.toastManager.showToast('Błąd komunikacji z serwera podczas anulowania.', 'error');
         } finally {
              // Re-enable button regardless of success or failure (if it still exists in DOM)
              if (cancelButton && cancelButton.parentNode) {

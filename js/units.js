@@ -82,9 +82,9 @@ async function fetchAndRenderRecruitmentPanel(villageId, buildingInternalName) {
                     html += `
                         <tr data-unit-internal-name="${unit.internal_name}" class="${canRecruit ? '' : 'unavailable'}">
                             <td><strong>${unit.name_pl}</strong><br><small>${unit.description_pl}</small></td>
-                            <td><img src="img/resources/wood.png" title="Drewno" alt="Drewno"> ${formatNumber(unit.cost_wood)}</td>
-                            <td><img src="img/resources/clay.png" title="Glina" alt="Glina"> ${formatNumber(unit.cost_clay)}</td>
-                            <td><img src="img/resources/iron.png" title="Żelazo" alt="Żelazo"> ${formatNumber(unit.cost_iron)}</td>
+                            <td><img src="img/wood.png" title="Drewno" alt="Drewno"> ${formatNumber(unit.cost_wood)}</td>
+                            <td><img src="img/stone.png" title="Glina" alt="Glina"> ${formatNumber(unit.cost_clay)}</td>
+                            <td><img src="img/iron.png" title="Żelazo" alt="Żelazo"> ${formatNumber(unit.cost_iron)}</td>
                              <td><img src="img/ds_graphic/unit/${unit.internal_name}/population.png" title="Populacja" alt="Populacja"> ${formatNumber(unit.population_cost)}</td>
                             <td>${formatDuration(unit.recruit_time_seconds)}</td>
                             <td>${unit.attack}/${unit.defense}</td>

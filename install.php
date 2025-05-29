@@ -345,19 +345,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     echo "<h3>Etap 3/4: Tworzenie tabel i dodawanie danych...</h3>";
     echo "<ul>";
     $sql_files = [
-        'sql_create_users_table.sql',
-        'sql_create_worlds_table.sql',
-        'sql_create_villages_table.sql',
-        'sql_create_buildings_tables.sql',
-        'sql_create_building_queue_table.sql',
-        'sql_create_unit_types.sql',
-        'sql_create_units_table.sql',
-        'sql_create_reports_table.sql',
-        'sql_create_battle_tables.sql',
-        'sql_create_research_tables.sql',
-        'sql_create_messages_table.sql',
-        'sql_create_trade_routes_table.sql',
-        'sql_create_notifications_table.sql'
+        'docs/sql/sql_create_users_table.sql',
+        'docs/sql/sql_create_worlds_table.sql',
+        'docs/sql/sql_create_villages_table.sql',
+        'docs/sql/sql_create_buildings_tables.sql',
+        'docs/sql/sql_create_building_queue_table.sql',
+        'docs/sql/sql_create_unit_types.sql',
+        'docs/sql/sql_create_units_table.sql',
+        'docs/sql/sql_create_reports_table.sql',
+        'docs/sql/sql_create_battle_tables.sql',
+        'docs/sql/sql_create_research_tables.sql',
+        'docs/sql/sql_create_messages_table.sql',
+        'docs/sql/sql_create_trade_routes_table.sql',
+        'docs/sql/sql_create_notifications_table.sql'
     ];
     
     foreach ($sql_files as $sql_file) {
@@ -371,7 +371,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             }
             
             // Po wykonaniu skryptu sql_create_buildings_tables.sql, dodaj brakującą kolumnę population_cost
-            if ($sql_file === 'sql_create_buildings_tables.sql') {
+            if ($sql_file === 'docs/sql/sql_create_buildings_tables.sql') {
                 echo "<li>Dodawanie kolumny `population_cost` do tabeli `building_types`: ";
                 $alter_sql = "ALTER IGNORE TABLE `building_types` ADD COLUMN `population_cost` INT(11) DEFAULT 0 COMMENT 'Zużycie populacji na poziom';";
                 if ($conn->query($alter_sql) === TRUE) {
@@ -382,7 +382,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             }
 
             // Po wykonaniu skryptu unit_types, sprawdź strukturę tabeli
-            if ($sql_file === 'sql_create_unit_types.sql') {
+            if ($sql_file === 'docs/sql/sql_create_unit_types.sql') {
                 echo "<li>Sprawdzanie struktury tabeli `unit_types`: ";
                 $describe_result = $conn->query("DESCRIBE `unit_types`");
                 if ($describe_result) {
@@ -470,7 +470,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['admin_username'])) {
             $coords = generateRandomCoordinates($conn, 100);
             $vm->createVillage($admin_id, 'Wioska ' . $username, $coords['x'], $coords['y']);
             echo '<h2>Administrator utworzony pomyślnie!</h2>';
-            echo '<p><a href="admin_login.php">Zaloguj się do panelu administratora</a> | <a href="login.php">Rozpocznij grę</a>.</p>';
+            echo '<p><a href="admin/admin_login.php">Zaloguj się do panelu administratora</a> | <a href="auth/login.php">Rozpocznij grę</a>.</p>';
         } else {
             $error = 'Błąd: ' . $stmt->error;
         }

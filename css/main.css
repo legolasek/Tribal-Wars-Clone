@@ -508,9 +508,9 @@ main h3 {
 /* --- Widok wioski --- */
 #village-view-graphic {
   position: relative; /* Dodano, aby placeholdery były pozycjonowane względem tego elementu */
-  width: 100%;
-  height: 500px; /* Ustawiono stałą wysokość */
-  margin: var(--spacing-lg) 0;
+  width: 800px; /* Ustawiono stałą szerokość */
+  height: 600px; /* Ustawiono stałą wysokość */
+  margin: var(--spacing-lg) auto; /* Wyśrodkowanie */
   background-color: var(--color-background-medium);
   background-image: url('../img/village_bg.jpg');
   background-size: cover;
@@ -528,15 +528,9 @@ main h3 {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: rgba(255, 255, 255, 0.7);
-  border: 2px solid var(--color-primary);
-  border-radius: var(--border-radius-small);
   cursor: pointer;
   transition: all var(--transition-fast);
-  text-align: center;
-  box-shadow: var(--box-shadow-default), 0 3px 6px rgba(0, 0, 0, 0.2);
   flex-direction: column;
-  backdrop-filter: blur(2px);
 }
 
 .building-placeholder:hover {
@@ -558,16 +552,19 @@ main h3 {
 }
 
 .building-icon {
-  max-width: 70%;
-  max-height: 60%;
+  max-width: 100%; /* Allow images to fill the placeholder width */
+  max-height: 100%; /* Allow images to fill the placeholder height */
   margin-bottom: 5px;
 }
 
 .placeholder-text {
   font-size: 0.8rem;
     font-weight: bold;
-  color: var(--color-secondary);
-  padding: var(--spacing-xs);
+  color: var(--color-text-light); /* Jasny tekst dla poziomu */
+  background-color: rgba(0, 0, 0, 0.5); /* Półprzezroczyste tło dla czytelności */
+  padding: 2px 5px; /* Mniejsze wypełnienie */
+  border-radius: 3px; /* Lekko zaokrąglone rogi */
+  margin-top: 2px; /* Mały odstęp od grafiki */
 }
 
 /* --- Tabele --- */

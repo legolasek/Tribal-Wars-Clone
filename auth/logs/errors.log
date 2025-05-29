@@ -1,0 +1,8 @@
+[2025-05-29 10:21:10] EXCEPTION: Class "NotificationManager" not found w C:\xampp\htdocs\header.php linia 52
+Trace: #0 C:\xampp\htdocs\auth\login.php(62): require()
+#1 {main}
+--------------------------------------------------------------------------------
+[2025-05-29 10:21:16] EXCEPTION: Class "NotificationManager" not found w C:\xampp\htdocs\header.php linia 52
+Trace: #0 C:\xampp\htdocs\auth\login.php(62): require()
+#1 {main}
+--------------------------------------------------------------------------------

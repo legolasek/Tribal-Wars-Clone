@@ -374,10 +374,10 @@ function formatTimeToHuman($timestamp) {
  */
 function displayResource($resource_type, $amount, $show_max = false, $max_amount = 0) {
     $icons = [
-        'wood' => 'img/ds_graphic/resources/wood.png',
-        'clay' => 'img/ds_graphic/resources/clay.png',
-        'iron' => 'img/ds_graphic/resources/iron.png',
-        'population' => 'img/ds_graphic/resources/population.png'
+        'wood' => '../img/ds_graphic/wood.png',
+        'clay' => '../img/ds_graphic/stone.png',
+        'iron' => '../img/ds_graphic/iron.png',
+        'population' => '../img/ds_graphic/resources/population.png'
     ];
     
     $names = [

@@ -2004,3 +2004,9 @@ Trace: #0 C:\xampp\htdocs\ajax_proxy.php(7): require_once()
 Trace: #0 C:\xampp\htdocs\ajax_proxy.php(7): require_once()
 #1 {main}
 --------------------------------------------------------------------------------
+[2025-05-29 11:27:31] ERROR: require_once(C:/xampp/htdocs/lib/BuildingManager.php): Failed to open stream: No such file or directory w C:\xampp\htdocs\ajax\resources\get_resources.php linia 9
+--------------------------------------------------------------------------------
+[2025-05-29 11:27:31] EXCEPTION: Failed opening required 'C:/xampp/htdocs/lib/BuildingManager.php' (include_path='C:\xampp\php\PEAR') w C:\xampp\htdocs\ajax\resources\get_resources.php linia 9
+Trace: #0 C:\xampp\htdocs\ajax_proxy.php(7): require_once()
+#1 {main}
+--------------------------------------------------------------------------------

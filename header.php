@@ -10,6 +10,7 @@ if (isset($_SESSION['user_id'])) {
     require_once __DIR__ . '/lib/managers/ResourceManager.php'; // Potrzebujemy ResourceManager do produkcji
     require_once __DIR__ . '/lib/managers/BuildingManager.php'; // Poprawiona ścieżka
     require_once __DIR__ . '/lib/managers/BuildingConfigManager.php'; // Ta ścieżka jest poprawna
+    require_once __DIR__ . '/lib/managers/NotificationManager.php'; // Do powiadomień
 
     $vm = new VillageManager($conn);
     
@@ -71,7 +72,7 @@ if (!isset($pageTitle)) {
     <title><?= htmlspecialchars($pageTitle) ?></title>
     
     <!-- Stylesheets -->
-    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="/css/main.css">
     <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
     
@@ -94,9 +95,9 @@ if (!isset($pageTitle)) {
     <script>
         window.gameMessages = <?= json_encode($gameMessages) ?>;
     </script>
-    <script src="js/resources.js" defer></script>
-    <script src="js/notifications.js" defer></script>
-    <script src="js/buildings.js" defer></script>
+    <script src="/js/resources.js" defer></script>
+    <script src="/js/notifications.js" defer></script>
+    <script src="/js/buildings.js"></script>
 </head>
 <body>
     <?php $current_page = basename($_SERVER['PHP_SELF']); ?>
@@ -108,13 +109,13 @@ if (!isset($pageTitle)) {
         <nav class="main-nav">
             <?php if (isset($_SESSION['user_id'])): ?>
                 <!-- Nawigacja dla zalogowanego użytkownika -->
-                <a href="game.php" class="<?= $current_page === 'game.php' ? 'active' : '' ?>"><i class="fas fa-home"></i> Przegląd</a>
-                <a href="map.php" class="<?= $current_page === 'map.php' ? 'active' : '' ?>"><i class="fas fa-map"></i> Mapa</a>
-                <a href="reports.php" class="<?= $current_page === 'reports.php' ? 'active' : '' ?>"><i class="fas fa-scroll"></i> Raporty</a>
-                <a href="messages.php" class="<?= $current_page === 'messages.php' ? 'active' : '' ?>"><i class="fas fa-envelope"></i> Wiadomości</a>
-                <a href="ranking.php" class="<?= $current_page === 'ranking.php' ? 'active' : '' ?>"><i class="fas fa-trophy"></i> Ranking</a>
-                <a href="settings.php" class="<?= $current_page === 'settings.php' ? 'active' : '' ?>"><i class="fas fa-cog"></i> Ustawienia</a>
-                <a href="logout.php"><i class="fas fa-sign-out-alt"></i> Wyloguj</a>
+                <a href="/game/game.php" class="<?= $current_page === 'game.php' ? 'active' : '' ?>"><i class="fas fa-home"></i> Przegląd</a>
+                <a href="/map/map.php" class="<?= $current_page === 'map.php' ? 'active' : '' ?>"><i class="fas fa-map"></i> Mapa</a>
+                <a href="/messages/reports.php" class="<?= $current_page === 'reports.php' ? 'active' : '' ?>"><i class="fas fa-scroll"></i> Raporty</a>
+                <a href="/messages/messages.php" class="<?= $current_page === 'messages.php' ? 'active' : '' ?>"><i class="fas fa-envelope"></i> Wiadomości</a>
+                <a href="/player/ranking.php" class="<?= $current_page === 'ranking.php' ? 'active' : '' ?>"><i class="fas fa-trophy"></i> Ranking</a>
+                <a href="/player/settings.php" class="<?= $current_page === 'settings.php' ? 'active' : '' ?>"><i class="fas fa-cog"></i> Ustawienia</a>
+                <a href="/auth/logout.php"><i class="fas fa-sign-out-alt"></i> Wyloguj</a>
                 
                 <div class="notifications-icon">
                     <a href="#" id="notifications-toggle">
@@ -154,9 +155,9 @@ if (!isset($pageTitle)) {
                 </div>
             <?php else: ?>
                 <!-- Nawigacja dla niezalogowanego użytkownika (strona główna) -->
-                <a href="index.php" class="<?= $current_page === 'index.php' ? 'active' : '' ?>">Strona główna</a>
-                <a href="register.php" class="<?= $current_page === 'register.php' ? 'active' : '' ?>">Rejestracja</a>
-                <a href="login.php" class="<?= $current_page === 'login.php' ? 'active' : '' ?>">Logowanie</a>
+                <a href="/index.php" class="<?= $current_page === 'index.php' ? 'active' : '' ?>">Strona główna</a>
+                <a href="/auth/register.php" class="<?= $current_page === 'register.php' ? 'active' : '' ?>">Rejestracja</a>
+                <a href="/auth/login.php" class="<?= $current_page === 'login.php' ? 'active' : '' ?>">Logowanie</a>
             <?php endif; ?>
         </nav>
         <?php if (isset($_SESSION['user_id'])): ?>

@@ -64,8 +64,8 @@ require 'header.php';
             <h2>Witaj w nowej wersji Tribal Wars!</h2>
             <p>Odkryj nowoczesne Plemiona z dynamiczną rozgrywką i strategicznymi wyzwaniami.</p>
             <div class="hero-buttons">
-                <a href="register.php" class="btn btn-primary">Zarejestruj się</a>
-                <a href="login.php" class="btn btn-secondary">Zaloguj się</a>
+                <a href="auth/register.php" class="btn btn-primary">Zarejestruj się</a>
+                <a href="auth/login.php" class="btn btn-secondary">Zaloguj się</a>
             </div>
         </div>
     </section>
@@ -94,7 +94,7 @@ require 'header.php';
                     </div>
                     <h3>Produkcja surowców</h3>
                     <p>Zarządzaj wydobyciem drewna, gliny i żelaza w czasie rzeczywistym. Rozbudowuj kopalnie, by zwiększyć produkcję.</p>
-                    <a href="register.php" class="feature-link">Rozpocznij produkcję</a>
+                    <a href="auth/register.php" class="feature-link">Rozpocznij produkcję</a>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">
@@ -102,7 +102,7 @@ require 'header.php';
                     </div>
                     <h3>Rozwój wiosek</h3>
                     <p>Buduj i ulepszaj budynki, aby wzmocnić swoją pozycję. Każdy budynek daje ci nowe możliwości i przewagę.</p>
-                    <a href="register.php" class="feature-link">Buduj imperium</a>
+                    <a href="auth/register.php" class="feature-link">Buduj imperium</a>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">
@@ -110,7 +110,7 @@ require 'header.php';
                     </div>
                     <h3>Interaktywna mapa</h3>
                     <p>Odkryj mapę świata z możliwością przeciągania. Planuj strategiczne ataki i podbijaj nowe terytoria.</p>
-                    <a href="register.php" class="feature-link">Eksploruj świat</a>
+                    <a href="auth/register.php" class="feature-link">Eksploruj świat</a>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">
@@ -118,7 +118,7 @@ require 'header.php';
                     </div>
                     <h3>Jednostki bojowe</h3>
                     <p>Rekrutuj różne rodzaje jednostek i atakuj wrogów. Twórz potężne armie i broń swojego terytorium.</p>
-                    <a href="register.php" class="feature-link">Twórz armię</a>
+                    <a href="auth/register.php" class="feature-link">Twórz armię</a>
                 </div>
             </div>
         </section>
@@ -139,7 +139,7 @@ require 'header.php';
             <div class="cta-box">
                 <h3>Dołącz do gry już teraz!</h3>
                 <p>Rejestracja zajmuje tylko chwilę, a gra jest całkowicie darmowa.</p>
-                <a href="register.php" class="btn btn-primary">Rozpocznij grę</a>
+                <a href="auth/register.php" class="btn btn-primary">Rozpocznij grę</a>
                 </div>
             </div>
         </section>
@@ -154,8 +154,8 @@ require 'header.php';
         <div class="footer-links">
             <h4>Szybkie linki</h4>
             <ul>
-                <li><a href="register.php">Rejestracja</a></li>
-                <li><a href="login.php">Logowanie</a></li>
+                <li><a href="auth/register.php">Rejestracja</a></li>
+                <li><a href="auth/login.php">Logowanie</a></li>
                 <li><a href="#">Pomoc</a></li>
                 <li><a href="#">Regulamin</a></li>
             </ul>

@@ -10,8 +10,8 @@
         <div class="footer-links">
             <h4>Szybkie linki</h4>
             <ul>
-                <li><a href="register.php">Rejestracja</a></li>
-                <li><a href="login.php">Logowanie</a></li>
+                <li><a href="auth/register.php">Rejestracja</a></li>
+                <li><a href="auth/login.php">Logowanie</a></li>
                 <li><a href="#">Pomoc</a></li>
                 <li><a href="#">Regulamin</a></li>
             </ul>
@@ -25,6 +25,6 @@
         <p>&copy; <?= date('Y') ?> Tribal Wars. Wszelkie prawa zastrzeżone.</p>
     </div>
     </footer>
-    <script src="js/main.js"></script>
+    
 </body>
 </html>

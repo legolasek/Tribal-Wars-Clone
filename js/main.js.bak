@@ -321,7 +321,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                     <img src="img/wood.png" alt="Drewno" class="res-icon-img"> ${building.upgrade_costs.wood}
                                 </span>`;
                                 tableHTML += `<span class="resource-cost">
-                                    <img src="img/clay.png" alt="Glina" class="res-icon-img"> ${building.upgrade_costs.clay}
+                                    <img src="img/stone.png" alt="Glina" class="res-icon-img"> ${building.upgrade_costs.clay}
                                 </span>`;
                                 tableHTML += `<span class="resource-cost">
                                     <img src="img/iron.png" alt="Żelazo" class="res-icon-img"> ${building.upgrade_costs.iron}
@@ -537,7 +537,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                                 <img src="img/wood.png" alt="Drewno" class="res-icon-img"> ${unit.costs.wood}
                                             </span>
                                             <span class="resource-cost">
-                                                <img src="img/clay.png" alt="Glina" class="res-icon-img"> ${unit.costs.clay}
+                                                <img src="img/stone.png" alt="Glina" class="res-icon-img"> ${unit.costs.clay}
                                             </span>
                                             <span class="resource-cost">
                                                 <img src="img/iron.png" alt="Żelazo" class="res-icon-img"> ${unit.costs.iron}
@@ -668,7 +668,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                         <img src="img/wood.png" alt="Drewno" class="res-icon-img"> ${data.upgrade_cost.wood}
                                     </span>
                                     <span class="resource-cost">
-                                        <img src="img/clay.png" alt="Glina" class="res-icon-img"> ${data.upgrade_cost.clay}
+                                        <img src="img/stone.png" alt="Glina" class="res-icon-img"> ${data.upgrade_cost.clay}
                                     </span>
                                     <span class="resource-cost">
                                         <img src="img/iron.png" alt="Żelazo" class="res-icon-img"> ${data.upgrade_cost.iron}

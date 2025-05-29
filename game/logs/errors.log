@@ -1,0 +1,14 @@
+[2025-05-29 10:31:54] ERROR: require(header.php): Failed to open stream: No such file or directory w C:\xampp\htdocs\game\world_select.php linia 58
+--------------------------------------------------------------------------------
+[2025-05-29 10:31:54] EXCEPTION: Failed opening required 'header.php' (include_path='C:\xampp\php\PEAR') w C:\xampp\htdocs\game\world_select.php linia 58
+Trace: #0 {main}
+--------------------------------------------------------------------------------
+[2025-05-29 10:35:37] ERROR: require(header.php): Failed to open stream: No such file or directory w C:\xampp\htdocs\game\game.php linia 74
+--------------------------------------------------------------------------------
+[2025-05-29 10:35:37] EXCEPTION: Failed opening required 'header.php' (include_path='C:\xampp\php\PEAR') w C:\xampp\htdocs\game\game.php linia 74
+Trace: #0 {main}
+--------------------------------------------------------------------------------
+[2025-05-29 16:12:40] ERROR: Undefined array key "current_population" w C:\xampp\htdocs\game\game.php linia 124
+--------------------------------------------------------------------------------
+[2025-05-29 16:14:05] ERROR: Undefined array key "current_population" w C:\xampp\htdocs\game\game.php linia 124
+--------------------------------------------------------------------------------
