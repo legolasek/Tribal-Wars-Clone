@@ -1,12 +1,12 @@
 <?php
-require '../init.php';
+require '../../init.php';
 validateCSRF();
 header('Content-Type: text/html; charset=UTF-8'); // Zwracamy HTML po akcji POST
 
 // Configuration and DB connection provided by init.php
-require_once __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'managers' . DIRECTORY_SEPARATOR . 'BuildingManager.php';
-require_once __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'managers' . DIRECTORY_SEPARATOR . 'VillageManager.php';
-require_once __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'managers' . DIRECTORY_SEPARATOR . 'BuildingConfigManager.php'; // Potrzebujemy BuildingConfigManager
+require_once __DIR__ . '/../../lib/managers/BuildingManager.php';
+require_once __DIR__ . '/../../lib/managers/VillageManager.php';
+require_once __DIR__ . '/../../lib/managers/BuildingConfigManager.php'; // Potrzebujemy BuildingConfigManager
 
 // Sprawdź, czy użytkownik jest zalogowany
 if (!isset($_SESSION['user_id'])) {
@@ -15,7 +15,7 @@ if (!isset($_SESSION['user_id'])) {
         echo json_encode(['error' => 'Nie jesteś zalogowany.']);
     } else {
         $_SESSION['game_message'] = "<p class='error-message'>Musisz być zalogowany, aby wykonać tę akcję.</p>";
-        header("Location: ../auth/login.php");
+        header("Location: ../../auth/login.php");
     }
     exit();
 }
@@ -27,7 +27,7 @@ if (!isset($_POST['queue_item_id']) || !is_numeric($_POST['queue_item_id'])) {
         echo json_encode(['error' => 'Nieprawidłowe ID zadania.']);
     } else {
         $_SESSION['game_message'] = "<p class='error-message'>Nieprawidłowe ID zadania.</p>";
-        header("Location: ../game/game.php");
+        header("Location: ../../game/game.php");
     }
     exit();
 }

@@ -1,5 +1,5 @@
 <?php
-require '../init.php';
+require '../../init.php';
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
@@ -9,11 +9,11 @@ ob_start(); // Rozpocznij buforowanie wyjścia
 try {
     header('Content-Type: application/json');
 
-    require_once '../lib/managers/BuildingManager.php';
-    require_once '../lib/managers/VillageManager.php';
-    require_once '../lib/functions.php'; // Zakładam, że mamy plik z funkcjami pomocniczymi
-    require_once '../lib/managers/BuildingConfigManager.php'; // Dołącz nowy Manager
-    require_once '../lib/managers/ResourceManager.php'; // Needed for current resources
+    require_once '../../lib/managers/BuildingManager.php';
+    require_once '../../lib/managers/VillageManager.php';
+    require_once '../../lib/functions.php'; // Zakładam, że mamy plik z funkcjami pomocniczymi
+    require_once '../../lib/managers/BuildingConfigManager.php'; // Dołącz nowy Manager
+    require_once '../../lib/managers/ResourceManager.php'; // Needed for current resources
 
     // Sprawdź, czy użytkownik jest zalogowany
     if (!isset($_SESSION['user_id'])) {

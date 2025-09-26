@@ -224,7 +224,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (popupOverlay) popupOverlay.style.display = 'block';
 
         try {
-            const response = await fetch(`get_building_details.php?village_id=${villageId}&building_internal_name=${internalName}`);
+            const response = await fetch(`/ajax/buildings/get_building_details.php?village_id=${villageId}&building_internal_name=${internalName}`);
             const data = await response.json();
 
             if (data.error) {
@@ -291,9 +291,9 @@ document.addEventListener('DOMContentLoaded', () => {
                               if (popupUpgradeCosts) {
                                 // Używamy względnych ścieżek do grafik zasobów w popupie
                                 popupUpgradeCosts.innerHTML = `Koszt:
-                                    <span class="resource-cost wood"><img src="../img/ds_graphic/wood.png" alt="Drewno"> ${formatNumber(data.upgrade_costs.wood)}</span>
-                                    <span class="resource-cost clay"><img src="../img/ds_graphic/stone.png" alt="Glina"> ${formatNumber(data.upgrade_costs.clay)}</span>
-                                    <span class="resource-cost iron"><img src="../img/ds_graphic/iron.png" alt="Żelazo"> ${formatNumber(data.upgrade_costs.iron)}</span>`;
+                                    <span class="resource-cost wood"><img src="/img/ds_graphic/wood.png" alt="Drewno"> ${formatNumber(data.upgrade_costs.wood)}</span>
+                                    <span class="resource-cost clay"><img src="/img/ds_graphic/stone.png" alt="Glina"> ${formatNumber(data.upgrade_costs.clay)}</span>
+                                    <span class="resource-cost iron"><img src="/img/ds_graphic/iron.png" alt="Żelazo"> ${formatNumber(data.upgrade_costs.iron)}</span>`;
                               }
                               if (popupUpgradeTime) popupUpgradeTime.textContent = `Czas budowy: ${data.upgrade_time_formatted}`;
 
@@ -436,7 +436,7 @@ document.addEventListener('DOMContentLoaded', () => {
                  // Fetch and render content based on building internal name
                  // This uses the get_building_action.php endpoint
                  // Pass village_id and internal_name
-                 const response = await fetch(`get_building_action.php?village_id=${villageId}&building_internal_name=${buildingInternalName}`); // Zmieniono parametr building_type na building_internal_name
+                 const response = await fetch(`/ajax/buildings/get_building_action.php?village_id=${villageId}&building_internal_name=${buildingInternalName}`); // Zmieniono parametr building_type na building_internal_name
                  const data = await response.json();
 
                  if (data.status === 'success' && actionContent) {
@@ -545,7 +545,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Wyślij żądanie AJAX do upgrade_building.php
             try {
-                const response = await fetch('upgrade_building.php', {
+                const response = await fetch('/ajax/buildings/upgrade_building.php', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded',
@@ -594,7 +594,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             // Użyj globalnej zmiennej villageId
-            const response = await fetch(`ajax/buildings/get_queue.php?village_id=${window.currentVillageId}`);
+            const response = await fetch(`/ajax/buildings/get_queue.php?village_id=${window.currentVillageId}`);
             const data = await response.json();
 
             if (data.status === 'success') {
@@ -663,7 +663,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             // Wyślij żądanie AJAX do cancel_upgrade.php
-            const response = await fetch('cancel_upgrade.php', {
+            const response = await fetch('/ajax/buildings/cancel_upgrade.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
