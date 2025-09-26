@@ -547,4 +547,61 @@ class BuildingManager {
 
          return $levels;
      }
+
+    /**
+     * Oblicza bonus do obrony przyznawany przez mur na danym poziomie.
+     * Bonus jest wykładniczy, np. 1.04^poziom_muru.
+     * @param int $wall_level Poziom muru.
+     * @return float Mnożnik bonusu do obrony.
+     */
+    public function getWallDefenseBonus(int $wall_level): float
+    {
+        if ($wall_level <= 0) {
+            return 1.0; // Brak bonusu
+        }
+
+        // Przykładowa formuła: 4% bonusu na każdy poziom, składany wykładniczo
+        $base_factor = 1.04;
+
+        return pow($base_factor, $wall_level);
+    }
+
+    /**
+     * Ustawia poziom budynku w wiosce.
+     * @param int $villageId ID wioski.
+     * @param string $internalName Wewnętrzna nazwa budynku.
+     * @param int $newLevel Nowy poziom budynku.
+     * @return bool True jeśli operacja się powiodła, false w przeciwnym razie.
+     */
+    public function setBuildingLevel(int $villageId, string $internalName, int $newLevel): bool
+    {
+        $config = $this->buildingConfigManager->getBuildingConfig($internalName);
+        if (!$config) {
+            return false; // Nieznany budynek
+        }
+
+        $buildingTypeId = $config['id'];
+        $maxLevel = $config['max_level'];
+
+        // Poziom nie może być ujemny ani większy od maksymalnego
+        if ($newLevel < 0 || $newLevel > $maxLevel) {
+            return false;
+        }
+
+        $stmt = $this->conn->prepare(
+            "UPDATE village_buildings SET level = ?
+             WHERE village_id = ? AND building_type_id = ?"
+        );
+
+        if ($stmt === false) {
+            error_log("Prepare failed for setBuildingLevel: " . $this->conn->error);
+            return false;
+        }
+
+        $stmt->bind_param("iii", $newLevel, $villageId, $buildingTypeId);
+        $success = $stmt->execute();
+        $stmt->close();
+
+        return $success;
+    }
 }
