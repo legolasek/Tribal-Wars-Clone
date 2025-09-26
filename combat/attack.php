@@ -414,8 +414,8 @@ if (!$is_ajax) {
                                     <?php endforeach; ?>
                                     
                                     <div style="margin-top: 15px;">
-                                        <button type="button" id="select-all">Zaznacz wszystkie</button>
-                                        <button type="button" id="select-none">Odznacz wszystkie</button>
+                                        <button type="button" id="select-all" class="btn btn-secondary">Zaznacz wszystkie</button>
+                                        <button type="button" id="select-none" class="btn btn-secondary">Odznacz wszystkie</button>
                                     </div>
                                 </div>
                                 
@@ -585,6 +585,8 @@ if (!$is_ajax) {
                 selectAllBtn.addEventListener('click', function() {
                     document.querySelectorAll('.unit-selector input[type="number"]').forEach(input => {
                         input.value = input.max;
+                        // Manually trigger the input event to update the catapult selector
+                        input.dispatchEvent(new Event('input'));
                     });
                 });
             }
@@ -637,18 +639,13 @@ if (!$is_ajax) {
                     .then(response => response.json())
                     .then(data => {
                         if (data.success) {
-                            // Wyświetl komunikat sukcesu
-                            const successMessage = document.createElement('p');
-                            successMessage.className = 'success-message';
-                            successMessage.textContent = data.message;
-                            
-                            // Dodaj komunikat przed formularzem
-                            attackForm.parentNode.insertBefore(successMessage, attackForm);
-                            
-                            // Odśwież stronę po 2 sekundach
-                            setTimeout(() => {
-                                window.location.reload();
-                            }, 2000);
+                            alert('Attack sent successfully!\n' + data.message);
+                            // Close the modal
+                            const genericModal = document.getElementById('generic-modal');
+                            if (genericModal) {
+                                genericModal.style.display = 'none';
+                            }
+                            // The page will not reload, keeping the user on the map.
                         } else {
                             // Wyświetl komunikat błędu
                             const errorMessage = document.createElement('p');

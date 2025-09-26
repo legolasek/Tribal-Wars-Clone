@@ -501,7 +501,7 @@ class BattleManager
         }
         // Pobierz jednostki atakujące
         $stmt_get_attack_units = $this->conn->prepare("
-            SELECT au.unit_type_id, au.count, ut.attack, ut.defense, ut.name_pl, ut.capacity, ut.internal_name
+            SELECT au.unit_type_id, au.count, ut.attack, ut.defense, ut.name_pl, ut.carry_capacity, ut.internal_name
             FROM attack_units au
             JOIN unit_types ut ON au.unit_type_id = ut.id
             WHERE au.attack_id = ?
@@ -513,7 +513,7 @@ class BattleManager
         $attack_capacity = 0;
         while ($unit = $attack_units_result->fetch_assoc()) {
             $attacking_units[$unit['unit_type_id']] = $unit;
-            $attack_capacity += $unit['capacity'] * $unit['count'];
+            $attack_capacity += $unit['carry_capacity'] * $unit['count'];
         }
         $stmt_get_attack_units->close();
         // Pobierz jednostki obronne
@@ -782,8 +782,16 @@ class BattleManager
                 }
                 $stmt_check_existing->close();
             }
+            // Get user IDs for the report
+            $stmt_users = $this->conn->prepare("SELECT v1.user_id as attacker_user_id, v2.user_id as defender_user_id FROM villages v1, villages v2 WHERE v1.id = ? AND v2.id = ?");
+            $stmt_users->bind_param("ii", $attack['source_village_id'], $attack['target_village_id']);
+            $stmt_users->execute();
+            $users = $stmt_users->get_result()->fetch_assoc();
+            $stmt_users->close();
+            $attacker_user_id = $users['attacker_user_id'];
+            $defender_user_id = $users['defender_user_id'];
+
             // Dodaj raport z bitwy (z detalami JSON)
-            $winner = $attacker_win ? 'attacker' : 'defender';
             $details = [
                 'attacker_losses' => $attacker_losses,
                 'defender_losses' => $defender_losses,
@@ -794,24 +802,35 @@ class BattleManager
                 'wall_level' => $wall_level,
                 'wall_bonus' => $wall_bonus,
                 'wall_damage' => $wall_damage_report,
-                'building_damage' => $building_damage_report
+                'building_damage' => $building_damage_report,
+                'total_attack_strength' => $total_attack_strength,
+                'total_defense_strength' => $total_defense_strength
             ];
+            $report_data_json = json_encode($details);
+            $attacker_won_int = $attacker_win ? 1 : 0;
+
             $stmt_add_report = $this->conn->prepare("
                 INSERT INTO battle_reports (
-                    attack_id, source_village_id, target_village_id, 
-                    attack_type, winner, total_attack_strength, 
-                    total_defense_strength, details_json, created_at
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())
+                    attack_id, source_village_id, target_village_id,
+                    battle_time, attacker_user_id, defender_user_id,
+                    attacker_won, report_data
+                ) VALUES (?, ?, ?, NOW(), ?, ?, ?, ?)
             ");
-            $details_json = json_encode($details);
             $stmt_add_report->bind_param(
-                "iiisssis",
+                "iiiiis",
                 $attack_id, $attack['source_village_id'], $attack['target_village_id'],
-                $attack['attack_type'], $winner, $total_attack_strength,
-                $total_defense_strength, $details_json
+                $attacker_user_id, $defender_user_id,
+                $attacker_won_int, $report_data_json
             );
             $stmt_add_report->execute();
+            $report_id = $stmt_add_report->insert_id;
             $stmt_add_report->close();
+
+            // Update the attack with the new report id
+            $stmt_update_attack = $this->conn->prepare("UPDATE attacks SET report_id = ? WHERE id = ?");
+            $stmt_update_attack->bind_param("ii", $report_id, $attack_id);
+            $stmt_update_attack->execute();
+            $stmt_update_attack->close();
             $this->conn->commit();
             return [ 'success' => true ];
         } catch (Exception $e) {
