@@ -1,6 +1,6 @@
 <?php
 error_log("DEBUG: upgrade_building.php - Start");
-require '../../init.php';
+require '../init.php';
 error_log("DEBUG: upgrade_building.php - After init.php");
 
 // Walidacja CSRF dla żądań POST
@@ -10,9 +10,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 error_log("DEBUG: upgrade_building.php - After validateCSRF()");
 
-require_once '../../lib/managers/BuildingManager.php';
-require_once '../../lib/managers/VillageManager.php';
-require_once '../../lib/managers/BuildingConfigManager.php';
+require_once '../lib/managers/BuildingManager.php';
+require_once '../lib/managers/VillageManager.php';
+require_once '../lib/managers/BuildingConfigManager.php';
 
 error_log("DEBUG: upgrade_building.php - After including managers");
 

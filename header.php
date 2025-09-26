@@ -73,6 +73,9 @@ if (!isset($pageTitle)) {
     
     <!-- Stylesheets -->
     <link rel="stylesheet" href="/css/main.css">
+    <?php if (basename($_SERVER['PHP_SELF']) === 'index.php'): ?>
+    <link rel="stylesheet" href="/css/home.css">
+    <?php endif; ?>
     <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
     
@@ -95,9 +98,11 @@ if (!isset($pageTitle)) {
     <script>
         window.gameMessages = <?= json_encode($gameMessages) ?>;
     </script>
+    <?php if (isset($_SESSION['user_id'])): ?>
     <script src="/js/resources.js" defer></script>
     <script src="/js/notifications.js" defer></script>
     <script src="/js/buildings.js"></script>
+    <?php endif; ?>
 </head>
 <body>
     <?php $current_page = basename($_SERVER['PHP_SELF']); ?>
@@ -167,24 +172,24 @@ if (!isset($pageTitle)) {
         <?php endif; ?>
     </header>
     
-    <?php if (isset($_SESSION['user_id']) && !empty($currentRes)): ?>
-        <div id="resource-bar" class="resource-bar" data-village-id="<?= $firstVidData['id'] ?>">
-            <ul>
-                <li class="resource-wood">
-                    <?= displayResource('wood', $currentRes['wood'], true, $currentRes['warehouse_capacity']) ?>
-                    <span class="resource-production" id="prod-wood">+<?= formatNumber($currentRes['wood_production_per_hour']) ?>/h</span>
-                </li>
-                <li class="resource-clay">
-                    <?= displayResource('clay', $currentRes['clay'], true, $currentRes['warehouse_capacity']) ?>
-                     <span class="resource-production" id="prod-clay">+<?= formatNumber($currentRes['clay_production_per_hour']) ?>/h</span>
-                </li>
-                <li class="resource-iron">
-                    <?= displayResource('iron', $currentRes['iron'], true, $currentRes['warehouse_capacity']) ?>
-                     <span class="resource-production" id="prod-iron">+<?= formatNumber($currentRes['iron_production_per_hour']) ?>/h</span>
-                </li>
-                <li class="resource-population">
-                    <?= displayResource('population', $currentRes['population'], true, $currentRes['farm_capacity']) ?>
-                </li>
-            </ul>
-        </div>
-    <?php endif; ?>
+    <?php if (isset($_SESSION['user_id']) && isset($currentRes) && $currentRes !== null): ?>
+    <div id="resource-bar" class="resource-bar" data-village-id="<?= $firstVidData['id'] ?>">
+        <ul>
+            <li class="resource-wood">
+                <?= displayResource('wood', $currentRes['wood'], true, $currentRes['warehouse_capacity']) ?>
+                <span class="resource-production" id="prod-wood">+<?= formatNumber($currentRes['wood_production_per_hour']) ?>/h</span>
+            </li>
+            <li class="resource-clay">
+                <?= displayResource('clay', $currentRes['clay'], true, $currentRes['warehouse_capacity']) ?>
+                 <span class="resource-production" id="prod-clay">+<?= formatNumber($currentRes['clay_production_per_hour']) ?>/h</span>
+            </li>
+            <li class="resource-iron">
+                <?= displayResource('iron', $currentRes['iron'], true, $currentRes['warehouse_capacity']) ?>
+                 <span class="resource-production" id="prod-iron">+<?= formatNumber($currentRes['iron_production_per_hour']) ?>/h</span>
+            </li>
+            <li class="resource-population">
+                <?= displayResource('population', $currentRes['population'], true, $currentRes['farm_capacity']) ?>
+            </li>
+        </ul>
+    </div>
+<?php endif; ?>

@@ -1,5 +1,5 @@
 <?php
-require '../../init.php';
+require '../init.php';
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
@@ -9,9 +9,9 @@ ob_start(); // Rozpocznij buforowanie wyjścia
 try {
     header('Content-Type: application/json');
 
-    require_once '../../lib/managers/BuildingManager.php';
-    require_once '../../lib/managers/VillageManager.php';
-    require_once '../../lib/AjaxResponse.php'; // Include AjaxResponse
+    require_once __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'managers' . DIRECTORY_SEPARATOR . 'BuildingManager.php';
+    require_once __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'managers' . DIRECTORY_SEPARATOR . 'VillageManager.php';
+    require_once __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'AjaxResponse.php'; // Include AjaxResponse
 
     // Sprawdź, czy użytkownik jest zalogowany
     if (!isset($_SESSION['user_id'])) {
@@ -181,7 +181,7 @@ try {
             $response['action_type'] = 'recruit_barracks';
 
             // Pobierz dane o jednostkach dostępnych w Koszarach
-            require_once '../../lib/managers/UnitManager.php';
+            require_once __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'managers' . DIRECTORY_SEPARATOR . 'UnitManager.php';
             $unitManager = new UnitManager($conn);
             $barracksUnits = $unitManager->getUnitTypes('barracks');
             
@@ -194,7 +194,7 @@ try {
             // Przygotuj dane jednostek do JSON
             $availableUnitsData = [];
             if (!empty($barracksUnits)) {
-                 require_once '../../lib/managers/UnitConfigManager.php';
+                 require_once __DIR__ . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'UnitConfigManager.php';
                  $unitConfigManager = new UnitConfigManager($conn);
 
                 foreach ($barracksUnits as $unitInternal => $unit) {
@@ -260,7 +260,7 @@ try {
             $response['action_type'] = 'recruit_stable';
             
             // Pobierz dane o jednostkach dostępnych w Stajni
-            require_once '../../lib/managers/UnitManager.php';
+            require_once __DIR__ . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'UnitManager.php';
             $unitManager = new UnitManager($conn);
             $stableUnits = $unitManager->getUnitTypes('stable');
             
@@ -273,7 +273,7 @@ try {
             // Przygotuj dane jednostek do JSON
             $availableUnitsData = [];
             if (!empty($stableUnits)) {
-                 require_once '../../lib/managers/UnitConfigManager.php';
+                 require_once __DIR__ . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'UnitConfigManager.php';
                  $unitConfigManager = new UnitConfigManager($conn);
 
                 foreach ($stableUnits as $unitInternal => $unit) {
@@ -339,7 +339,7 @@ try {
             $response['action_type'] = 'research';
             
             // Pobierz dane o badaniach dostępnych w kuźni
-            require_once '../../lib/managers/ResearchManager.php';
+            require_once 'lib/ResearchManager.php';
             $researchManager = new ResearchManager($conn);
             $smithy_research_types = $researchManager->getResearchTypesForBuilding('smithy');
 
@@ -672,7 +672,7 @@ try {
              $response['action_type'] = 'recruit_siege';
             
             // Pobierz dane o jednostkach dostępnych w Warsztacie
-            require_once '../../lib/managers/UnitManager.php';
+            require_once __DIR__ . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'UnitManager.php';
             $unitManager = new UnitManager($conn);
             $garageUnits = $unitManager->getUnitTypes('garage');
             
@@ -770,7 +770,7 @@ try {
              $response['action_type'] = 'research_advanced';
              
              // Pobierz dane o badaniach dostępnych w akademii
-             require_once '../../lib/managers/ResearchManager.php';
+             require_once 'lib/ResearchManager.php';
              if (!isset($researchManager)) {
                  $researchManager = new ResearchManager($conn);
              }
