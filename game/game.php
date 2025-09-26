@@ -324,126 +324,102 @@ require '../header.php';
             </div>
 
             <section class="building-list-section">
-                <h2>Szczegóły budynków</h2>
-                <div class="buildings-list">
-                    <?php foreach ($buildings_data as $building): ?>
-                        <?php
-                        $current_level = $building['level'];
-                        $next_level = $building['next_level'];
-                        $is_upgrading = $building['is_upgrading'];
-                        $queue_finish_time = $building['queue_finish_time'];
-                        $queue_level_after = $building['queue_level_after'];
-                        $max_level = $building['max_level'];
-                        $upgrade_costs = $building['upgrade_costs'];
-                        $upgrade_time_seconds = $building['upgrade_time_seconds'];
-                        $can_upgrade = $building['can_upgrade'];
-                        $upgrade_not_available_reason = $building['upgrade_not_available_reason'];
-                        $production_type = $building['production_type'];
-                        $population_cost = $building['population_cost'];
-                        $next_level_population_cost = $building['next_level_population_cost'];
+                <?php
+                // Separate buildings into resource and other categories
+                $resource_buildings_data = [];
+                $other_buildings_data = [];
+                $resource_building_keys = ['sawmill', 'clay_pit', 'iron_mine', 'farm', 'warehouse'];
 
-                        // Add production info for resource buildings
-                        $production_info = '';
-                        if ($production_type && ($building['internal_name'] === 'wood_production' || $building['internal_name'] === 'clay_production' || $building['internal_name'] === 'iron_production' || $building['internal_name'] === 'farm')) {
-                             $hourly_production = $buildingManager->getHourlyProduction($building['internal_name'], $current_level);
-                             $production_info = "<p>Produkcja: " . formatNumber($hourly_production) . "/godz.</p>";
-                        }
+                foreach ($buildings_data as $internal_name => $building) {
+                    if (in_array($internal_name, $resource_building_keys)) {
+                        $resource_buildings_data[$internal_name] = $building;
+                    } else {
+                        $other_buildings_data[$internal_name] = $building;
+                    }
+                }
 
-                         // Add population cost info
-                        $population_info = '';
-                        if ($population_cost !== null) {
-                             $population_info = "<p>Populacja: " . formatNumber($population_cost) . "</p>";
-                        }
-                        
-                        // Format upgrade time
-                        $upgrade_time_formatted = ($upgrade_time_seconds !== null) ? formatDuration($upgrade_time_seconds) : '';
+                // Function to render a single building item to avoid code duplication
+                function render_building_item($building, $village, $buildingManager, $village_id) {
+                    $current_level = $building['level'];
+                    $next_level = $building['next_level'];
+                    $is_upgrading = $building['is_upgrading'];
+                    $queue_finish_time = $building['queue_finish_time'];
+                    $queue_level_after = $building['queue_level_after'];
+                    $max_level = $building['max_level'];
+                    $upgrade_costs = $building['upgrade_costs'];
+                    $upgrade_time_seconds = $building['upgrade_time_seconds'];
+                    $can_upgrade = $building['can_upgrade'];
+                    $upgrade_not_available_reason = $building['upgrade_not_available_reason'];
+                    $production_type = $building['production_type'];
+                    $population_cost = $building['population_cost'];
+                    $next_level_population_cost = $building['next_level_population_cost'];
+                    $production_info = '';
+                    if ($production_type) {
+                         $hourly_production = $buildingManager->getHourlyProduction($building['internal_name'], $current_level);
+                         $production_info = "<p>Produkcja: " . formatNumber($hourly_production) . "/godz.</p>";
+                    }
+                    $population_info = '';
+                    if ($population_cost !== null) {
+                         $population_info = "<p>Populacja: " . formatNumber($population_cost) . "</p>";
+                    }
+                    $upgrade_time_formatted = ($upgrade_time_seconds !== null) ? formatDuration($upgrade_time_seconds) : '';
+                    ?>
+                    <div class="building-item" data-internal-name="<?= htmlspecialchars($building['internal_name']) ?>">
+                        <h3><?= htmlspecialchars($building['name_pl']) ?> (Poziom <?= $building['level'] ?>)</h3>
+                        <p><?= htmlspecialchars($building['description_pl']) ?></p>
+                        <?= $production_info ?>
+                        <?= $population_info ?>
 
-                        ?>
-                        <div class="building-item" data-internal-name="<?= htmlspecialchars($building['internal_name']) ?>">
-                            <h3><?= htmlspecialchars($building['name_pl']) ?> (Poziom <?= $building['level'] ?>)</h3>
-                            <p><?= htmlspecialchars($building['description_pl']) ?></p>
-                            <?= $production_info // Display production info if available ?>
-                            <?= $population_info // Display population cost info if available ?>
+                        <?php if ($is_upgrading): ?>
+                            <p class="upgrade-status">W trakcie rozbudowy do poziomu <?= $queue_level_after ?>.</p>
+                            <p class="upgrade-timer" data-finish-time="<?= $queue_finish_time ?>"><?= getRemainingTimeText($queue_finish_time) ?></p>
+                            <div class="progress-bar-container" data-finish-time="<?= $queue_finish_time ?>"><div class="progress-bar"></div><span class="progress-text"></span></div>
+                            <button class="btn btn-secondary cancel-upgrade-button" data-building-internal-name="<?= htmlspecialchars($building['internal_name']) ?>">Anuluj</button>
+                        <?php elseif ($current_level >= $max_level): ?>
+                             <p class="upgrade-status">Osiągnięto maksymalny poziom (<?= $max_level ?>).</p>
+                             <button class="btn btn-secondary" disabled>Maksymalny poziom</button>
+                        <?php else: ?>
+                            <p class="upgrade-status">Rozbudowa do poziomu <?= $next_level ?>:</p>
+                            <?php if ($upgrade_costs): ?>
+                                 <p>Koszt:
+                                    <span class="resource wood <?= ($village['wood'] < $upgrade_costs['wood']) ? 'not-enough' : '' ?>"><img src="../img/ds_graphic/wood.png" alt="Drewno"><?= formatNumber($upgrade_costs['wood']) ?></span>
+                                    <span class="resource clay <?= ($village['clay'] < $upgrade_costs['clay']) ? 'not-enough' : '' ?>"><img src="../img/ds_graphic/stone.png" alt="Glina"><?= formatNumber($upgrade_costs['clay']) ?></span>
+                                    <span class="resource iron <?= ($village['iron'] < $upgrade_costs['iron']) ? 'not-enough' : '' ?>"><img src="../img/ds_graphic/iron.png" alt="Żelazo"><?= formatNumber($upgrade_costs['iron']) ?></span>
+                                 </p>
+                                 <?php if ($next_level_population_cost > 0): ?>
+                                     <p>Wymagana wolna populacja: <span class="resource population <?= (($village['farm_capacity'] - $village['population']) < $next_level_population_cost) ? 'not-enough' : '' ?>"><img src="../img/ds_graphic/resources/population.png" alt="Populacja"><?= formatNumber($next_level_population_cost) ?></span></p>
+                                 <?php endif; ?>
+                                 <p>Czas budowy: <span class="upgrade-time-formatted"><?= $upgrade_time_formatted ?></span></p>
 
-                            <?php if ($is_upgrading): ?>
-                                <p class="upgrade-status">W trakcie rozbudowy do poziomu <?= $queue_level_after ?>.</p>
-                                <p class="upgrade-timer" data-finish-time="<?= $queue_finish_time ?>"><?= getRemainingTimeText($queue_finish_time) ?></p>
-                                 <!-- Progress bar placeholder -->
-                                <div class="progress-bar-container" data-finish-time="<?= $queue_finish_time ?>">
-                                    <div class="progress-bar"></div>
-                                    <span class="progress-text"></span>
-                                </div>
-                                <button class="btn btn-secondary cancel-upgrade-button" data-building-internal-name="<?= htmlspecialchars($building['internal_name']) ?>">Anuluj</button>
-                            <?php elseif ($current_level >= $max_level): ?>
-                                 <p class="upgrade-status">Osiągnięto maksymalny poziom (<?= $max_level ?>).</p>
-                                 <button class="btn btn-secondary" disabled>Maksymalny poziom</button>
-                            <?php else: ?>
-                                <p class="upgrade-status">Rozbudowa do poziomu <?= $next_level ?>:</p>
-                                <?php if ($upgrade_costs): ?>
-                                     <p>Koszt: 
-                                        <span class="resource wood <?= ($village['wood'] ?? 0) < ($upgrade_costs['wood'] ?? 0) ? 'not-enough' : '' ?>">
-                                            <img src="../img/ds_graphic/wood.png" alt="Drewno"><?= formatNumber($upgrade_costs['wood'] ?? 0) ?>
-                                        </span>
-                                        <span class="resource clay <?= ($village['clay'] ?? 0) < ($upgrade_costs['clay'] ?? 0) ? 'not-enough' : '' ?>">
-                                            <img src="../img/ds_graphic/stone.png" alt="Glina"><?= formatNumber($upgrade_costs['clay'] ?? 0) ?>
-                                        </span>
-                                        <span class="resource iron <?= ($village['iron'] ?? 0) < ($upgrade_costs['iron'] ?? 0) ? 'not-enough' : '' ?>">
-                                            <img src="../img/ds_graphic/iron.png" alt="Żelazo"><?= formatNumber($upgrade_costs['iron'] ?? 0) ?>
-                                        </span>
-                                     </p>
-                                     <?php if ($next_level_population_cost !== null && $next_level_population_cost > 0): // Check population cost for NEXT level ?>
-                                         <p>Wymagana wolna populacja: 
-                                             <span class="resource population <?= (($village['max_population'] ?? 0) - ($village['current_population'] ?? 0)) < $next_level_population_cost ? 'not-enough' : '' ?>">
-                                                <img src="../img/ds_graphic/resources/population.png" alt="Populacja"><?= formatNumber($next_level_population_cost) ?>
-                                             </span>
-                                         </p>
-                                     <?php endif; ?>
-                                     <?php if ($upgrade_time_seconds !== null): ?>
-                                         <p>Czas budowy: <span class="upgrade-time-formatted"><?= $upgrade_time_formatted ?></span></p>
-                                     <?php endif; ?>
-                                     
-                                     <?php if ($can_upgrade): ?>
-                                         <button class="btn btn-primary upgrade-building-button" data-building-internal-name="<?= htmlspecialchars($building['internal_name']) ?>" data-village-id="<?= $village_id ?>">Rozbuduj do poziomu <?= $next_level ?></button>
-                                     <?php else: ?>
-                                         <p class="error-message"><?= htmlspecialchars($upgrade_not_available_reason) ?></p>
-                                         <button class="btn btn-primary" disabled>Rozbuduj do poziomu <?= $next_level ?></button>
-                                     <?php endif; ?>
-                                     
-                                <?php else: ?>
-                                     <p>Brak danych o kosztach.</p>
+                                 <?php if ($can_upgrade): ?>
+                                     <button class="btn btn-primary upgrade-building-button" data-building-internal-name="<?= htmlspecialchars($building['internal_name']) ?>" data-village-id="<?= $village_id ?>">Rozbuduj do poziomu <?= $next_level ?></button>
+                                 <?php else: ?>
+                                     <p class="error-message"><?= htmlspecialchars($upgrade_not_available_reason) ?></p>
                                      <button class="btn btn-primary" disabled>Rozbuduj do poziomu <?= $next_level ?></button>
-                                <?php endif; ?>
+                                 <?php endif; ?>
                             <?php endif; ?>
-                            
-                            <!-- Action Button (opens specific building panel via AJAX/JS) -->
-                             <?php 
-                                // Only show action button if not upgrading and not max level (or if action is always available)
-                                $showActionButton = !$is_upgrading; // Show if not upgrading
-                                // Some buildings might have actions even at max level (e.g. Market, Barracks)
-                                // We need a way to define this, maybe in building config?
-                                // For now, assume action is available if not upgrading and not max level,
-                                // OR if it's a building with a dedicated panel regardless of upgrade status/level > 0.
-                                 $buildings_with_panels = ['main_building', 'barracks', 'stable', 'workshop', 'smithy', 'academy', 'market', 'statue', 'church', 'first_church', 'mint']; // Add buildings with panels
-                                 if (in_array($building['internal_name'], $buildings_with_panels) && $current_level > 0) {
-                                     $showActionButton = true; // Always show button for buildings with panels if level > 0
-                                 }
+                        <?php endif; ?>
 
-                                if ($showActionButton): 
-                                     $actionText = getBuildingActionText($building['internal_name']);
-                                     if ($actionText !== 'Akcja' || in_array($building['internal_name'], $buildings_with_panels)): // Show button if specific text or has panel
-                             ?>
-                                    <button class="btn btn-secondary building-action-button" 
-                                             data-building-internal-name="<?= htmlspecialchars($building['internal_name']) ?>"
-                                             data-village-id="<?= $village_id ?>">
-                                             <?= htmlspecialchars($actionText) ?>
-                                    </button>
-                                <?php 
-                                     endif;
-                                endif;
-                                ?>
+                        <?php
+                             $buildings_with_panels = ['main_building', 'barracks', 'stable', 'workshop', 'smithy', 'academy', 'market', 'statue', 'church', 'first_church', 'mint'];
+                             if (in_array($building['internal_name'], $buildings_with_panels) && $building['level'] > 0):
+                                 $actionText = getBuildingActionText($building['internal_name']);
+                        ?>
+                                <button class="btn btn-secondary building-action-button" data-building-internal-name="<?= htmlspecialchars($building['internal_name']) ?>" data-village-id="<?= $village_id ?>"><?= htmlspecialchars($actionText) ?></button>
+                            <?php endif; ?>
+                    </div>
+                    <?php
+                }
+                ?>
 
-                        </div>
-                    <?php endforeach; ?>
+                <h2>Budynki Surowcowe</h2>
+                <div class="buildings-list">
+                    <?php foreach ($resource_buildings_data as $building) render_building_item($building, $village, $buildingManager, $village_id); ?>
+                </div>
+
+                <h2 style="margin-top: 30px;">Budynki Miejskie i Wojskowe</h2>
+                <div class="buildings-list">
+                    <?php foreach ($other_buildings_data as $building) render_building_item($building, $village, $buildingManager, $village_id); ?>
                 </div>
             </section>
         </section>

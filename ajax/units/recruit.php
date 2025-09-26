@@ -94,20 +94,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         exit();
     }
 
-    // Deduct resources
-    $costs = $resource_check['total_costs'];
-    $villageManager->updateVillageResources($village_id, -$costs['wood'], -$costs['clay'], -$costs['iron']);
+    // Use a transaction to ensure atomicity
+    $conn->begin_transaction();
+    try {
+        // Deduct resources
+        $costs = $resource_check['total_costs'];
+        $villageManager->updateVillageResources($village_id, -$costs['wood'], -$costs['clay'], -$costs['iron']);
 
-    // Add to recruitment queue
-    $result = $unitManager->recruitUnits($village_id, $unit_id, $count, $building_level);
+        // Add to recruitment queue
+        $result = $unitManager->recruitUnits($village_id, $unit_id, $count, $building_level);
 
-    if ($result['success']) {
-        echo json_encode(['success' => true, 'message' => $result['message']]);
-    } else {
-        // Rollback resources if recruitment failed
-        $villageManager->updateVillageResources($village_id, $costs['wood'], $costs['clay'], $costs['iron']);
+        if ($result['success']) {
+            $conn->commit();
+            echo json_encode(['success' => true, 'message' => $result['message']]);
+        } else {
+            throw new Exception($result['error']);
+        }
+    } catch (Exception $e) {
+        $conn->rollback();
         http_response_code(500);
-        echo json_encode(['error' => $result['error']]);
+        echo json_encode(['error' => 'An error occurred during recruitment: ' . $e->getMessage()]);
     }
 }
 ?>

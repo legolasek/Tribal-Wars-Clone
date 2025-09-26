@@ -38,8 +38,9 @@ CREATE TABLE IF NOT EXISTS `attack_units` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Nowa definicja tabeli battle_reports używająca report_id jako klucza głównego/obcego
+-- Nowa definicja tabeli battle_reports
 CREATE TABLE IF NOT EXISTS `battle_reports` (
-  `report_id` INT(11) NOT NULL COMMENT 'References reports.id',
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
   `attack_id` int(11) NOT NULL,
   `source_village_id` int(11) NOT NULL,
   `target_village_id` int(11) NOT NULL,
@@ -48,13 +49,12 @@ CREATE TABLE IF NOT EXISTS `battle_reports` (
   `defender_user_id` int(11) NOT NULL,
   `attacker_won` tinyint(1) NOT NULL COMMENT '1 jeśli atakujący wygrał, 0 jeśli obrońca wygrał',
   `report_data` text NOT NULL COMMENT 'Dane raportu w formacie JSON (zawiera straty, łupy, itp.)',
-  PRIMARY KEY (`report_id`),
-  KEY `attack_id` (`attack_id`),
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `attack_id` (`attack_id`),
   KEY `source_village_id` (`source_village_id`),
   KEY `target_village_id` (`target_village_id`),
   KEY `attacker_user_id` (`attacker_user_id`),
   KEY `defender_user_id` (`defender_user_id`),
-  CONSTRAINT `fk_battle_reports_report_id` FOREIGN KEY (`report_id`) REFERENCES `reports` (`id`) ON DELETE CASCADE,
   FOREIGN KEY (`attack_id`) REFERENCES `attacks` (`id`) ON DELETE CASCADE,
   FOREIGN KEY (`source_village_id`) REFERENCES `villages` (`id`) ON DELETE CASCADE,
   FOREIGN KEY (`target_village_id`) REFERENCES `villages` (`id`) ON DELETE CASCADE,
