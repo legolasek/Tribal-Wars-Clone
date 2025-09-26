@@ -5,18 +5,21 @@
 class BattleManager
 {
     private $conn;
-    private $villageManager; // Dodajemy właściwość dla VillageManager
-    
+    private $villageManager;
+    private $buildingManager; // Dodajemy właściwość dla BuildingManager
+
     /**
      * Konstruktor
-     * 
+     *
      * @param mysqli $conn Połączenie z bazą danych
      * @param VillageManager $villageManager Instancja VillageManager
+     * @param BuildingManager $buildingManager Instancja BuildingManager
      */
-    public function __construct($conn, VillageManager $villageManager)
+    public function __construct($conn, VillageManager $villageManager, BuildingManager $buildingManager)
     {
         $this->conn = $conn;
-        $this->villageManager = $villageManager; // Przypisujemy instancję
+        $this->villageManager = $villageManager;
+        $this->buildingManager = $buildingManager; // Przypisujemy instancję
     }
     
     /**
@@ -26,9 +29,10 @@ class BattleManager
      * @param int $target_village_id ID wioski docelowej (atakowanej)
      * @param array $units_sent Tablica z ID typów jednostek i ich liczbą
      * @param string $attack_type Typ ataku ('attack', 'raid', 'support')
+     * @param string|null $target_building Cel dla katapult
      * @return array Status operacji
      */
-    public function sendAttack($source_village_id, $target_village_id, $units_sent, $attack_type = 'attack')
+    public function sendAttack($source_village_id, $target_village_id, $units_sent, $attack_type = 'attack', $target_building = null)
     {
         // Sprawdź, czy wioski istnieją
         $stmt_check_villages = $this->conn->prepare("
@@ -149,15 +153,16 @@ class BattleManager
             // Dodaj atak do tabeli attacks
             $stmt_add_attack = $this->conn->prepare("
                 INSERT INTO attacks (
-                    source_village_id, target_village_id, 
-                    attack_type, start_time, arrival_time, 
-                    is_completed, is_canceled
-                ) VALUES (?, ?, ?, FROM_UNIXTIME(?), FROM_UNIXTIME(?), 0, 0)
+                    source_village_id, target_village_id,
+                    attack_type, start_time, arrival_time,
+                    is_completed, is_canceled, target_building
+                ) VALUES (?, ?, ?, FROM_UNIXTIME(?), FROM_UNIXTIME(?), 0, 0, ?)
             ");
             $stmt_add_attack->bind_param(
-                "iisis",
+                "iisiss",
                 $source_village_id, $target_village_id,
-                $attack_type, $start_time, $arrival_time
+                $attack_type, $start_time, $arrival_time,
+                $target_building
             );
             $stmt_add_attack->execute();
             $attack_id = $stmt_add_attack->insert_id;
@@ -483,7 +488,7 @@ class BattleManager
     {
         // Pobierz szczegóły ataku
         $stmt_get_attack = $this->conn->prepare("
-            SELECT id, source_village_id, target_village_id, attack_type
+            SELECT id, source_village_id, target_village_id, attack_type, target_building
             FROM attacks
             WHERE id = ?
         ");
@@ -496,7 +501,7 @@ class BattleManager
         }
         // Pobierz jednostki atakujące
         $stmt_get_attack_units = $this->conn->prepare("
-            SELECT au.unit_type_id, au.count, ut.attack, ut.defense, ut.name_pl, ut.capacity
+            SELECT au.unit_type_id, au.count, ut.attack, ut.defense, ut.name_pl, ut.capacity, ut.internal_name
             FROM attack_units au
             JOIN unit_types ut ON au.unit_type_id = ut.id
             WHERE au.attack_id = ?
@@ -542,40 +547,64 @@ class BattleManager
         foreach ($defending_units as $unit) {
             $total_defense_strength += $unit['defense'] * $unit['count'];
         }
+
+        // --- BONUS MURU ---
+        $wall_level = $this->buildingManager->getBuildingLevel($attack['target_village_id'], 'wall');
+        $wall_bonus = $this->buildingManager->getWallDefenseBonus($wall_level);
+
         $total_attack_strength = round($total_attack_strength * $attack_random * $morale);
-        $total_defense_strength = round($total_defense_strength * $defense_random);
-        // --- STRATY ---
+        $total_defense_strength = round($total_defense_strength * $wall_bonus * $defense_random);
+        // --- STRATY (ulepszona formuła) ---
         $attacker_win = $total_attack_strength > $total_defense_strength;
-        $attacker_loss_factor = $attacker_win ? 0.3 : 0.7;
-        $defender_loss_factor = $attacker_win ? 0.7 : 0.3;
+
         $attacker_losses = [];
         $remaining_attacking_units = [];
-        foreach ($attacking_units as $unit_type_id => $unit) {
-            $loss_count = round($unit['count'] * $attacker_loss_factor);
-            $remaining_count = $unit['count'] - $loss_count;
-            $attacker_losses[$unit_type_id] = [
-                'unit_name' => $unit['name_pl'],
-                'initial_count' => $unit['count'],
-                'lost_count' => $loss_count,
-                'remaining_count' => $remaining_count
-            ];
-            if ($remaining_count > 0) {
-                $remaining_attacking_units[$unit_type_id] = $remaining_count;
-            }
-        }
         $defender_losses = [];
         $remaining_defending_units = [];
-        foreach ($defending_units as $unit_type_id => $unit) {
-            $loss_count = round($unit['count'] * $defender_loss_factor);
-            $remaining_count = $unit['count'] - $loss_count;
-            $defender_losses[$unit_type_id] = [
-                'unit_name' => $unit['name_pl'],
-                'initial_count' => $unit['count'],
-                'lost_count' => $loss_count,
-                'remaining_count' => $remaining_count
-            ];
-            if ($remaining_count > 0) {
-                $remaining_defending_units[$unit_type_id] = $remaining_count;
+
+        if ($attacker_win) {
+            // Atakujący wygrywa, obrońca traci wszystkie jednostki, atakujący traci proporcjonalnie
+            $loss_ratio = ($total_defense_strength / max(1, $total_attack_strength)) ** 0.5;
+
+            foreach ($attacking_units as $unit_type_id => $unit) {
+                $loss_count = round($unit['count'] * $loss_ratio);
+                $remaining_count = $unit['count'] - $loss_count;
+                $attacker_losses[$unit_type_id] = [
+                    'unit_name' => $unit['name_pl'], 'initial_count' => $unit['count'],
+                    'lost_count' => $loss_count, 'remaining_count' => $remaining_count
+                ];
+                if ($remaining_count > 0) {
+                    $remaining_attacking_units[$unit_type_id] = $remaining_count;
+                }
+            }
+
+            foreach ($defending_units as $unit_type_id => $unit) {
+                $defender_losses[$unit_type_id] = [
+                    'unit_name' => $unit['name_pl'], 'initial_count' => $unit['count'],
+                    'lost_count' => $unit['count'], 'remaining_count' => 0
+                ];
+            }
+        } else {
+            // Obrońca wygrywa lub remis, atakujący traci wszystkie jednostki, obrońca traci proporcjonalnie
+            $loss_ratio = ($total_attack_strength / max(1, $total_defense_strength)) ** 0.5;
+
+            foreach ($attacking_units as $unit_type_id => $unit) {
+                $attacker_losses[$unit_type_id] = [
+                    'unit_name' => $unit['name_pl'], 'initial_count' => $unit['count'],
+                    'lost_count' => $unit['count'], 'remaining_count' => 0
+                ];
+            }
+
+            foreach ($defending_units as $unit_type_id => $unit) {
+                $loss_count = round($unit['count'] * $loss_ratio);
+                $remaining_count = $unit['count'] - $loss_count;
+                $defender_losses[$unit_type_id] = [
+                    'unit_name' => $unit['name_pl'], 'initial_count' => $unit['count'],
+                    'lost_count' => $loss_count, 'remaining_count' => $remaining_count
+                ];
+                if ($remaining_count > 0) {
+                    $remaining_defending_units[$unit_type_id] = $remaining_count;
+                }
             }
         }
         // --- ŁUPY ---
@@ -601,9 +630,92 @@ class BattleManager
             $stmt_update->execute();
             $stmt_update->close();
         }
+
+        // --- ZNISZCZENIA MURU (TARANY) ---
+        $wall_damage_report = ['initial_level' => $wall_level, 'final_level' => $wall_level];
+        if ($attacker_win) {
+            $surviving_rams = 0;
+            foreach ($remaining_attacking_units as $unit_type_id => $count) {
+                if (isset($attacking_units[$unit_type_id]) && $attacking_units[$unit_type_id]['internal_name'] === 'ram') {
+                    $surviving_rams += $count;
+                }
+            }
+
+            if ($surviving_rams > 0 && $wall_level > 0) {
+                $ram_effectiveness = (mt_rand(8, 12) / 10); // 0.8 to 1.2
+                $levels_destroyed = floor(($surviving_rams / 4) * $ram_effectiveness);
+
+                if ($levels_destroyed > 0) {
+                    $new_wall_level = max(0, $wall_level - $levels_destroyed);
+                    $wall_damage_report['final_level'] = $new_wall_level;
+                }
+            }
+        }
+
+        // --- ZNISZCZENIA BUDYNKÓW (KATAPULTY) ---
+        $building_damage_report = null;
+        if ($attacker_win) {
+            $surviving_catapults = 0;
+            foreach ($remaining_attacking_units as $unit_type_id => $count) {
+                if (isset($attacking_units[$unit_type_id]) && $attacking_units[$unit_type_id]['internal_name'] === 'catapult') {
+                    $surviving_catapults += $count;
+                }
+            }
+
+            if ($surviving_catapults > 0) {
+                $target_building_name = $attack['target_building'];
+
+                // If no specific target, choose a random one
+                if (empty($target_building_name)) {
+                    $village_buildings = $this->buildingManager->getVillageBuildingsLevels($attack['target_village_id']);
+                    $possible_targets = array_filter($village_buildings, function($level) {
+                        return $level > 0;
+                    });
+                    if (!empty($possible_targets)) {
+                        $target_building_name = array_rand($possible_targets);
+                    }
+                }
+
+                if (!empty($target_building_name)) {
+                    $initial_level = $this->buildingManager->getBuildingLevel($attack['target_village_id'], $target_building_name);
+                    if ($initial_level > 0) {
+                        $catapult_effectiveness = (mt_rand(8, 12) / 10);
+                        $levels_destroyed = floor(($surviving_catapults / 8) * $catapult_effectiveness);
+
+                        if ($levels_destroyed > 0) {
+                            $final_level = max(0, $initial_level - $levels_destroyed);
+                            $building_damage_report = [
+                                'building_name' => $target_building_name,
+                                'initial_level' => $initial_level,
+                                'final_level' => $final_level
+                            ];
+                        }
+                    }
+                }
+            }
+        }
+
         // --- TRANSAKCJA ---
         $this->conn->begin_transaction();
         try {
+            // Zaktualizuj poziom muru, jeśli został uszkodzony
+            if ($wall_damage_report['initial_level'] !== $wall_damage_report['final_level']) {
+                $this->buildingManager->setBuildingLevel(
+                    $attack['target_village_id'],
+                    'wall',
+                    $wall_damage_report['final_level']
+                );
+            }
+
+            // Zaktualizuj poziom celu katapult, jeśli został uszkodzony
+            if ($building_damage_report && $building_damage_report['initial_level'] !== $building_damage_report['final_level']) {
+                $this->buildingManager->setBuildingLevel(
+                    $attack['target_village_id'],
+                    $building_damage_report['building_name'],
+                    $building_damage_report['final_level']
+                );
+            }
+
             // Oznacz atak jako zakończony
             $stmt_complete_attack = $this->conn->prepare("
                 UPDATE attacks 
@@ -678,7 +790,11 @@ class BattleManager
                 'loot' => $loot,
                 'attack_random' => $attack_random,
                 'defense_random' => $defense_random,
-                'morale' => $morale
+                'morale' => $morale,
+                'wall_level' => $wall_level,
+                'wall_bonus' => $wall_bonus,
+                'wall_damage' => $wall_damage_report,
+                'building_damage' => $building_damage_report
             ];
             $stmt_add_report = $this->conn->prepare("
                 INSERT INTO battle_reports (

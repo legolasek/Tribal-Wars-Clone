@@ -25,6 +25,16 @@
         <p>&copy; <?= date('Y') ?> Tribal Wars. Wszelkie prawa zastrzeżone.</p>
     </div>
     </footer>
+
+    <!-- Generic Modal -->
+    <div id="generic-modal" class="popup-container" style="display:none;">
+        <div class="popup-content large">
+            <span class="close-button">&times;</span>
+            <div id="generic-modal-content">
+                <!-- Content will be loaded here via AJAX -->
+            </div>
+        </div>
+    </div>
     
 </body>
 </html>

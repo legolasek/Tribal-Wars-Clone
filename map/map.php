@@ -157,11 +157,33 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Send units button
     document.getElementById('popup-send-units').addEventListener('click', function() {
-        const villageId = this.dataset.villageId;
-        if (villageId) {
-            window.location.href = `../combat/attack.php?target_village_id=${villageId}`;
+        const targetVillageId = this.dataset.villageId;
+        if (targetVillageId && currentVillageId) {
+            fetch(`../combat/attack.php?target_village_id=${targetVillageId}&source_village_id=${currentVillageId}&ajax=1`)
+                .then(response => response.text())
+                .then(html => {
+                    document.getElementById('generic-modal-content').innerHTML = html;
+                    document.getElementById('generic-modal').style.display = 'block';
+                    hideVillagePopup();
+                })
+                .catch(error => console.error('Error loading attack form:', error));
         }
     });
+
+    // Generic modal close logic
+    const genericModal = document.getElementById('generic-modal');
+    if (genericModal) {
+        const closeModalButton = genericModal.querySelector('.close-button');
+        closeModalButton.addEventListener('click', () => {
+            genericModal.style.display = 'none';
+        });
+
+        window.addEventListener('click', (event) => {
+            if (event.target === genericModal) {
+                genericModal.style.display = 'none';
+            }
+        });
+    }
 
     // Handle clicks outside the popup to close it
     document.addEventListener('click', function(event) {

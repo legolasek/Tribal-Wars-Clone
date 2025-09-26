@@ -12,6 +12,15 @@ $conn = $GLOBALS['conn']; // Use global connection from init.php
 require_once __DIR__ . '/../lib/managers/UnitManager.php';
 require_once __DIR__ . '/../lib/managers/VillageManager.php';
 require_once __DIR__ . '/../lib/managers/BattleManager.php';
+require_once __DIR__ . '/../lib/managers/BuildingConfigManager.php';
+require_once __DIR__ . '/../lib/managers/BuildingManager.php';
+
+// Instantiate managers
+$unitManager = new UnitManager($conn);
+$villageManager = new VillageManager($conn);
+$buildingConfigManager = new BuildingConfigManager($conn);
+$buildingManager = new BuildingManager($conn, $buildingConfigManager);
+$battleManager = new BattleManager($conn, $villageManager, $buildingManager);
 
 $user_id = $_SESSION['user_id'];
 $username = $_SESSION['username'];
@@ -86,6 +95,7 @@ $units = $unitManager->getVillageUnits($source_village_id);
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['attack'])) {
     $target_village_id = (int)$_POST['target_village'];
     $attack_type = $_POST['attack_type'];
+    $target_building = !empty($_POST['target_building']) ? $_POST['target_building'] : null;
     
     // Sprawdź, czy wybrano typ ataku
     if (!in_array($attack_type, ['attack', 'raid', 'support'])) {
@@ -108,7 +118,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['attack'])) {
             $message_type = "error";
         } else {
             // Wyślij atak
-            $result = $battleManager->sendAttack($source_village_id, $target_village_id, $units_sent, $attack_type);
+            $result = $battleManager->sendAttack($source_village_id, $target_village_id, $units_sent, $attack_type, $target_building);
             
             if ($result['success']) {
                 $message = $result['message'];
@@ -175,7 +185,16 @@ while ($row = $user_villages_result->fetch_assoc()) {
 }
 $stmt->close();
 
-$database->closeConnection();
+// Get all building types for the catapult target dropdown
+$all_buildings = $buildingConfigManager->getAllBuildingConfigs();
+
+$is_ajax = isset($_REQUEST['ajax']) && $_REQUEST['ajax'] == 1;
+
+// Fetch target village details if provided
+$target_village_id = $_GET['target_village_id'] ?? null;
+
+if (!$is_ajax) {
+    $database->closeConnection();
 ?>
 <!DOCTYPE html>
 <html lang="pl">
@@ -321,6 +340,7 @@ $database->closeConnection();
 </head>
 <body>
     <div id="game-container">
+    <?php if (!$is_ajax): ?>
         <header id="main-header">
             <div class="header-title">
                 <span class="game-logo">⚔️</span>
@@ -389,7 +409,7 @@ $database->closeConnection();
                                         <div class="unit-selector">
                                             <img src="../img/ds_graphic/unit/<?= $unit['internal_name'] ?>.png" alt="<?= $unit['name_pl'] ?>">
                                             <span><?= $unit['name_pl'] ?> (Dostępnych: <?= $unit['count'] ?>)</span>
-                                            <input type="number" name="unit_<?= $unit['unit_type_id'] ?>" value="0" min="0" max="<?= $unit['count'] ?>">
+                                            <input type="number" name="unit_<?= $unit['unit_type_id'] ?>" value="0" min="0" max="<?= $unit['count'] ?>" data-internal-name="<?= htmlspecialchars($unit['internal_name']) ?>">
                                         </div>
                                     <?php endforeach; ?>
                                     
@@ -418,10 +438,22 @@ $database->closeConnection();
                                         <select name="target_village" required>
                                             <option value="">-- Wybierz wioskę --</option>
                                             <?php foreach ($target_villages as $village): ?>
-                                                <option value="<?php echo $village['id']; ?>">
+                                                <option value="<?php echo $village['id']; ?>" <?php if (isset($target_village_id) && $village['id'] == $target_village_id) echo 'selected'; ?>>
                                                     <?php echo htmlspecialchars($village['name']); ?> (<?php echo $village['x_coord']; ?>|<?php echo $village['y_coord']; ?>) - 
                                                     <?php echo htmlspecialchars($village['username']); ?> - 
                                                     Odl: <?php echo $village['distance']; ?>
+                                                </option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                    </div>
+
+                                    <div class="target-selector" id="catapult-target-selector" style="display: none;">
+                                        <h3>Cel dla katapult</h3>
+                                        <select name="target_building">
+                                            <option value="">-- Losowy --</option>
+                                            <?php foreach ($all_buildings as $building): ?>
+                                                <option value="<?php echo htmlspecialchars($building['internal_name']); ?>">
+                                                    <?php echo htmlspecialchars($building['name_pl']); ?>
                                                 </option>
                                             <?php endforeach; ?>
                                         </select>
@@ -519,9 +551,11 @@ $database->closeConnection();
                         </div>
                     <?php endif; ?>
                 </div>
+            <?php if (!$is_ajax): ?>
             </main>
         </div>
     </div>
+            <?php endif; ?>
     
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -550,7 +584,7 @@ $database->closeConnection();
             if (selectAllBtn) {
                 selectAllBtn.addEventListener('click', function() {
                     document.querySelectorAll('.unit-selector input[type="number"]').forEach(input => {
-                        input.value = input.getAttribute('data-max');
+                        input.value = input.max;
                     });
                 });
             }
@@ -559,9 +593,32 @@ $database->closeConnection();
                 selectNoneBtn.addEventListener('click', function() {
                     document.querySelectorAll('.unit-selector input[type="number"]').forEach(input => {
                         input.value = 0;
+                        // Manually trigger the input event to update the catapult selector
+                        input.dispatchEvent(new Event('input'));
                     });
                 });
             }
+
+            // Catapult target selector logic
+            const catapultTargetSelector = document.getElementById('catapult-target-selector');
+            const unitInputs = document.querySelectorAll('.unit-selector input[type="number"]');
+
+            function checkCatapultSelection() {
+                let catapultsSelected = false;
+                unitInputs.forEach(input => {
+                    if (input.dataset.internalName === 'catapult' && parseInt(input.value, 10) > 0) {
+                        catapultsSelected = true;
+                    }
+                });
+                catapultTargetSelector.style.display = catapultsSelected ? 'block' : 'none';
+            }
+
+            unitInputs.forEach(input => {
+                input.addEventListener('input', checkCatapultSelection);
+            });
+
+            // Initial check in case the form is pre-filled
+            checkCatapultSelection();
             
             // Obsługa formularza ataku przez AJAX
             const attackForm = document.getElementById('attack-form');

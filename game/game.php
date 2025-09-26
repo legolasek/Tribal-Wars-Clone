@@ -18,7 +18,7 @@ $buildingManager = new BuildingManager($conn, $buildingConfigManager);
 $villageManager = new VillageManager($conn);
 $resourceManager = new ResourceManager($conn, $buildingManager);
 $unitManager = new UnitManager($conn); // Inicjalizacja UnitManager
-$battleManager = new BattleManager($conn, $villageManager); // Inicjalizacja BattleManager
+$battleManager = new BattleManager($conn, $villageManager, $buildingManager); // Inicjalizacja BattleManager
 $researchManager = new ResearchManager($conn); // Inicjalizacja ResearchManager
 
 
@@ -466,7 +466,7 @@ require '../header.php';
 <?php require '../footer.php'; ?>
 
 <!-- Scripts -->
-<!-- <script src="/js/resources.js" defer></script>
+<script src="/js/resources.js" defer></script>
 <script src="/js/notifications.js" defer></script>
 <script src="/js/buildings.js" defer></script>
 <script src="/js/units.js" defer></script>
@@ -476,7 +476,7 @@ require '../header.php';
 <script src="/js/noble.js" defer></script>
 <script src="/js/mint.js" defer></script>
 <script src="/js/info_panel.js" defer></script> <!-- Generic panel for info -->
-<script src="/js/main.js" defer></script> // Add main.js with absolute path -->
+<script src="/js/main.js" defer></script> // Add main.js with absolute path
 
 
 

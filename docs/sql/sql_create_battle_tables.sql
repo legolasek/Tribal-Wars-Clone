@@ -11,6 +11,7 @@ CREATE TABLE IF NOT EXISTS `attacks` (
   `is_completed` tinyint(1) NOT NULL DEFAULT 0,
   `is_canceled` tinyint(1) NOT NULL DEFAULT 0,
   `report_id` INT(11) NULL COMMENT 'ID of the related battle report in the general reports table',
+  `target_building` VARCHAR(50) DEFAULT NULL COMMENT 'Cel dla katapult (internal_name)',
   PRIMARY KEY (`id`),
   KEY `source_village_id` (`source_village_id`),
   KEY `target_village_id` (`target_village_id`),
