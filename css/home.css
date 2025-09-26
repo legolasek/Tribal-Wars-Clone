@@ -1,0 +1,31 @@
+.hero-overlay {
+    background: linear-gradient(to bottom, rgba(0,0,0,0.8), rgba(0,0,0,0.5)) !important;
+}
+.stats-bar {
+    background: linear-gradient(to right, #6a4a3a, #4a2a1a) !important;
+    padding: 25px 30px !important;
+}
+.stat-number {
+    font-size: 3rem !important;
+    color: #f0b040 !important;
+}
+.stat-label {
+    font-size: 1.2rem !important;
+}
+.features-grid {
+    gap: 35px !important;
+}
+.feature-card {
+    padding: 30px !important;
+    border-radius: 15px !important;
+}
+.feature-icon {
+    width: 100px !important;
+    height: 100px !important;
+}
+.description-container {
+    padding: 35px !important;
+}
+.site-footer {
+    padding: 35px 25px 20px !important;
+}

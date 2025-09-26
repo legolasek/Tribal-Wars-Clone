@@ -108,19 +108,19 @@ require '../header.php';
         <!-- Resource Bar -->
         <div id="resource-bar">
             <div class="resource-item">
-                <img src="../img/ds_graphic/wood.png" alt="Drewno">
+                <img src="/img/ds_graphic/wood.png" alt="Drewno">
                 <span id="current-wood"><?= formatNumber($village['wood']) ?></span> / <span id="warehouse-wood-capacity"><?= formatNumber($village['warehouse_capacity']) ?></span>
             </div>
             <div class="resource-item">
-                <img src="../img/ds_graphic/stone.png" alt="Glina">
+                <img src="/img/ds_graphic/stone.png" alt="Glina">
                 <span id="current-clay"><?= formatNumber($village['clay']) ?></span> / <span id="warehouse-clay-capacity"><?= formatNumber($village['warehouse_capacity']) ?></span>
             </div>
             <div class="resource-item">
-                <img src="../img/ds_graphic/iron.png" alt="Żelazo">
+                <img src="/img/ds_graphic/iron.png" alt="Żelazo">
                 <span id="current-iron"><?= formatNumber($village['iron']) ?></span> / <span id="warehouse-iron-capacity"><?= formatNumber($village['warehouse_capacity']) ?></span>
             </div>
             <div class="resource-item">
-                <img src="../img/ds_graphic/resources/population.png" alt="Populacja">
+                <img src="/img/ds_graphic/resources/population.png" alt="Populacja">
                 <span id="current-population"><?= $village['population'] ?></span> / <span id="farm-population-capacity"><?= $village['farm_capacity'] ?></span>
             </div>
         </div>
@@ -382,12 +382,12 @@ require '../header.php';
                             <p class="upgrade-status">Rozbudowa do poziomu <?= $next_level ?>:</p>
                             <?php if ($upgrade_costs): ?>
                                  <p>Koszt:
-                                    <span class="resource wood <?= ($village['wood'] < $upgrade_costs['wood']) ? 'not-enough' : '' ?>"><img src="../img/ds_graphic/wood.png" alt="Drewno"><?= formatNumber($upgrade_costs['wood']) ?></span>
-                                    <span class="resource clay <?= ($village['clay'] < $upgrade_costs['clay']) ? 'not-enough' : '' ?>"><img src="../img/ds_graphic/stone.png" alt="Glina"><?= formatNumber($upgrade_costs['clay']) ?></span>
-                                    <span class="resource iron <?= ($village['iron'] < $upgrade_costs['iron']) ? 'not-enough' : '' ?>"><img src="../img/ds_graphic/iron.png" alt="Żelazo"><?= formatNumber($upgrade_costs['iron']) ?></span>
+                                    <span class="resource wood <?= ($village['wood'] < $upgrade_costs['wood']) ? 'not-enough' : '' ?>"><img src="/img/ds_graphic/wood.png" alt="Drewno"><?= formatNumber($upgrade_costs['wood']) ?></span>
+                                    <span class="resource clay <?= ($village['clay'] < $upgrade_costs['clay']) ? 'not-enough' : '' ?>"><img src="/img/ds_graphic/stone.png" alt="Glina"><?= formatNumber($upgrade_costs['clay']) ?></span>
+                                    <span class="resource iron <?= ($village['iron'] < $upgrade_costs['iron']) ? 'not-enough' : '' ?>"><img src="/img/ds_graphic/iron.png" alt="Żelazo"><?= formatNumber($upgrade_costs['iron']) ?></span>
                                  </p>
                                  <?php if ($next_level_population_cost > 0): ?>
-                                     <p>Wymagana wolna populacja: <span class="resource population <?= (($village['farm_capacity'] - $village['population']) < $next_level_population_cost) ? 'not-enough' : '' ?>"><img src="../img/ds_graphic/resources/population.png" alt="Populacja"><?= formatNumber($next_level_population_cost) ?></span></p>
+                                     <p>Wymagana wolna populacja: <span class="resource population <?= (($village['farm_capacity'] - $village['population']) < $next_level_population_cost) ? 'not-enough' : '' ?>"><img src="/img/ds_graphic/resources/population.png" alt="Populacja"><?= formatNumber($next_level_population_cost) ?></span></p>
                                  <?php endif; ?>
                                  <p>Czas budowy: <span class="upgrade-time-formatted"><?= $upgrade_time_formatted ?></span></p>
 

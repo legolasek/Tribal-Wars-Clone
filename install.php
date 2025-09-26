@@ -217,10 +217,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     error_reporting(E_ALL);
 
     // Funkcja do wykonania zapytań SQL z pliku
-    function executeSqlFile($conn, $filePath) {
+    function executeSqlFile($conn, $filePath, &$errorMessages) {
         $sql = file_get_contents($filePath);
         if ($sql === false) {
-            echo "<div class='error'>Błąd: Nie można odczytać pliku SQL: " . htmlspecialchars($filePath) . "</div><br>";
+            $errorMessages[] = "Błąd: Nie można odczytać pliku SQL: " . htmlspecialchars($filePath);
             return false;
         }
 
@@ -229,33 +229,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         $success = true;
         $queryCount = 0;
         
-        echo "<div class='sql-errors'>"; // Kontener na błędy ukryty domyślnie
-        
         foreach ($queries as $query) {
             $query = trim($query);
             if (!empty($query)) {
                 $queryCount++;
                 try {
                     if ($conn->query($query) !== TRUE) {
-                        // Komunikat o błędzie pojedynczego zapytania wewnątrz kontenera
-                        echo "<div class='error-detail'>";
-                        echo "&nbsp;&nbsp;<strong>Błąd w zapytaniu #$queryCount:</strong> " . $conn->error;
-                        echo "<pre>" . htmlspecialchars($query) . "</pre>";
-                        echo "</div>";
+                        $errorMsg = "&nbsp;&nbsp;<strong>Błąd w zapytaniu #$queryCount:</strong> " . $conn->error . "<pre>" . htmlspecialchars($query) . "</pre>";
+                        $errorMessages[] = $errorMsg;
                         $success = false;
                     }
                 } catch (mysqli_sql_exception $e) {
-                    // Komunikat o wyjątku SQL wewnątrz kontenera
-                    echo "<div class='error-detail'>";
-                    echo "&nbsp;&nbsp;<strong>Wyjątek SQL w zapytaniu #$queryCount:</strong> " . $e->getMessage();
-                    echo "<pre>" . htmlspecialchars($query) . "</pre>";
-                    echo "</div>";
+                    $errorMsg = "&nbsp;&nbsp;<strong>Wyjątek SQL w zapytaniu #$queryCount:</strong> " . $e->getMessage() . "<pre>" . htmlspecialchars($query) . "</pre>";
+                    $errorMessages[] = $errorMsg;
                     $success = false;
                 }
             }
         }
-        
-        echo "</div>"; // Zamknięcie kontenera na błędy
         
         return $success;
     }
@@ -363,11 +353,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     foreach ($sql_files as $sql_file) {
         echo "<li>Wykonywanie pliku <strong>$sql_file</strong>: ";
         if (file_exists($sql_file)) {
-            $result = executeSqlFile($conn, $sql_file);
+            $errorMessages = [];
+            $result = executeSqlFile($conn, $sql_file, $errorMessages);
             if ($result) {
                 echo "<span class='success'>Pomyślnie.</span></li>";
             } else {
-                echo "<span class='error clickable'>❌ Wystąpiły błędy. <span class='show-details'>(Pokaż szczegóły)</span></span></li>"; // Dodano klasę 'clickable' i komunikat o szczegółach
+                echo "<span class='error clickable'>❌ Wystąpiły błędy. <span class='show-details'>(Pokaż szczegóły)</span></span></li>";
+                echo "<div class='sql-errors'>"; // Kontener na błędy
+                foreach ($errorMessages as $msg) {
+                    echo "<div class='error-detail'>$msg</div>";
+                }
+                echo "</div>"; // Zamknięcie kontenera
             }
             
             // Po wykonaniu skryptu sql_create_buildings_tables.sql, dodaj brakującą kolumnę population_cost
@@ -489,18 +485,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['admin_username'])) {
 
         errorSpans.forEach(span => {
             span.addEventListener('click', function() {
-                // Znajdź najbliższy kontener błędów SQL po klikniętym elemencie
-                let currentElement = this.closest('li');
-                let sqlErrorsDiv = null;
-                // Przeszukaj kolejne elementy sibling aż znajdziesz .sql-errors
-                while (currentElement = currentElement.nextElementSibling) {
-                    if (currentElement.classList && currentElement.classList.contains('sql-errors')) {
-                        sqlErrorsDiv = currentElement;
-                        break;
-                    }
-                }
+                // Znajdź element <li>, który jest rodzicem klikniętego spana
+                const listItem = this.closest('li');
+                if (!listItem) return;
+
+                // Znajdź kontener z błędami wewnątrz tego elementu listy
+                const sqlErrorsDiv = listItem.querySelector('.sql-errors');
                 
                 if (sqlErrorsDiv) {
+                    // Przełącz widoczność kontenera z błędami
                     if (sqlErrorsDiv.style.display === 'none' || sqlErrorsDiv.style.display === '') {
                         sqlErrorsDiv.style.display = 'block';
                         this.querySelector('.show-details').textContent = '(Ukryj szczegóły)';

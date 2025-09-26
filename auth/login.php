@@ -59,10 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 // --- PREZENTACJA (HTML) ---
 $pageTitle = 'Logowanie';
-// Include header.php only if this is a standard request (not AJAX POST handled above)
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    require '../header.php';
-}
+require '../header.php';
 ?>
 <main>
     <div class="form-container">
@@ -81,28 +78,14 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
             <input type="submit" value="Zaloguj" class="btn btn-primary">
         </form>
-        <p class="mt-2">Nie masz konta? <a href="register.php">Zaloguj się</a>.</p>
+        <p class="mt-2">Nie masz konta? <a href="register.php">Zarejestruj się</a>.</p>
         <p><a href="../index.php">Wróć do strony głównej</a>.</p>
     </div>
 </main>
-<script>
-// Dodanie pustych inicjalizacji dla plików JS, które oczekują tych zmiennych
-// To jest tymczasowe rozwiązanie - docelowo dane powinny być przekazywane w inny sposób
-const initialResources = {
-    wood: 0,
-    clay: 0,
-    iron: 0,
-    last_update_timestamp: Math.floor(Date.now() / 1000),
-    warehouse_capacity: 1000
-};
-</script>
 <?php
-// Include footer.php only if header was included (standard request)
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    require '../footer.php';
-    // Zamknij połączenie z bazą po renderowaniu strony
-    if (isset($database)) {
-        $database->closeConnection();
-    }
+require '../footer.php';
+// Zamknij połączenie z bazą po renderowaniu strony
+if (isset($database)) {
+    $database->closeConnection();
 }
 ?>

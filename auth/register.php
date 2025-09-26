@@ -37,6 +37,7 @@ function findUniqueCoordinates($conn, $max_coord = 100) {
 
 // --- PRZETWARZANIE DANYCH (REJESTRACJA) ---
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    require_once '../lib/managers/VillageManager.php';
     // validateCSRF(); // Usunięto stąd, bo jest w validateCSRF() wywoływanym globalnie dla POST w init.php (jeśli logika init.php została odpowiednio zmieniona)
 
     $username = $_POST['username'] ?? '';
@@ -149,7 +150,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     }
                     
                     // 4. Zaktualizuj populację wioski po dodaniu budynków
-                    require_once '../lib/VillageManager.php'; // Upewnij się, że klasa jest dostępna
                     $villageManager = new VillageManager($conn);
                     $villageManager->updateVillagePopulation($village_id); // Wywołaj metodę do przeliczenia populacji
 
@@ -184,10 +184,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 // --- PREZENTACJA (HTML) ---
 $pageTitle = 'Rejestracja';
-// Include header.php only if this is a standard request (not AJAX POST handled above)
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    require '../header.php';
-}
+require '../header.php';
 ?>
 <main>
     <div class="form-container">
@@ -217,12 +214,9 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     </div>
 </main>
 <?php
-// Include footer.php only if header was included (standard request)
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    require '../footer.php';
-    // Zamknij połączenie z bazą po renderowaniu strony
-    if (isset($database)) {
-        $database->closeConnection();
-    }
+require '../footer.php';
+// Zamknij połączenie z bazą po renderowaniu strony
+if (isset($database)) {
+    $database->closeConnection();
 }
 ?>

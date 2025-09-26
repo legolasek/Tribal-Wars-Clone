@@ -74,7 +74,7 @@ CREATE TABLE IF NOT EXISTS `battle_report_units` (
   PRIMARY KEY (`id`),
   KEY `report_id` (`report_id`),
   KEY `unit_type_id` (`unit_type_id`),
-  CONSTRAINT `fk_battle_report_units_report_id` FOREIGN KEY (`report_id`) REFERENCES `battle_reports` (`report_id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_battle_report_units_report_id` FOREIGN KEY (`report_id`) REFERENCES `battle_reports` (`id`) ON DELETE CASCADE,
   FOREIGN KEY (`unit_type_id`) REFERENCES `unit_types` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
