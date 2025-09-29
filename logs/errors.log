@@ -2010,3 +2010,10 @@ Trace: #0 C:\xampp\htdocs\ajax_proxy.php(7): require_once()
 Trace: #0 C:\xampp\htdocs\ajax_proxy.php(7): require_once()
 #1 {main}
 --------------------------------------------------------------------------------
+[2025-09-29 18:58:40] ERROR: Undefined array key "REQUEST_URI" w /app/init.php linia 93
+--------------------------------------------------------------------------------
+[2025-09-29 18:58:40] ERROR: Cannot modify header information - headers already sent by (output started at /app/lib/utils/ErrorHandler.php:44) w /app/init.php linia 113
+--------------------------------------------------------------------------------
+[2025-09-29 18:59:22] EXCEPTION: Call to undefined method VillageManager::createVillageForNewUser() w /app/create_admin.php linia 59
+Trace: #0 {main}
+--------------------------------------------------------------------------------

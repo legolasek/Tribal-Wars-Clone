@@ -10,7 +10,6 @@ CREATE TABLE IF NOT EXISTS `attacks` (
   `arrival_time` datetime NOT NULL,
   `is_completed` tinyint(1) NOT NULL DEFAULT 0,
   `is_canceled` tinyint(1) NOT NULL DEFAULT 0,
-  `report_id` INT(11) NULL COMMENT 'ID of the related battle report in the general reports table',
   `target_building` VARCHAR(50) DEFAULT NULL COMMENT 'Cel dla katapult (internal_name)',
   PRIMARY KEY (`id`),
   KEY `source_village_id` (`source_village_id`),
@@ -18,10 +17,8 @@ CREATE TABLE IF NOT EXISTS `attacks` (
   KEY `arrival_time` (`arrival_time`),
   KEY `is_completed` (`is_completed`),
   KEY `is_canceled` (`is_canceled`),
-  KEY `report_id` (`report_id`),
   FOREIGN KEY (`source_village_id`) REFERENCES `villages` (`id`) ON DELETE CASCADE,
-  FOREIGN KEY (`target_village_id`) REFERENCES `villages` (`id`) ON DELETE CASCADE,
-  FOREIGN KEY (`report_id`) REFERENCES `reports` (`id`) ON DELETE SET NULL
+  FOREIGN KEY (`target_village_id`) REFERENCES `villages` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Tabela jednostek wysłanych w ataku

@@ -89,37 +89,40 @@ if (isset($_SESSION['user_id'])) {
 
 } else {
     // Jeśli użytkownik nie jest zalogowany, przekieruj na stronę logowania, chyba że to strona publiczna
-    $public_pages = ['index.php', 'auth/login.php', 'auth/register.php', 'install.php', 'admin/admin_login.php', 'admin/db_verify.php', 'favicon.ico', 'css/', 'js/', 'img/', 'ajax/']; // Dodaj inne publiczne ścieżki (katalogi i ajax)
-    $current_path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-    $current_path = trim($current_path, '/');
-    
-    $is_public = false;
-    
-    // Sprawdź, czy ścieżka pasuje do publicznych plików/katalogów
-    foreach ($public_pages as $public_item) {
-        $public_item_trimmed = trim($public_item, '/');
-        // Jeśli ścieżka URL jest dokładnie publicznym plikiem LUB zaczyna się od publicznego katalogu/
-        if ($current_path === $public_item_trimmed || (strpos($current_path, $public_item_trimmed . '/') === 0 && $public_item_trimmed !== '')) {
-            $is_public = true;
-            break;
-        }
-    }
-    
+    // Ten blok jest pomijany w trybie CLI, aby uniknąć błędów z `$_SERVER`
+    if (php_sapi_name() !== 'cli') {
+        $public_pages = ['index.php', 'auth/login.php', 'auth/register.php', 'install.php', 'admin/admin_login.php', 'admin/db_verify.php', 'favicon.ico', 'css/', 'js/', 'img/', 'ajax/']; // Dodaj inne publiczne ścieżki (katalogi i ajax)
+        $current_path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+        $current_path = trim($current_path, '/');
 
-    if (!$is_public) {
-        // Jeśli nie jest to publiczna strona i nie jest to żądanie AJAX (które może być kierowane do publicznego skryptu w ajax/)
-        // to przekieruj na index.php (stronę logowania/główną)
-        if (!(isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest')) {
-             header("Location: index.php");
+        $is_public = false;
+
+        // Sprawdź, czy ścieżka pasuje do publicznych plików/katalogów
+        foreach ($public_pages as $public_item) {
+            $public_item_trimmed = trim($public_item, '/');
+            // Jeśli ścieżka URL jest dokładnie publicznym plikiem LUB zaczyna się od publicznego katalogu/
+            if ($current_path === $public_item_trimmed || (strpos($current_path, $public_item_trimmed . '/') === 0 && $public_item_trimmed !== '')) {
+                $is_public = true;
+                break;
+            }
+        }
+
+
+        if (!$is_public) {
+            // Jeśli nie jest to publiczna strona i nie jest to żądanie AJAX (które może być kierowane do publicznego skryptu w ajax/)
+            // to przekieruj na index.php (stronę logowania/główną)
+            if (!(isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest')) {
+                 header("Location: index.php");
+                 exit();
+            }
+             // Jeśli to żądanie AJAX do niepublicznego zasobu, ale użytkownik nie jest zalogowany, również zakończ
+             // (CSRF check powinien to też wychwycić, ale dodatkowe zabezpieczenie)
+             // Można zwrócić błąd JSON lub status 401/403
+             header('HTTP/1.1 401 Unauthorized');
+             header('Content-Type: application/json');
+             echo json_encode(['error' => 'Wymagane logowanie.']);
              exit();
         }
-         // Jeśli to żądanie AJAX do niepublicznego zasobu, ale użytkownik nie jest zalogowany, również zakończ
-         // (CSRF check powinien to też wychwycić, ale dodatkowe zabezpieczenie)
-         // Można zwrócić błąd JSON lub status 401/403
-         header('HTTP/1.1 401 Unauthorized');
-         header('Content-Type: application/json');
-         echo json_encode(['error' => 'Wymagane logowanie.']);
-         exit();
     }
 }
 

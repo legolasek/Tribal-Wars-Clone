@@ -109,14 +109,22 @@ class BattleManager
             $villages['target_x'], $villages['target_y']
         );
         
-        // Znajdź najwolniejszą jednostkę
+        // Znajdź najwolniejszą jednostkę (poprawiono SQL Injection)
+        $unit_ids = array_keys($units_sent);
+        if (empty($unit_ids)) {
+            return ['success' => false, 'error' => 'Brak jednostek do wysłania.'];
+        }
+        $placeholders = implode(',', array_fill(0, count($unit_ids), '?'));
+        $types = str_repeat('i', count($unit_ids));
+
         $stmt_get_speed = $this->conn->prepare("
-            SELECT unit_type_id, speed 
+            SELECT id as unit_type_id, speed
             FROM unit_types
-            WHERE id IN (" . implode(',', array_keys($units_sent)) . ")
+            WHERE id IN ($placeholders)
             ORDER BY speed ASC
             LIMIT 1
         ");
+        $stmt_get_speed->bind_param($types, ...$unit_ids);
         $stmt_get_speed->execute();
         $speed_result = $stmt_get_speed->get_result();
         $slowest_unit = $speed_result->fetch_assoc();
@@ -219,59 +227,49 @@ class BattleManager
      */
     public function cancelAttack($attack_id, $user_id)
     {
-        // Sprawdź, czy atak istnieje i należy do użytkownika
-        $stmt_check_attack = $this->conn->prepare("
-            SELECT a.id, a.source_village_id, a.target_village_id, a.attack_type, 
-                   a.start_time, a.arrival_time, a.is_completed, a.is_canceled
-            FROM attacks a
-            JOIN villages v ON a.source_village_id = v.id
-            WHERE a.id = ? AND v.user_id = ? AND a.is_completed = 0 AND a.is_canceled = 0
-        ");
-        $stmt_check_attack->bind_param("ii", $attack_id, $user_id);
-        $stmt_check_attack->execute();
-        $result = $stmt_check_attack->get_result();
-        
-        if ($result->num_rows === 0) {
-            return [
-                'success' => false,
-                'error' => 'Atak nie istnieje, został już zakończony, anulowany lub nie masz do niego dostępu.'
-            ];
-        }
-        
-        $attack = $result->fetch_assoc();
-        $stmt_check_attack->close();
-        
-        // Sprawdź, czy atak już dotarł do celu
-        $current_time = time();
-        $arrival_time = strtotime($attack['arrival_time']);
-        
-        if ($current_time >= $arrival_time) {
-            return [
-                'success' => false,
-                'error' => 'Nie można anulować ataku, który już dotarł do celu.'
-            ];
-        }
-        
-        // Rozpocznij transakcję
         $this->conn->begin_transaction();
         
         try {
-            // Oznacz atak jako anulowany
-            $stmt_cancel_attack = $this->conn->prepare("
-                UPDATE attacks 
-                SET is_canceled = 1 
-                WHERE id = ?
+            // Sprawdź, czy atak istnieje, należy do użytkownika i zablokuj wiersz do aktualizacji
+            $stmt_check_attack = $this->conn->prepare("
+                SELECT a.id, a.source_village_id, a.arrival_time
+                FROM attacks a
+                JOIN villages v ON a.source_village_id = v.id
+                WHERE a.id = ? AND v.user_id = ? AND a.is_completed = 0 AND a.is_canceled = 0
+                FOR UPDATE
             ");
+            $stmt_check_attack->bind_param("ii", $attack_id, $user_id);
+            $stmt_check_attack->execute();
+            $result = $stmt_check_attack->get_result();
+
+            if ($result->num_rows === 0) {
+                $this->conn->rollback();
+                return [
+                    'success' => false,
+                    'error' => 'Atak nie istnieje, został już zakończony, anulowany lub nie masz do niego dostępu.'
+                ];
+            }
+
+            $attack = $result->fetch_assoc();
+            $stmt_check_attack->close();
+
+            // Sprawdź, czy atak już dotarł do celu
+            if (time() >= strtotime($attack['arrival_time'])) {
+                $this->conn->rollback();
+                return [
+                    'success' => false,
+                    'error' => 'Nie można anulować ataku, który już dotarł do celu.'
+                ];
+            }
+
+            // Oznacz atak jako anulowany
+            $stmt_cancel_attack = $this->conn->prepare("UPDATE attacks SET is_canceled = 1 WHERE id = ?");
             $stmt_cancel_attack->bind_param("i", $attack_id);
             $stmt_cancel_attack->execute();
             $stmt_cancel_attack->close();
             
             // Pobierz jednostki z ataku
-            $stmt_get_units = $this->conn->prepare("
-                SELECT unit_type_id, count 
-                FROM attack_units 
-                WHERE attack_id = ?
-            ");
+            $stmt_get_units = $this->conn->prepare("SELECT unit_type_id, count FROM attack_units WHERE attack_id = ?");
             $stmt_get_units->bind_param("i", $attack_id);
             $stmt_get_units->execute();
             $units_result = $stmt_get_units->get_result();
@@ -282,43 +280,16 @@ class BattleManager
             }
             $stmt_get_units->close();
             
-            // Zwróć jednostki do wioski źródłowej
+            // Zwróć jednostki do wioski źródłowej w sposób atomowy
             foreach ($units_to_return as $unit_type_id => $count) {
-                $stmt_check_existing = $this->conn->prepare("
-                    SELECT id, count 
-                    FROM village_units 
-                    WHERE village_id = ? AND unit_type_id = ?
+                $stmt_return_units = $this->conn->prepare("
+                    INSERT INTO village_units (village_id, unit_type_id, count)
+                    VALUES (?, ?, ?)
+                    ON DUPLICATE KEY UPDATE count = count + VALUES(count)
                 ");
-                $stmt_check_existing->bind_param("ii", $attack['source_village_id'], $unit_type_id);
-                $stmt_check_existing->execute();
-                $existing_result = $stmt_check_existing->get_result();
-                
-                if ($existing_result->num_rows > 0) {
-                    // Aktualizuj istniejące jednostki
-                    $existing = $existing_result->fetch_assoc();
-                    $new_count = $existing['count'] + $count;
-                    
-                    $stmt_update = $this->conn->prepare("
-                        UPDATE village_units 
-                        SET count = ? 
-                        WHERE id = ?
-                    ");
-                    $stmt_update->bind_param("ii", $new_count, $existing['id']);
-                    $stmt_update->execute();
-                    $stmt_update->close();
-                } else {
-                    // Dodaj nowe jednostki
-                    $stmt_insert = $this->conn->prepare("
-                        INSERT INTO village_units (
-                            village_id, unit_type_id, count
-                        ) VALUES (?, ?, ?)
-                    ");
-                    $stmt_insert->bind_param("iii", $attack['source_village_id'], $unit_type_id, $count);
-                    $stmt_insert->execute();
-                    $stmt_insert->close();
-                }
-                
-                $stmt_check_existing->close();
+                $stmt_return_units->bind_param("iii", $attack['source_village_id'], $unit_type_id, $count);
+                $stmt_return_units->execute();
+                $stmt_return_units->close();
             }
             
             // Zatwierdź transakcję
@@ -331,12 +302,11 @@ class BattleManager
                 'returned_units' => $units_to_return
             ];
         } catch (Exception $e) {
-            // Wycofaj transakcję w przypadku błędu
             $this->conn->rollback();
-            
+            error_log("Błąd podczas anulowania ataku: " . $e->getMessage());
             return [
                 'success' => false,
-                'error' => 'Wystąpił błąd podczas anulowania ataku: ' . $e->getMessage()
+                'error' => 'Wystąpił błąd serwera podczas anulowania ataku.'
             ];
         }
     }
@@ -360,23 +330,25 @@ class BattleManager
 
         // Pobierz wszystkie niezakończone i nieanulowane ataki, które powinny już dotrzeć do celu,
         // a dotyczą wiosek użytkownika (jako atakujący lub obrońca)
-        // Używamy FIND_IN_SET, ponieważ nie możemy bezpośrednio bindować tablicy do IN z prepare()
-        $village_ids_string = implode(',', $user_village_ids);
+        // Zastąpiono FIND_IN_SET wydajniejszą klauzulą IN z dynamicznymi placeholderami
+        $placeholders = implode(',', array_fill(0, count($user_village_ids), '?'));
+        $types = 's' . str_repeat('i', count($user_village_ids) * 2);
+        $params = array_merge([$current_time], $user_village_ids, $user_village_ids);
 
         $stmt_get_attacks = $this->conn->prepare("
             SELECT id, source_village_id, target_village_id, attack_type
             FROM attacks
             WHERE is_completed = 0 AND is_canceled = 0 AND arrival_time <= ?
-              AND (FIND_IN_SET(source_village_id, ?) OR FIND_IN_SET(target_village_id, ?))
+              AND (source_village_id IN ($placeholders) OR target_village_id IN ($placeholders))
             ORDER BY arrival_time ASC
         ");
-        
-         if ($stmt_get_attacks === false) {
-             error_log("Prepare failed for getCompletedAttacks (BattleManager): " . $this->conn->error);
-             return ['<p class="error-message">Wystąpił błąd podczas pobierania zakończonych ataków.</p>'];
-         }
 
-        $stmt_get_attacks->bind_param("sss", $current_time, $village_ids_string, $village_ids_string);
+        if ($stmt_get_attacks === false) {
+            error_log("Prepare failed for getCompletedAttacks (BattleManager): " . $this->conn->error);
+            return ['<p class="error-message">Wystąpił błąd podczas pobierania zakończonych ataków.</p>'];
+        }
+
+        $stmt_get_attacks->bind_param($types, ...$params);
         $stmt_get_attacks->execute();
         $attacks_result = $stmt_get_attacks->get_result();
         
@@ -717,71 +689,40 @@ class BattleManager
             }
 
             // Oznacz atak jako zakończony
-            $stmt_complete_attack = $this->conn->prepare("
-                UPDATE attacks 
-                SET is_completed = 1 
-                WHERE id = ?
-            ");
+            $stmt_complete_attack = $this->conn->prepare("UPDATE attacks SET is_completed = 1 WHERE id = ?");
             $stmt_complete_attack->bind_param("i", $attack_id);
             $stmt_complete_attack->execute();
             $stmt_complete_attack->close();
+
             // Zaktualizuj jednostki obronne w wiosce
             foreach ($defending_units as $unit_type_id => $unit) {
-                $new_count = isset($remaining_defending_units[$unit_type_id]) ? $remaining_defending_units[$unit_type_id] : 0;
+                $new_count = $remaining_defending_units[$unit_type_id] ?? 0;
                 if ($new_count > 0) {
-                    $stmt_update = $this->conn->prepare("
-                        UPDATE village_units 
-                        SET count = ? 
-                        WHERE village_id = ? AND unit_type_id = ?
-                    ");
+                    $stmt_update = $this->conn->prepare("UPDATE village_units SET count = ? WHERE village_id = ? AND unit_type_id = ?");
                     $stmt_update->bind_param("iii", $new_count, $attack['target_village_id'], $unit_type_id);
                     $stmt_update->execute();
                     $stmt_update->close();
                 } else {
-                    $stmt_delete = $this->conn->prepare("
-                        DELETE FROM village_units 
-                        WHERE village_id = ? AND unit_type_id = ?
-                    ");
+                    $stmt_delete = $this->conn->prepare("DELETE FROM village_units WHERE village_id = ? AND unit_type_id = ?");
                     $stmt_delete->bind_param("ii", $attack['target_village_id'], $unit_type_id);
                     $stmt_delete->execute();
                     $stmt_delete->close();
                 }
             }
+
             // Zwróć pozostałe jednostki atakujące do wioski źródłowej
             foreach ($remaining_attacking_units as $unit_type_id => $count) {
-                $stmt_check_existing = $this->conn->prepare("
-                    SELECT id, count 
-                    FROM village_units 
-                    WHERE village_id = ? AND unit_type_id = ?
+                // Użyj INSERT ... ON DUPLICATE KEY UPDATE dla atomowości
+                $stmt_return_units = $this->conn->prepare("
+                    INSERT INTO village_units (village_id, unit_type_id, count)
+                    VALUES (?, ?, ?)
+                    ON DUPLICATE KEY UPDATE count = count + VALUES(count)
                 ");
-                $stmt_check_existing->bind_param("ii", $attack['source_village_id'], $unit_type_id);
-                $stmt_check_existing->execute();
-                $existing_result = $stmt_check_existing->get_result();
-                if ($existing_result->num_rows > 0) {
-                    // Aktualizuj istniejące jednostki
-                    $existing = $existing_result->fetch_assoc();
-                    $new_count = $existing['count'] + $count;
-                    $stmt_update = $this->conn->prepare("
-                        UPDATE village_units 
-                        SET count = ? 
-                        WHERE id = ?
-                    ");
-                    $stmt_update->bind_param("ii", $new_count, $existing['id']);
-                    $stmt_update->execute();
-                    $stmt_update->close();
-                } else {
-                    // Dodaj nowe jednostki
-                    $stmt_insert = $this->conn->prepare("
-                        INSERT INTO village_units (
-                            village_id, unit_type_id, count
-                        ) VALUES (?, ?, ?)
-                    ");
-                    $stmt_insert->bind_param("iii", $attack['source_village_id'], $unit_type_id, $count);
-                    $stmt_insert->execute();
-                    $stmt_insert->close();
-                }
-                $stmt_check_existing->close();
+                $stmt_return_units->bind_param("iii", $attack['source_village_id'], $unit_type_id, $count);
+                $stmt_return_units->execute();
+                $stmt_return_units->close();
             }
+
             // Get user IDs for the report
             $stmt_users = $this->conn->prepare("SELECT v1.user_id as attacker_user_id, v2.user_id as defender_user_id FROM villages v1, villages v2 WHERE v1.id = ? AND v2.id = ?");
             $stmt_users->bind_param("ii", $attack['source_village_id'], $attack['target_village_id']);
@@ -791,46 +732,43 @@ class BattleManager
             $attacker_user_id = $users['attacker_user_id'];
             $defender_user_id = $users['defender_user_id'];
 
-            // Dodaj raport z bitwy (z detalami JSON)
+            // Zapisz główny raport bitwy
             $details = [
-                'attacker_losses' => $attacker_losses,
-                'defender_losses' => $defender_losses,
                 'loot' => $loot,
-                'attack_random' => $attack_random,
-                'defense_random' => $defense_random,
-                'morale' => $morale,
-                'wall_level' => $wall_level,
-                'wall_bonus' => $wall_bonus,
-                'wall_damage' => $wall_damage_report,
-                'building_damage' => $building_damage_report,
-                'total_attack_strength' => $total_attack_strength,
-                'total_defense_strength' => $total_defense_strength
+                'attack_random' => $attack_random, 'defense_random' => $defense_random, 'morale' => $morale,
+                'wall_level' => $wall_level, 'wall_bonus' => $wall_bonus,
+                'wall_damage' => $wall_damage_report, 'building_damage' => $building_damage_report,
+                'total_attack_strength' => $total_attack_strength, 'total_defense_strength' => $total_defense_strength
             ];
             $report_data_json = json_encode($details);
             $attacker_won_int = $attacker_win ? 1 : 0;
 
             $stmt_add_report = $this->conn->prepare("
-                INSERT INTO battle_reports (
-                    attack_id, source_village_id, target_village_id,
-                    battle_time, attacker_user_id, defender_user_id,
-                    attacker_won, report_data
-                ) VALUES (?, ?, ?, NOW(), ?, ?, ?, ?)
+                INSERT INTO battle_reports (attack_id, source_village_id, target_village_id, battle_time, attacker_user_id, defender_user_id, attacker_won, report_data)
+                VALUES (?, ?, ?, NOW(), ?, ?, ?, ?)
             ");
-            $stmt_add_report->bind_param(
-                "iiiiis",
-                $attack_id, $attack['source_village_id'], $attack['target_village_id'],
-                $attacker_user_id, $defender_user_id,
-                $attacker_won_int, $report_data_json
-            );
+            $stmt_add_report->bind_param("iiiiis", $attack_id, $attack['source_village_id'], $attack['target_village_id'], $attacker_user_id, $defender_user_id, $attacker_won_int, $report_data_json);
             $stmt_add_report->execute();
             $report_id = $stmt_add_report->insert_id;
             $stmt_add_report->close();
 
-            // Update the attack with the new report id
-            $stmt_update_attack = $this->conn->prepare("UPDATE attacks SET report_id = ? WHERE id = ?");
-            $stmt_update_attack->bind_param("ii", $report_id, $attack_id);
-            $stmt_update_attack->execute();
-            $stmt_update_attack->close();
+            // Zapisz szczegóły jednostek do battle_report_units
+            $stmt_add_units = $this->conn->prepare("
+                INSERT INTO battle_report_units (report_id, unit_type_id, side, initial_count, lost_count, remaining_count)
+                VALUES (?, ?, ?, ?, ?, ?)
+            ");
+            foreach ($attacker_losses as $unit_type_id => $loss_data) {
+                $side = 'attacker';
+                $stmt_add_units->bind_param("iisiii", $report_id, $unit_type_id, $side, $loss_data['initial_count'], $loss_data['lost_count'], $loss_data['remaining_count']);
+                $stmt_add_units->execute();
+            }
+            foreach ($defender_losses as $unit_type_id => $loss_data) {
+                $side = 'defender';
+                $stmt_add_units->bind_param("iisiii", $report_id, $unit_type_id, $side, $loss_data['initial_count'], $loss_data['lost_count'], $loss_data['remaining_count']);
+                $stmt_add_units->execute();
+            }
+            $stmt_add_units->close();
+
             $this->conn->commit();
             return [ 'success' => true ];
         } catch (Exception $e) {
@@ -973,17 +911,16 @@ class BattleManager
         // Sprawdź, czy raport istnieje i czy użytkownik ma do niego dostęp
         $stmt = $this->conn->prepare("
             SELECT br.id, br.attack_id, br.source_village_id, br.target_village_id, 
-                   br.attack_type, br.winner, br.total_attack_strength, 
-                   br.total_defense_strength, br.created_at,
+                   br.attacker_won, br.report_data, br.battle_time as created_at,
                    sv.name as source_village_name, sv.x_coord as source_x, sv.y_coord as source_y,
                    tv.name as target_village_name, tv.x_coord as target_x, tv.y_coord as target_y,
                    attacker.username as attacker_name, defender.username as defender_name
             FROM battle_reports br
             JOIN villages sv ON br.source_village_id = sv.id
             JOIN villages tv ON br.target_village_id = tv.id
-            JOIN users attacker ON sv.user_id = attacker.id
-            JOIN users defender ON tv.user_id = defender.id
-            WHERE br.id = ? AND (sv.user_id = ? OR tv.user_id = ?)
+            JOIN users attacker ON br.attacker_user_id = attacker.id
+            JOIN users defender ON br.defender_user_id = defender.id
+            WHERE br.id = ? AND (br.attacker_user_id = ? OR br.defender_user_id = ?)
         ");
         $stmt->bind_param("iii", $report_id, $user_id, $user_id);
         $stmt->execute();
@@ -999,14 +936,18 @@ class BattleManager
         $report = $result->fetch_assoc();
         $stmt->close();
         
-        // Pobierz szczegóły jednostek
+        // Zdekoduj dane JSON z ogólnymi informacjami o bitwie
+        $report['details'] = json_decode($report['report_data'], true);
+        unset($report['report_data']); // Usuń pole z JSONem z finalnego raportu
+
+        // Pobierz szczegóły jednostek z tabeli battle_report_units
         $stmt_units = $this->conn->prepare("
             SELECT bru.unit_type_id, bru.side, bru.initial_count, 
                    bru.lost_count, bru.remaining_count,
-                   ut.name_pl, ut.internal_name, ut.attack, ut.defense
+                   ut.name_pl, ut.internal_name
             FROM battle_report_units bru
             JOIN unit_types ut ON bru.unit_type_id = ut.id
-            WHERE bru.battle_report_id = ?
+            WHERE bru.report_id = ?
         ");
         $stmt_units->bind_param("i", $report_id);
         $stmt_units->execute();
@@ -1017,9 +958,9 @@ class BattleManager
         
         while ($unit = $units_result->fetch_assoc()) {
             if ($unit['side'] === 'attacker') {
-                $attacker_units[] = $unit;
+                $attacker_units[$unit['unit_type_id']] = $unit;
             } else {
-                $defender_units[] = $unit;
+                $defender_units[$unit['unit_type_id']] = $unit;
             }
         }
         $stmt_units->close();
