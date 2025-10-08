@@ -347,6 +347,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         'docs/sql/sql_create_research_tables.sql',
         'docs/sql/sql_create_messages_table.sql',
         'docs/sql/sql_create_trade_routes_table.sql',
+        'docs/sql/sql_create_market_offers_table.sql',
         'docs/sql/sql_create_notifications_table.sql'
     ];
     

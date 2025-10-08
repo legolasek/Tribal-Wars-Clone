@@ -1,166 +1,211 @@
-/**
- * Frontend logic for Market Panel and Trade
- */
+document.addEventListener('DOMContentLoaded', function() {
+    const marketPanel = document.getElementById('market-panel');
 
-// Assume formatDuration is available globally from buildings.js or units.js
-// function formatDuration(seconds) { ... }
-
-// Function to update timers specifically within the Market popup for active trades
-function updateTradeTimersPopup() {
-    const timers = document.querySelectorAll('#popup-action-content .trade-timer');
-    const currentTime = Math.floor(Date.now() / 1000);
-
-    timers.forEach(timerElement => {
-        const finishTime = parseInt(timerElement.dataset.endsAt, 10);
-        const remainingTime = finishTime - currentTime;
-
-        if (remainingTime > 0) {
-            timerElement.textContent = formatDuration(remainingTime);
-        } else {
-            timerElement.textContent = 'Przybył!';
-            timerElement.classList.add('timer-finished');
-            timerElement.removeAttribute('data-ends-at'); // Stop refreshing this timer
-
-            // This trade has finished. We should ideally refresh the active trades list.
-            // For simplicity now, just mark it finished.
-             const tradeRow = timerElement.closest('tr');
-             if (tradeRow) {
-                  tradeRow.classList.add('finished');
-                  // Might need to visually update resources if it was an incoming trade
-                  // Or update available traders if it was an outgoing trade
-             }
-             // A trade finished, refresh the market panel to update lists and trader count
-             // Need a way to get current villageId and buildingInternalName (market)
-             // Let's assume popup-action-content has data attributes
-             const actionContent = document.getElementById('popup-action-content');
-              if (actionContent && actionContent.dataset.villageId && actionContent.dataset.buildingInternalName === 'market') {
-                   const villageId = actionContent.dataset.villageId;
-                   const buildingInternalName = actionContent.dataset.buildingInternalName;
-                    // Refresh the panel after a short delay to allow backend processing
-                    setTimeout(() => {
-                         fetchAndRenderMarketPanel(villageId, buildingInternalName); // Assuming this function exists and fetches market data
-                    }, 1000); // Delay by 1 second
-              }
+    // This script should only run when the market panel is loaded into the DOM.
+    // We use a MutationObserver to detect when the panel is added.
+    const observer = new MutationObserver((mutationsList, observer) => {
+        for(const mutation of mutationsList) {
+            if (mutation.type === 'childList') {
+                const marketPanelNode = document.getElementById('market-panel');
+                if (marketPanelNode) {
+                    initializeMarketPanel(marketPanelNode);
+                    // Once initialized, we can disconnect the observer if the panel is not expected to be removed and re-added frequently.
+                    // observer.disconnect();
+                }
+            }
         }
     });
-}
 
-// Setup interval for updating trade popup timers
-let tradeTimerInterval = null;
-function startTradeTimerInterval() {
-    if (tradeTimerInterval === null) {
-        tradeTimerInterval = setInterval(updateTradeTimersPopup, 1000);
+    // Start observing the body for child list changes.
+    observer.observe(document.body, { childList: true, subtree: true });
+
+    function initializeMarketPanel(panel) {
+        const tabs = panel.querySelectorAll('.tab-button');
+        const contents = panel.querySelectorAll('.market-tab-content');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Deactivate all tabs and content
+                tabs.forEach(t => t.classList.remove('active'));
+                contents.forEach(c => c.classList.remove('active'));
+
+                // Activate the clicked tab and its content
+                tab.classList.add('active');
+                const tabId = tab.dataset.tab;
+                document.getElementById(tabId).classList.add('active');
+
+                // Load content for the activated tab
+                if (tabId === 'trade') {
+                    loadAllOffers();
+                } else if (tabId === 'my-offers') {
+                    loadMyOffers();
+                }
+            });
+        });
+
+        // Initial load for the default tab
+        loadAllOffers();
+        setupCreateOfferForm();
     }
-}
 
-// Function to handle Send Resources form submission via AJAX
-function setupMarketListeners(villageId, buildingInternalName) {
-    const sendResourcesForm = document.getElementById('send-resources-form');
-    if (sendResourcesForm) {
-        sendResourcesForm.addEventListener('submit', async function(event) {
-            event.preventDefault();
-            const form = event.target;
-            const formData = new FormData(form);
+    async function loadAllOffers() {
+        const offersList = document.getElementById('market-offers-list');
+        if (!offersList) return;
+        offersList.innerHTML = '<p>Ładowanie ofert...</p>';
 
-            const sendButton = form.querySelector('.send-button');
-            if (sendButton) {
-                sendButton.disabled = true;
-                sendButton.textContent = 'Wysyłanie...'; // Show loading state
+        try {
+            const response = await fetch('/ajax/market/get_offers.php');
+            const data = await response.json();
+
+            if (data.success) {
+                renderOffers(offersList, data.offers, false);
+            } else {
+                offersList.innerHTML = `<p class="error-message">${data.message}</p>`;
             }
+        } catch (error) {
+            offersList.innerHTML = `<p class="error-message">Błąd ładowania ofert.</p>`;
+        }
+    }
+
+    async function loadMyOffers() {
+        const myOffersList = document.getElementById('my-offers-list');
+        if (!myOffersList) return;
+        myOffersList.innerHTML = '<p>Ładowanie Twoich ofert...</p>';
+
+        try {
+            // We reuse get_offers and filter client-side for simplicity.
+            // In a larger application, a dedicated endpoint would be better.
+            const response = await fetch('/ajax/market/get_offers.php');
+            const data = await response.json();
+
+            if (data.success) {
+                const myVillageId = parseInt(document.querySelector('.village-name-display').dataset.villageId, 10);
+                const myOffers = data.offers.filter(offer => offer.village_id == myVillageId);
+                renderOffers(myOffersList, myOffers, true);
+            } else {
+                myOffersList.innerHTML = `<p class="error-message">${data.message}</p>`;
+            }
+        } catch (error) {
+            myOffersList.innerHTML = `<p class="error-message">Błąd ładowania Twoich ofert.</p>`;
+        }
+    }
+
+    function renderOffers(container, offers, isMyOffers) {
+        if (offers.length === 0) {
+            container.innerHTML = '<p>Brak ofert.</p>';
+            return;
+        }
+
+        let html = '<table><thead><tr><th>Oferuje</th><th>W zamian za</th><th>Gracz</th><th>Akcja</th></tr></thead><tbody>';
+        const myVillageId = parseInt(document.querySelector('.village-name-display').dataset.villageId, 10);
+
+        offers.forEach(offer => {
+            html += `
+                <tr>
+                    <td>${offer.offered_amount} <img src="/img/ds_graphic/${offer.offered_resource}.png" alt="${offer.offered_resource}" class="resource-icon"></td>
+                    <td>${offer.requested_amount} <img src="/img/ds_graphic/${offer.requested_resource}.png" alt="${offer.requested_resource}" class="resource-icon"></td>
+                    <td>${offer.village_name} (${offer.x_coord}|${offer.y_coord})</td>
+                    <td>
+                        ${isMyOffers ?
+                            `<button class="btn btn-danger cancel-offer-btn" data-offer-id="${offer.id}">Anuluj</button>` :
+                            (offer.village_id !== myVillageId ? `<button class="btn btn-success accept-offer-btn" data-offer-id="${offer.id}">Akceptuj</button>` : 'Twoja oferta')
+                        }
+                    </td>
+                </tr>
+            `;
+        });
+
+        html += '</tbody></table>';
+        container.innerHTML = html;
+    }
+
+    function setupCreateOfferForm() {
+        const form = document.getElementById('create-offer-form');
+        if (!form) return;
+
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const formData = new FormData(form);
+            const button = form.querySelector('button[type="submit"]');
+            button.disabled = true;
+            button.textContent = 'Wystawianie...';
 
             try {
-                 // Add csrf_token to form data
-                 const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
-                 formData.append('csrf_token', csrfToken);
-
-                const response = await fetch(form.action, {
+                const response = await fetch('/ajax/market/create_offer.php', {
                     method: 'POST',
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest' // Identify as AJAX request
-                    },
-                    body: new URLSearchParams(formData).toString()
+                    body: formData
                 });
-                const data = await response.json();
+                const result = await response.json();
 
-                if (data.status === 'success') {
-                    window.toastManager.showToast(data.message, 'success');
-                    // Refresh the market panel and trader count
-                     fetchAndRenderMarketPanel(villageId, buildingInternalName); // Assuming this function exists and fetches market data
-
-                    // Update resources display
-                    if (window.resourceUpdater && data.data && data.data.village_info) {
-                         window.resourceUpdater.resources.wood.amount = data.data.village_info.wood;
-                         window.resourceUpdater.resources.clay.amount = data.data.village_info.clay;
-                         window.resourceUpdater.resources.iron.amount = data.data.village_info.iron;
-                          window.resourceUpdater.updateUI();
-                     }
-
+                if (result.success) {
+                    if (window.toastManager) window.toastManager.showToast(result.message, 'success');
+                    form.reset();
+                    // Switch to "My Offers" tab to see the new offer
+                    document.querySelector('.tab-button[data-tab="my-offers"]').click();
                 } else {
-                    window.toastManager.showToast(data.message || 'Błąd wysyłania surowców.', 'error');
+                    if (window.toastManager) window.toastManager.showToast(result.message, 'error');
                 }
-
             } catch (error) {
-                console.error('Błąd AJAX wysyłania surowców:', error);
-                window.toastManager.showToast('Błąd komunikacji z serwera podczas wysyłania surowców.', 'error');
+                if (window.toastManager) window.toastManager.showToast('Błąd podczas tworzenia oferty.', 'error');
             } finally {
-                // Re-enable button regardless of success or failure
-                if (sendButton) {
-                    sendButton.disabled = false;
-                    sendButton.textContent = 'Wyślij zasoby'; // Restore original text
-                }
+                button.disabled = false;
+                button.textContent = 'Wystaw ofertę';
             }
         });
     }
-}
 
-// Add a function to fetch and render the Market panel (to be called from buildings.js)
-async function fetchAndRenderMarketPanel(villageId, buildingInternalName) {
-     const actionContent = document.getElementById('popup-action-content');
-     const detailsContent = document.getElementById('building-details-content');
-     if (!actionContent || !detailsContent || !villageId || !buildingInternalName) {
-         console.error('Missing elements or parameters for market panel.');
-         return;
-     }
+    // Event delegation for accept/cancel buttons
+    document.body.addEventListener('click', async function(e) {
+        if (e.target.classList.contains('accept-offer-btn')) {
+            const button = e.target;
+            const offerId = button.dataset.offerId;
+            button.disabled = true;
 
-     // Show loading indicator
-     actionContent.innerHTML = '<p>Ładowanie panelu rynku...</p>';
-     actionContent.style.display = 'block';
-     detailsContent.style.display = 'none'; // Hide details when showing action content
+            try {
+                const response = await fetch('/ajax/market/accept_offer.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: `offer_id=${offerId}`
+                });
+                const result = await response.json();
 
-     // Add data attributes to actionContent for easy access in timer updates
-     actionContent.dataset.villageId = villageId;
-     actionContent.dataset.buildingInternalName = buildingInternalName;
+                if (result.success) {
+                    if (window.toastManager) window.toastManager.showToast(result.message, 'success');
+                    loadAllOffers(); // Refresh the list
+                } else {
+                    if (window.toastManager) window.toastManager.showToast(result.message, 'error');
+                    button.disabled = false;
+                }
+            } catch (error) {
+                if (window.toastManager) window.toastManager.showToast('Błąd podczas akceptowania oferty.', 'error');
+                button.disabled = false;
+            }
+        }
 
-     try {
-         // Use the existing get_building_action.php endpoint
-         const response = await fetch(`get_building_action.php?village_id=${villageId}&building_type=${buildingInternalName}`);
-         const data = await response.json();
+        if (e.target.classList.contains('cancel-offer-btn')) {
+            const button = e.target;
+            const offerId = button.dataset.offerId;
+            button.disabled = true;
 
-         if (data.status === 'success' && data.action_type === 'trade') {
-             // Server already returns HTML in additional_info_html
-             actionContent.innerHTML = data.data.additional_info_html;
-             setupMarketListeners(villageId, buildingInternalName); // Setup listeners after rendering
-              updateTradeTimersPopup(); // Start timers for the popup queue
+            try {
+                const response = await fetch('/ajax/market/cancel_offer.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: `offer_id=${offerId}`
+                });
+                const result = await response.json();
 
-         } else if (data.error) {
-             actionContent.innerHTML = '<p>Błąd ładowania panelu rynku: ' + data.error + '</p>';
-             window.toastManager.showToast(data.error, 'error');
-         } else {
-              actionContent.innerHTML = '<p>Nieprawidłowa odpowiedź serwera lub akcja nie dotyczy rynku.</p>';
-         }
-
-     } catch (error) {
-         console.error('Błąd AJAX pobierania panelu rynku:', error);
-         actionContent.innerHTML = '<p>Błąd komunikacji z serwera.</p>';
-         window.toastManager.showToast('Błąd komunikacji z serwera podczas pobierania panelu rynku.', 'error');
-     }
-}
-
-// Add the fetchAndRenderMarketPanel function to the global scope or make it accessible
-// window.fetchAndRenderMarketPanel = fetchAndRenderMarketPanel;
-
-// Ensure timers start when DOM is ready
-document.addEventListener('DOMContentLoaded', () => {
-    // Start the interval for trade popup timers
-     startTradeTimerInterval();
-}); 
+                if (result.success) {
+                    if (window.toastManager) window.toastManager.showToast(result.message, 'success');
+                    loadMyOffers(); // Refresh the list
+                } else {
+                    if (window.toastManager) window.toastManager.showToast(result.message, 'error');
+                    button.disabled = false;
+                }
+            } catch (error) {
+                if (window.toastManager) window.toastManager.showToast('Błąd podczas anulowania oferty.', 'error');
+                button.disabled = false;
+            }
+        }
+    });
+});
